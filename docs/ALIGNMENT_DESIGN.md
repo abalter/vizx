@@ -24,7 +24,7 @@ The first implementation target should be the simplest one available in the curr
 The current `alignY` behavior is intentionally narrow:
 
 - target side: always `target.center.y`
-- reference side: `referenceAnchor.y` (for example `center`, `north`, or `south`)
+- reference side: `referenceAnchor.y` (for example `center`, `north`, `south`, `east`, or `west`)
 
 Arbitrary target-anchor-to-reference-anchor alignment is not implemented yet.
 

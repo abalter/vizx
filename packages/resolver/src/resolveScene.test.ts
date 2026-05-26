@@ -353,6 +353,138 @@ describe("resolveScene", () => {
     expect(connector?.end).toEqual(target.anchors.south);
   });
 
+  it("alignY can match target center.y to a reference east anchor", () => {
+    const unalignedScene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: point(220, 170) },
+          children: [
+            { kind: "text", id: "Reference.label", center: point(0, 0), text: "Reference" },
+            { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 56 },
+          children: [
+            {
+              kind: "group",
+              id: "Target.inner",
+              children: [
+                { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+                { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 14, paddingY: 10 }, rx: 8, ry: 8 },
+              ],
+            },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-to-target-east", from: { objectId: "Reference", anchor: "east" }, to: { objectId: "Target", anchor: "east" } },
+      ],
+    };
+
+    const alignedScene: ObjectScene = {
+      ...unalignedScene,
+      objects: unalignedScene.objects.map((object) => {
+        if (object.id !== "Target") {
+          return object;
+        }
+
+        return {
+          ...object,
+          align: { relation: "alignY", reference: { objectId: "Reference", anchor: "east" } },
+        };
+      }),
+    };
+
+    const unaligned = resolveScene(unalignedScene);
+    const aligned = resolveScene(alignedScene);
+    const reference = requireResolvedObject(aligned, "Reference");
+    const target = requireResolvedObject(aligned, "Target");
+    const unalignedTarget = requireResolvedObject(unaligned, "Target");
+    const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+    const connector = aligned.resolved.connectors.find((entry) => entry.id === "reference-to-target-east");
+
+    expect(aligned.diagnostics).toEqual([]);
+    expect(target.anchors.center?.y).toBe(reference.anchors.east?.y);
+    expect(target.anchors.center?.x).toBe(unalignedTarget.anchors.center?.x);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.center?.y).toBe(target.anchors.center?.y);
+    expect(connector?.end).toEqual(target.anchors.east);
+  });
+
+  it("alignY can match target center.y to a reference west anchor", () => {
+    const unalignedScene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: point(220, 170) },
+          children: [
+            { kind: "text", id: "Reference.label", center: point(0, 0), text: "Reference" },
+            { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "leftOf", reference: { objectId: "Reference", anchor: "west" }, gap: 52 },
+          children: [
+            {
+              kind: "group",
+              id: "Target.inner",
+              children: [
+                { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+                { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 14, paddingY: 10 }, rx: 8, ry: 8 },
+              ],
+            },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-to-target-west", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "Target", anchor: "west" } },
+      ],
+    };
+
+    const alignedScene: ObjectScene = {
+      ...unalignedScene,
+      objects: unalignedScene.objects.map((object) => {
+        if (object.id !== "Target") {
+          return object;
+        }
+
+        return {
+          ...object,
+          align: { relation: "alignY", reference: { objectId: "Reference", anchor: "west" } },
+        };
+      }),
+    };
+
+    const unaligned = resolveScene(unalignedScene);
+    const aligned = resolveScene(alignedScene);
+    const reference = requireResolvedObject(aligned, "Reference");
+    const target = requireResolvedObject(aligned, "Target");
+    const unalignedTarget = requireResolvedObject(unaligned, "Target");
+    const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+    const connector = aligned.resolved.connectors.find((entry) => entry.id === "reference-to-target-west");
+
+    expect(aligned.diagnostics).toEqual([]);
+    expect(target.anchors.center?.y).toBe(reference.anchors.west?.y);
+    expect(target.anchors.center?.x).toBe(unalignedTarget.anchors.center?.x);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.center?.y).toBe(target.anchors.center?.y);
+    expect(connector?.end).toEqual(target.anchors.west);
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
