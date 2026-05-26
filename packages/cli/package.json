@@ -1,0 +1,19 @@
+{
+  "name": "@vizx/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "vizx": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@vizx/core": "0.0.0",
+    "@vizx/parser": "0.0.0",
+    "@vizx/interpreter": "0.0.0",
+    "@vizx/renderer-svg": "0.0.0"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

@@ -1,0 +1,6 @@
+# Minimal VizX sketch syntax. This syntax is provisional.
+box A "Raw data" at 60 40
+box B "Clean / transform" right_of A by 120
+box C "Model" right_of B by 120
+connect A.east -> B.west
+connect B.east -> C.west
