@@ -99,7 +99,7 @@ npm run demo
 npm run inspect
 ```
 
-The current demo builds a small object graph in TypeScript and writes [`examples/basic.svg`](./examples/basic.svg). `npm run inspect` prints resolved geometry, anchors, connector endpoints, diagnostics, and nested group children for that same demo scene as JSON when available. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
+The current demo builds a small object graph in TypeScript and writes [`examples/basic.svg`](./examples/basic.svg). `npm run inspect` prints resolved geometry, anchors, connector endpoints, diagnostics, and nested group children for that same demo scene as JSON when available. Bounding boxes, anchors, and geometry summaries all use resolved scene coordinates. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
 
 ## Design principles
 

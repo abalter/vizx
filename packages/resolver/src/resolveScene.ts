@@ -354,9 +354,37 @@ function translateResolvedObject(object: ResolvedObject, offset: Vector): Resolv
     ...object,
     bbox: bboxTranslate(object.bbox, offset),
     anchors: translateAnchors(object.anchors, offset),
+    geometry: translateGeometry(object.geometry, offset),
     children: object.children?.map((child) => translateResolvedObject(child, offset)),
     renderNode: translateRenderNode(object.renderNode, offset),
   };
+}
+
+function translateGeometry(
+  geometry: Record<string, number | string | undefined> | undefined,
+  offset: Vector,
+): Record<string, number | string | undefined> | undefined {
+  if (!geometry) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    Object.entries(geometry).map(([key, value]) => {
+      if (typeof value !== "number") {
+        return [key, value];
+      }
+
+      if (key === "x" || key === "cx") {
+        return [key, value + offset.dx];
+      }
+
+      if (key === "y" || key === "cy") {
+        return [key, value + offset.dy];
+      }
+
+      return [key, value];
+    }),
+  );
 }
 
 function resolveAnchorRef(

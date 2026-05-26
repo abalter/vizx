@@ -32,4 +32,25 @@ describe("demo scene inspection", () => {
     expect(secondChild?.bbox).toBeDefined();
     expect(secondChild?.anchors.east).toBeDefined();
   });
+
+  it("reports geometry summaries in the same resolved scene coordinate space", () => {
+    const inspection = inspectScene(createBasicDemoScene());
+    const textChild = inspection.objects[0]?.children?.find((child) => child.id === "A.label");
+    const rectChild = inspection.objects[0]?.children?.find((child) => child.id === "A.frame");
+
+    expect(textChild).toBeDefined();
+    expect(rectChild).toBeDefined();
+
+    if (!textChild || !rectChild) {
+      throw new Error("Expected demo inspection children to be present");
+    }
+
+    expect(rectChild.geometry).toBeDefined();
+    expect(rectChild.geometry?.x).toBe(rectChild.bbox.x);
+    expect(rectChild.geometry?.y).toBe(rectChild.bbox.y);
+    expect(rectChild.geometry?.width).toBe(rectChild.bbox.width);
+    expect(rectChild.geometry?.height).toBe(rectChild.bbox.height);
+    expect(textChild.geometry?.x).toBeGreaterThan(textChild.bbox.x);
+    expect(textChild.geometry?.y).toBeGreaterThan(textChild.bbox.y);
+  });
 });
