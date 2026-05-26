@@ -36,9 +36,11 @@ VizX is an attempt to build a clean lower/mid-level core that can eventually sup
 This repository is a design scaffold and early TypeScript prototype. It includes:
 
 - a proposed architecture in [`DESIGN.md`](./DESIGN.md),
+- a capability matrix in [`docs/CAPABILITY_MATRIX.md`](./docs/CAPABILITY_MATRIX.md),
 - package-level specifications in each package's `SPEC.md`,
 - a small geometry kernel,
 - a minimal unresolved object model,
+- a small TypeScript example registry used by the CLI and tests,
 - a simple resolver,
 - an SVG renderer,
 - tests for the core pipeline,
@@ -62,6 +64,7 @@ vizx/
     basic.svg
   packages/
     core/          Shared diagnostics, style types, and common interfaces
+    examples/      TypeScript example registry and capability harness
     geometry/      Pure geometry primitives and operations
     object-model/  Unresolved drawable objects and anchor references
     resolver/      Object graph → resolved geometry → render scene
@@ -96,10 +99,12 @@ nvm use
 npm install
 npm run build
 npm run demo
+npm run examples
 npm run inspect
+npm run debug
 ```
 
-The current demo builds a small object graph in TypeScript and writes [`examples/basic.svg`](./examples/basic.svg). `npm run inspect` prints resolved geometry, anchors, connector endpoints, diagnostics, and nested group children for that same demo scene as JSON when available. Bounding boxes, anchors, and geometry summaries all use resolved scene coordinates. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
+Examples are currently TypeScript scene builders collected in `@vizx/examples`, not parser-driven source files. `npm run demo` writes [`examples/basic.svg`](./examples/basic.svg) for the built-in basic example. `npm run examples` renders normal and debug SVGs for every registered example into `examples/`. `npm run inspect` prints resolved geometry, anchors, connector endpoints, diagnostics, and nested group children for the basic example as JSON when available. Bounding boxes, anchors, and geometry summaries all use resolved scene coordinates. `npm run debug` writes `examples/basic.debug.svg`, overlaying resolved bounding boxes, anchor points, object ids, and connector endpoints on the normal diagram. The same example registry also feeds the capability-oriented test harness, and the current capability coverage is summarized in [`docs/CAPABILITY_MATRIX.md`](./docs/CAPABILITY_MATRIX.md). The debug overlay is configurable programmatically through `createDebugOverlay(..., options)` and `createDebugRenderScene(..., options)` in the resolver package. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
 
 ## Design principles
 

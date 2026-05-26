@@ -16,6 +16,8 @@
     "build": "tsc -b tsconfig.json",
     "clean": "rm -rf packages/*/dist examples/*.svg",
     "demo": "tsx packages/cli/src/index.ts examples/basic.svg",
+    "debug": "tsx packages/cli/src/index.ts debug",
+    "examples": "tsx packages/cli/src/index.ts examples",
     "inspect": "tsx packages/cli/src/index.ts inspect",
     "test": "vitest run"
   },

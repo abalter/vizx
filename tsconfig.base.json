@@ -7,6 +7,7 @@
     "baseUrl": ".",
     "paths": {
       "@vizx/core": ["packages/core/src/index.ts"],
+      "@vizx/examples": ["packages/examples/src/index.ts"],
       "@vizx/geometry": ["packages/geometry/src/index.ts"],
       "@vizx/object-model": ["packages/object-model/src/index.ts"],
       "@vizx/resolver": ["packages/resolver/src/index.ts"],

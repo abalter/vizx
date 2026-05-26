@@ -1,15 +1,16 @@
 {
-  "name": "@vizx/cli",
+  "name": "@vizx/examples",
   "version": "0.0.0",
-    "@vizx/examples": "0.0.0",
   "type": "module",
-  "bin": {
-    "vizx": "dist/index.js"
-  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "dependencies": {
-    "@vizx/core": "0.0.0",
     "@vizx/geometry": "0.0.0",
     "@vizx/object-model": "0.0.0",
     "@vizx/resolver": "0.0.0",

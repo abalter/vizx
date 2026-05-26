@@ -7,8 +7,6 @@
     "types": ["node"]
   },
   "references": [
-    { "path": "../core" },
-    { "path": "../examples" },
     { "path": "../geometry" },
     { "path": "../object-model" },
     { "path": "../resolver" },

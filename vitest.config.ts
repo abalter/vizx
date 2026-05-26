@@ -4,6 +4,7 @@ export default {
   resolve: {
     alias: {
       "@vizx/core": resolve("./packages/core/src/index.ts"),
+      "@vizx/examples": resolve("./packages/examples/src/index.ts"),
       "@vizx/geometry": resolve("./packages/geometry/src/index.ts"),
       "@vizx/object-model": resolve("./packages/object-model/src/index.ts"),
       "@vizx/resolver": resolve("./packages/resolver/src/index.ts"),

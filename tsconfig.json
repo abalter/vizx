@@ -3,6 +3,7 @@
   "files": [],
   "references": [
     { "path": "./packages/core" },
+    { "path": "./packages/examples" },
     { "path": "./packages/geometry" },
     { "path": "./packages/object-model" },
     { "path": "./packages/resolver" },
