@@ -3,14 +3,12 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",
-    "outDir": "dist",
-    "types": ["node"]
+    "outDir": "dist"
   },
   "references": [
     { "path": "../core" },
     { "path": "../geometry" },
     { "path": "../object-model" },
-    { "path": "../resolver" },
     { "path": "../renderer-svg" }
   ],
   "include": ["src"]

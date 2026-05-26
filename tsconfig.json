@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/geometry" },
+    { "path": "./packages/object-model" },
+    { "path": "./packages/resolver" },
+    { "path": "./packages/renderer-svg" },
+    { "path": "./packages/cli" }
+  ]
+}

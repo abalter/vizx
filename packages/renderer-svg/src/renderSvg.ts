@@ -1,4 +1,5 @@
-import type { RenderDef, RenderNode, RenderScene, Style } from "@vizx/core";
+import type { Style } from "@vizx/core";
+import type { RenderDef, RenderNode, RenderScene, RenderTransform } from "./scene";
 
 export interface SvgRenderOptions {
   readonly pretty?: boolean;
@@ -9,7 +10,9 @@ export function renderSvg(scene: RenderScene, options: SvgRenderOptions = {}): s
   const newline = options.pretty === false ? "" : "\n";
 
   const parts: string[] = [];
-  parts.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${scene.width}" height="${scene.height}" viewBox="0 0 ${scene.width} ${scene.height}">`);
+  parts.push(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.viewBox.width}" height="${scene.viewBox.height}" viewBox="${scene.viewBox.minX} ${scene.viewBox.minY} ${scene.viewBox.width} ${scene.viewBox.height}">`,
+  );
 
   if (scene.defs && scene.defs.length > 0) {
     parts.push(`${indent}<defs>`);
@@ -83,8 +86,17 @@ function renderNode(node: RenderNode, indent: string): string {
   }
 }
 
-function commonAttrs(node: { id?: string; transform?: string; style?: Style }): string {
-  return attrsToString({ id: node.id, transform: node.transform }) + styleAttrs(node.style);
+function commonAttrs(node: { id?: string; transform?: RenderTransform; style?: Style }): string {
+  return attrsToString({ id: node.id, transform: transformToString(node.transform) }) + styleAttrs(node.style);
+}
+
+function transformToString(transform?: RenderTransform): string | undefined {
+  if (!transform) return undefined;
+
+  switch (transform.kind) {
+    case "translate":
+      return `translate(${transform.x} ${transform.y})`;
+  }
 }
 
 function styleAttrs(style?: Style): string {

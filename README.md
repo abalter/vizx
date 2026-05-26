@@ -37,13 +37,14 @@ This repository is a design scaffold and early TypeScript prototype. It includes
 
 - a proposed architecture in [`DESIGN.md`](./DESIGN.md),
 - package-level specifications in each package's `SPEC.md`,
-- a small core object model,
-- a minimal sketch parser,
-- a simple interpreter/resolver,
+- a small geometry kernel,
+- a minimal unresolved object model,
+- a simple resolver,
 - an SVG renderer,
+- tests for the core pipeline,
 - and a CLI demo path.
 
-The current syntax is intentionally provisional. The deeper goal is the core model and pipeline.
+The current syntax is intentionally provisional. The active development path is the core model and pipeline, built from the inside out.
 
 ## Repository layout
 
@@ -51,33 +52,35 @@ The current syntax is intentionally provisional. The deeper goal is the core mod
 vizx/
   README.md
   DESIGN.md
+  roadmap.md
+  tsconfig.json
   docs/
     LANGUAGE_SKETCH.md
     SPEC_INDEX.md
   examples/
     basic.vizx
+    basic.svg
   packages/
-    core/          Shared geometry, units, commands, objects, scene graph types
-    parser/        Surface syntax → AST → core commands
-    interpreter/   Core commands → resolved object graph → render scene
-    renderer-svg/  Render scene → SVG string
+    core/          Shared diagnostics, style types, and common interfaces
+    geometry/      Pure geometry primitives and operations
+    object-model/  Unresolved drawable objects and anchor references
+    resolver/      Object graph → resolved geometry → render scene
+    renderer-svg/  Render scene types and SVG serialization
     cli/           Command-line demo entry point
+    parser/        Provisional syntax experiment, not the primary development path
+    interpreter/   Legacy compatibility scaffold
 ```
 
 ## Pipeline
 
 ```text
-source syntax
+core IR or object graph
   ↓
-parser
+unresolved object graph
   ↓
-AST
+resolver
   ↓
-core command IR
-  ↓
-interpreter / resolver
-  ↓
-resolved object graph
+resolved scene
   ↓
 render scene graph
   ↓
@@ -86,13 +89,17 @@ renderer backend: SVG first, others later
 
 ## Quick start
 
+Use Node 22 LTS with npm 10.x. The repository includes an `engines` range and `.nvmrc` for that toolchain.
+
 ```bash
+nvm use
 npm install
 npm run build
 npm run demo
+npm run inspect
 ```
 
-The demo reads [`examples/basic.vizx`](./examples/basic.vizx) and writes `examples/basic.svg`.
+The current demo builds a small object graph in TypeScript and writes [`examples/basic.svg`](./examples/basic.svg). `npm run inspect` prints resolved geometry, anchors, connector endpoints, and diagnostics for that same demo scene as JSON. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
 
 ## Design principles
 

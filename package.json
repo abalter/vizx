@@ -4,13 +4,20 @@
   "version": "0.0.0",
   "description": "Experimental programmable 2D drawing language runtime.",
   "type": "module",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22 <25",
+    "npm": ">=10 <12"
+  },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "tsc -b packages/core packages/parser packages/interpreter packages/renderer-svg packages/cli",
+    "build": "tsc -b tsconfig.json",
     "clean": "rm -rf packages/*/dist examples/*.svg",
-    "demo": "tsx packages/cli/src/index.ts examples/basic.vizx examples/basic.svg"
+    "demo": "tsx packages/cli/src/index.ts examples/basic.svg",
+    "inspect": "tsx packages/cli/src/index.ts inspect",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
