@@ -17,11 +17,19 @@ export interface RelativePlacement {
 
 export type ObjectPlacement = AbsolutePlacement | RelativePlacement;
 
+export interface AlignYRelation {
+  readonly relation: "alignY";
+  readonly reference: AnchorRef;
+}
+
+export type ObjectAlignment = AlignYRelation;
+
 export interface BaseObject {
   readonly id: string;
   readonly style?: Style;
   readonly transform?: Transform;
   readonly placement?: ObjectPlacement;
+  readonly align?: ObjectAlignment;
 }
 
 export interface RectFitToText {

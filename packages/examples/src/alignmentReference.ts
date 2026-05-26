@@ -5,7 +5,7 @@ import { createLabelBox } from "./helpers";
 export const alignmentReferenceExample: VizxExample = {
   id: "alignment-reference",
   title: "Alignment Reference",
-  description: "Provides a deterministic reference scene for future alignment and distribution work using existing placement relations.",
+  description: "Provides a deterministic reference scene for alignY behavior and future alignment/distribution work.",
   expectedCapabilities: [
     "group bbox",
     "rect anchors",
@@ -14,6 +14,7 @@ export const alignmentReferenceExample: VizxExample = {
     "leftOf placement",
     "above placement",
     "below placement",
+    "alignY",
     "straight connector",
     "inspect output",
     "debug overlay",
@@ -65,7 +66,10 @@ export const alignmentReferenceExample: VizxExample = {
       createLabelBox("Left", "Left short", { kind: "leftOf", reference: { objectId: "Reference", anchor: "west" }, gap: 52 }),
       createLabelBox("Right", "Right longer label", { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 52 }),
       createLabelBox("Above", "Above", { kind: "above", reference: { objectId: "Reference", anchor: "north" }, gap: 46 }),
-      createLabelBox("Below", "Below longer label", { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 46 }),
+      {
+        ...createLabelBox("Below", "Below longer label", { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 46 }),
+        align: { relation: "alignY", reference: { objectId: "Reference", anchor: "center" } },
+      },
     ],
     connectors: [
       { kind: "connector", id: "reference-left", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "Left", anchor: "east" } },

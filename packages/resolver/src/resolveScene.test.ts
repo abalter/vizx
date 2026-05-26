@@ -170,6 +170,57 @@ describe("resolveScene", () => {
     expect(aboveChild?.bbox.y).toBeLessThan(center.bbox.y);
   });
 
+  it("applies alignY after placement by matching target center.y to the reference center.y", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Center",
+          placement: { kind: "absolute", position: point(200, 140) },
+          children: [
+            { kind: "text", id: "Center.label", center: point(0, 0), text: "Center" },
+            { kind: "rect", id: "Center.frame", fitToText: { textId: "Center.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "below", reference: { objectId: "Center", anchor: "south" }, gap: 40 },
+          align: { relation: "alignY", reference: { objectId: "Center", anchor: "center" } },
+          children: [
+            {
+              kind: "group",
+              id: "Target.inner",
+              children: [
+                { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+                { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+              ],
+            },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "edge-center-target", from: { objectId: "Center", anchor: "south" }, to: { objectId: "Target", anchor: "north" } },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const center = requireResolvedObject(result, "Center");
+    const target = requireResolvedObject(result, "Target");
+    const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(target.anchors.center?.y).toBe(center.anchors.center?.y);
+    expect(target.anchors.center?.x).toBe(center.anchors.center?.x);
+    expect(target.anchors.north?.y).toBeLessThan(center.anchors.south!.y);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.center?.y).toBe(target.anchors.center?.y);
+    expect(result.resolved.connectors[0]?.end).toEqual(target.anchors.north);
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
@@ -191,6 +242,65 @@ describe("resolveScene", () => {
       {
         severity: "error",
         message: "Could not place B: missing reference object Missing",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an alignY reference object is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignY", reference: { objectId: "Missing", anchor: "center" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Orphan" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference object Missing",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an alignY reference anchor is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 80) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "Center" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignY", reference: { objectId: "A", anchor: "baseline" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Target" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference anchor A.baseline",
       },
     ]);
   });

@@ -16,6 +16,7 @@
       "@vizx/renderer-svg": ["packages/renderer-svg/src/index.ts"]
     },
     "strict": true,
+    "noEmitOnError": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

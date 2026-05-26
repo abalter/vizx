@@ -75,6 +75,22 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
     objectMap.set(object.id, placedObject);
   }
 
+  // Alignment runs after intrinsic resolution and placement, before connectors.
+  for (const [index, source] of scene.objects.entries()) {
+    const resolvedObject = resolvedObjects[index];
+
+    if (!resolvedObject) {
+      continue;
+    }
+
+    const alignedObject = applyAlignment(resolvedObject, source, objectMap, diagnostics);
+
+    if (alignedObject !== resolvedObject) {
+      resolvedObjects[index] = alignedObject;
+      objectMap.set(source.id, alignedObject);
+    }
+  }
+
   const resolvedConnectors: ResolvedConnector[] = [];
   const connectorNodes: RenderNode[] = [];
 
@@ -343,6 +359,60 @@ function applyPlacement(
   }
 
   if (offset.dx === 0 && offset.dy === 0) {
+    return object;
+  }
+
+  return translateResolvedObject(object, offset);
+}
+
+function applyAlignment(
+  object: ResolvedObject,
+  source: DrawableObject,
+  placedObjects: ReadonlyMap<string, ResolvedObject>,
+  diagnostics: Diagnostic[],
+): ResolvedObject {
+  const alignment = source.align;
+
+  if (!alignment) {
+    return object;
+  }
+
+  const referenceObject = placedObjects.get(alignment.reference.objectId);
+
+  if (!referenceObject) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not align ${source.id}: missing reference object ${alignment.reference.objectId}`,
+    });
+    return object;
+  }
+
+  const referenceAnchor = referenceObject.anchors[alignment.reference.anchor];
+
+  if (!referenceAnchor) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.${alignment.reference.anchor}`,
+    });
+    return object;
+  }
+
+  const targetAnchor = object.anchors.center;
+
+  if (!targetAnchor) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not align ${source.id}: missing target anchor center`,
+    });
+    return object;
+  }
+
+  const offset: Vector = {
+    dx: 0,
+    dy: referenceAnchor.y - targetAnchor.y,
+  };
+
+  if (offset.dy === 0) {
     return object;
   }
 

@@ -164,7 +164,7 @@ describe("example registry", () => {
     expect(left.anchors.east?.x).toBeLessThan(reference.anchors.west!.x);
     expect(right.anchors.west?.x).toBeGreaterThan(reference.anchors.east!.x);
     expect(above.anchors.south?.y).toBeLessThan(reference.anchors.north!.y);
-    expect(below.anchors.north?.y).toBeGreaterThan(reference.anchors.south!.y);
+    expect(below.anchors.center?.y).toBe(reference.anchors.center?.y);
     expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
     expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
     expect(nestedFrame?.anchors.center?.x).toBeGreaterThan(reference.bbox.x);
@@ -177,6 +177,78 @@ describe("example registry", () => {
       expect(connector.end.x).toBeTypeOf("number");
       expect(connector.end.y).toBeTypeOf("number");
     }
+  });
+
+  it("locks down the current alignment-reference baseline geometry and anchor lines", () => {
+    const result = resolveScene(requireVizxExample("alignment-reference").createScene());
+    const reference = requireResolvedObject(result, "Reference");
+    const left = requireResolvedObject(result, "Left");
+    const right = requireResolvedObject(result, "Right");
+    const above = requireResolvedObject(result, "Above");
+    const below = requireResolvedObject(result, "Below");
+    const nestedGroup = reference.children?.find((child) => child.id === "Reference.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Reference.inner.frame");
+    const leftConnector = requireResolvedConnector(result, "reference-left");
+    const rightConnector = requireResolvedConnector(result, "reference-right");
+    const aboveConnector = requireResolvedConnector(result, "reference-above");
+    const belowConnector = requireResolvedConnector(result, "reference-below");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(reference.children?.length).toBeGreaterThan(0);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(left.bbox.width).toBeLessThan(right.bbox.width);
+    expect(above.bbox.width).toBeLessThan(below.bbox.width);
+    expect(left.bbox.x + left.bbox.width).toBeLessThan(reference.bbox.x);
+    expect(right.bbox.x).toBeGreaterThan(reference.bbox.x + reference.bbox.width);
+    expect(above.bbox.y + above.bbox.height).toBeLessThan(reference.bbox.y);
+    expect(below.anchors.center?.y).toBe(reference.anchors.center?.y);
+
+    expect(leftConnector.start.y).toBe(reference.anchors.west?.y);
+    expect(leftConnector.end.y).toBe(left.anchors.east?.y);
+    expect(leftConnector.start.y).toBe(leftConnector.end.y);
+    expect(rightConnector.start.y).toBe(reference.anchors.east?.y);
+    expect(rightConnector.end.y).toBe(right.anchors.west?.y);
+    expect(rightConnector.start.y).toBe(rightConnector.end.y);
+    expect(aboveConnector.start.x).toBe(reference.anchors.north?.x);
+    expect(aboveConnector.end.x).toBe(above.anchors.south?.x);
+    expect(aboveConnector.start.x).toBe(aboveConnector.end.x);
+    expect(belowConnector.start.x).toBe(reference.anchors.south?.x);
+    expect(belowConnector.end.x).toBe(below.anchors.north?.x);
+    expect(belowConnector.start.x).toBe(belowConnector.end.x);
+
+    for (const connector of result.resolved.connectors) {
+      expect(Number.isFinite(connector.start.x)).toBe(true);
+      expect(Number.isFinite(connector.start.y)).toBe(true);
+      expect(Number.isFinite(connector.end.x)).toBe(true);
+      expect(Number.isFinite(connector.end.y)).toBe(true);
+    }
+
+    expect(reference.geometry).toBeUndefined();
+    expect(left.geometry).toBeUndefined();
+    expect(right.geometry).toBeUndefined();
+    expect(above.geometry).toBeUndefined();
+    expect(below.geometry).toBeUndefined();
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(left.anchors.east?.x).toBe(left.bbox.x + left.bbox.width);
+    expect(right.anchors.west?.x).toBe(right.bbox.x);
+    expect(above.anchors.south?.y).toBe(above.bbox.y + above.bbox.height);
+    expect(below.anchors.north?.y).toBe(below.bbox.y);
+  });
+
+  it("alignY makes a target center.y match its reference center.y", () => {
+    const result = resolveScene(requireVizxExample("alignment-reference").createScene());
+    const reference = requireResolvedObject(result, "Reference");
+    const target = requireResolvedObject(result, "Below");
+
+    expect(reference.anchors.center?.y).toBeDefined();
+    expect(target.anchors.center?.y).toBeDefined();
+
+    if (!reference.anchors.center || !target.anchors.center) {
+      throw new Error("Expected alignment-reference objects to resolve center anchors");
+    }
+
+    expect(target.anchors.center.y).toBe(reference.anchors.center.y);
   });
 });
 
@@ -201,4 +273,24 @@ function requireInspectionObject(
   }
 
   return object;
+}
+
+function requireResolvedObject(result: ReturnType<typeof resolveScene>, id: string) {
+  const object = result.resolved.objects.find((entry) => entry.id === id);
+
+  if (!object) {
+    throw new Error(`Expected resolved object ${id}`);
+  }
+
+  return object;
+}
+
+function requireResolvedConnector(result: ReturnType<typeof resolveScene>, id: string) {
+  const connector = result.resolved.connectors.find((entry) => entry.id === id);
+
+  if (!connector) {
+    throw new Error(`Expected resolved connector ${id}`);
+  }
+
+  return connector;
 }
