@@ -1,6 +1,8 @@
+import { alignmentReferenceExample } from "./alignmentReference";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
 import { connectorsExample } from "./connectors";
+import { mixedNestedPlacementExample } from "./mixedNestedPlacement";
 import { nestedGroupsExample } from "./nestedGroups";
 import { relativePlacementExample } from "./relativePlacement";
 import type { VizxExample } from "./types";
@@ -8,11 +10,13 @@ import type { VizxExample } from "./types";
 export * from "./types";
 
 export const vizxExamples: readonly VizxExample[] = [
+  alignmentReferenceExample,
   basicExample,
   anchorsExample,
   nestedGroupsExample,
   connectorsExample,
   relativePlacementExample,
+  mixedNestedPlacementExample,
 ];
 
 export function getVizxExample(id: string): VizxExample | undefined {

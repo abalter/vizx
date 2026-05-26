@@ -98,6 +98,86 @@ describe("example registry", () => {
     expect(above.anchors.south?.y).toBeLessThan(center.anchors.north!.y);
     expect(below.anchors.north?.y).toBeGreaterThan(center.anchors.south!.y);
   });
+
+  it("resolves mixed nested placement with nested children, side placements, and concrete connector points", () => {
+    const scene = requireVizxExample("mixed-nested-placement").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const center = requireInspectionObject(inspection, "Hub");
+    const right = requireInspectionObject(inspection, "Right");
+    const left = requireInspectionObject(inspection, "Left");
+    const above = requireInspectionObject(inspection, "Above");
+    const below = requireInspectionObject(inspection, "Below");
+    const nestedGroup = center.children?.find((child) => child.id === "Hub.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Hub.inner.frame");
+    const debugOverlayChildren = getDebugOverlayChildren(debugScene);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(debugOverlayChildren.length).toBeGreaterThan(0);
+    expect(center.children?.length).toBeGreaterThan(0);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(right.anchors.west?.x).toBeGreaterThan(center.anchors.east!.x);
+    expect(left.anchors.east?.x).toBeLessThan(center.anchors.west!.x);
+    expect(above.anchors.south?.y).toBeLessThan(center.anchors.north!.y);
+    expect(below.anchors.north?.y).toBeGreaterThan(center.anchors.south!.y);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.center?.x).toBeGreaterThan(center.bbox.x);
+    expect(nestedFrame?.anchors.center?.y).toBeGreaterThan(center.bbox.y);
+    expect(result.resolved.connectors.length).toBeGreaterThanOrEqual(2);
+
+    for (const connector of result.resolved.connectors) {
+      expect(connector.start.x).toBeTypeOf("number");
+      expect(connector.start.y).toBeTypeOf("number");
+      expect(connector.end.x).toBeTypeOf("number");
+      expect(connector.end.y).toBeTypeOf("number");
+    }
+  });
+
+  it("resolves alignment-reference with varied bbox sizes and reference objects on all sides", () => {
+    const scene = requireVizxExample("alignment-reference").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const reference = requireInspectionObject(inspection, "Reference");
+    const left = requireInspectionObject(inspection, "Left");
+    const right = requireInspectionObject(inspection, "Right");
+    const above = requireInspectionObject(inspection, "Above");
+    const below = requireInspectionObject(inspection, "Below");
+    const nestedGroup = reference.children?.find((child) => child.id === "Reference.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Reference.inner.frame");
+    const debugOverlayChildren = getDebugOverlayChildren(debugScene);
+    const topLevelIds = inspection.objects.map((object) => object.id);
+
+    expect(topLevelIds).toEqual(["Reference", "Left", "Right", "Above", "Below"]);
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(debugOverlayChildren.length).toBeGreaterThan(0);
+    expect(reference.children?.length).toBeGreaterThan(0);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(left.bbox.width).not.toBe(right.bbox.width);
+    expect(below.bbox.width).toBeGreaterThan(above.bbox.width);
+    expect(left.anchors.east?.x).toBeLessThan(reference.anchors.west!.x);
+    expect(right.anchors.west?.x).toBeGreaterThan(reference.anchors.east!.x);
+    expect(above.anchors.south?.y).toBeLessThan(reference.anchors.north!.y);
+    expect(below.anchors.north?.y).toBeGreaterThan(reference.anchors.south!.y);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.center?.x).toBeGreaterThan(reference.bbox.x);
+    expect(nestedFrame?.anchors.center?.y).toBeGreaterThan(reference.bbox.y);
+    expect(result.resolved.connectors.length).toBeGreaterThanOrEqual(2);
+
+    for (const connector of result.resolved.connectors) {
+      expect(connector.start.x).toBeTypeOf("number");
+      expect(connector.start.y).toBeTypeOf("number");
+      expect(connector.end.x).toBeTypeOf("number");
+      expect(connector.end.y).toBeTypeOf("number");
+    }
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {
