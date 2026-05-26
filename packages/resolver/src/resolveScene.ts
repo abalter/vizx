@@ -17,11 +17,19 @@ import {
   type DrawableObject,
   type GroupObject,
   type ObjectScene,
+  type PlacementRelation,
   type RectObject,
   type TextObject,
 } from "@vizx/object-model";
 import type { RenderDef, RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { measureTextApprox } from "./textMetrics";
+
+const placementRelationAnchors: Record<PlacementRelation, { referenceAnchor: AnchorName; targetAnchor: AnchorName }> = {
+  rightOf: { referenceAnchor: "east", targetAnchor: "west" },
+  leftOf: { referenceAnchor: "west", targetAnchor: "east" },
+  above: { referenceAnchor: "north", targetAnchor: "south" },
+  below: { referenceAnchor: "south", targetAnchor: "north" },
+};
 
 export interface ResolvedObject {
   readonly id: string;
@@ -320,25 +328,17 @@ function applyPlacement(
   diagnostics: Diagnostic[],
 ): ResolvedObject {
   let offset: Vector = { dx: source.transform?.translateX ?? 0, dy: source.transform?.translateY ?? 0 };
+  const placement = source.placement;
 
-  if (source.placement?.kind === "absolute") {
-    offset = addVectors(offset, { dx: source.placement.position.x, dy: source.placement.position.y });
+  if (placement?.kind === "absolute") {
+    offset = addVectors(offset, { dx: placement.position.x, dy: placement.position.y });
   }
 
-  if (source.placement?.kind === "rightOf") {
-    const referencePoint = resolveAnchorRef(placedObjects, source.placement.reference);
-    const westAnchor = object.anchors.west;
+  if (placement && placement.kind !== "absolute") {
+    const placementOffset = resolveRelativePlacementOffset(object, source, placedObjects, diagnostics);
 
-    if (!referencePoint || !westAnchor) {
-      diagnostics.push({
-        severity: "error",
-        message: `Could not place ${source.id} relative to ${source.placement.reference.objectId}`,
-      });
-    } else {
-      offset = addVectors(offset, {
-        dx: referencePoint.x + source.placement.gap - westAnchor.x,
-        dy: referencePoint.y - westAnchor.y,
-      });
+    if (placementOffset) {
+      offset = addVectors(offset, placementOffset);
     }
   }
 
@@ -347,6 +347,82 @@ function applyPlacement(
   }
 
   return translateResolvedObject(object, offset);
+}
+
+function resolveRelativePlacementOffset(
+  object: ResolvedObject,
+  source: DrawableObject,
+  placedObjects: ReadonlyMap<string, ResolvedObject>,
+  diagnostics: Diagnostic[],
+): Vector | undefined {
+  const placement = source.placement;
+
+  if (!placement || placement.kind === "absolute") {
+    return undefined;
+  }
+
+  const anchorConfig = placementRelationAnchors[placement.kind];
+
+  if (!anchorConfig) {
+    diagnostics.push({
+      severity: "error",
+      message: `Unsupported placement relation ${placement.kind} for ${source.id}`,
+    });
+    return undefined;
+  }
+
+  const referenceObject = placedObjects.get(placement.reference.objectId);
+
+  if (!referenceObject) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not place ${source.id}: missing reference object ${placement.reference.objectId}`,
+    });
+    return undefined;
+  }
+
+  const referenceAnchor = referenceObject.anchors[placement.reference.anchor];
+
+  if (!referenceAnchor) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not place ${source.id}: missing reference anchor ${placement.reference.objectId}.${placement.reference.anchor}`,
+    });
+    return undefined;
+  }
+
+  const targetAnchor = object.anchors[anchorConfig.targetAnchor];
+
+  if (!targetAnchor) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not place ${source.id}: missing target anchor ${anchorConfig.targetAnchor}`,
+    });
+    return undefined;
+  }
+
+  switch (placement.kind) {
+    case "rightOf":
+      return {
+        dx: referenceAnchor.x + placement.gap - targetAnchor.x,
+        dy: referenceAnchor.y - targetAnchor.y,
+      };
+    case "leftOf":
+      return {
+        dx: referenceAnchor.x - placement.gap - targetAnchor.x,
+        dy: referenceAnchor.y - targetAnchor.y,
+      };
+    case "above":
+      return {
+        dx: referenceAnchor.x - targetAnchor.x,
+        dy: referenceAnchor.y - placement.gap - targetAnchor.y,
+      };
+    case "below":
+      return {
+        dx: referenceAnchor.x - targetAnchor.x,
+        dy: referenceAnchor.y + placement.gap - targetAnchor.y,
+      };
+  }
 }
 
 function translateResolvedObject(object: ResolvedObject, offset: Vector): ResolvedObject {

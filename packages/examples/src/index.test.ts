@@ -84,6 +84,20 @@ describe("example registry", () => {
       expect(connector.end.y).toBeTypeOf("number");
     }
   });
+
+  it("positions the relative-placement example around its center object", () => {
+    const inspection = inspectScene(requireVizxExample("relative-placement").createScene());
+    const center = requireInspectionObject(inspection, "Center");
+    const right = requireInspectionObject(inspection, "Right");
+    const left = requireInspectionObject(inspection, "Left");
+    const above = requireInspectionObject(inspection, "Above");
+    const below = requireInspectionObject(inspection, "Below");
+
+    expect(right.anchors.west?.x).toBeGreaterThan(center.anchors.east!.x);
+    expect(left.anchors.east?.x).toBeLessThan(center.anchors.west!.x);
+    expect(above.anchors.south?.y).toBeLessThan(center.anchors.north!.y);
+    expect(below.anchors.north?.y).toBeGreaterThan(center.anchors.south!.y);
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {
@@ -94,4 +108,17 @@ function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {
   }
 
   return overlay.children;
+}
+
+function requireInspectionObject(
+  inspection: ReturnType<typeof inspectScene>,
+  id: string,
+) {
+  const object = inspection.objects.find((entry) => entry.id === id);
+
+  if (!object) {
+    throw new Error(`Expected inspection object ${id}`);
+  }
+
+  return object;
 }

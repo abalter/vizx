@@ -7,13 +7,15 @@ export interface AbsolutePlacement {
   readonly position: Point;
 }
 
-export interface RightOfPlacement {
-  readonly kind: "rightOf";
+export type PlacementRelation = "rightOf" | "leftOf" | "above" | "below";
+
+export interface RelativePlacement {
+  readonly kind: PlacementRelation;
   readonly reference: AnchorRef;
   readonly gap: number;
 }
 
-export type ObjectPlacement = AbsolutePlacement | RightOfPlacement;
+export type ObjectPlacement = AbsolutePlacement | RelativePlacement;
 
 export interface BaseObject {
   readonly id: string;
