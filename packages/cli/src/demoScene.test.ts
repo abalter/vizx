@@ -14,4 +14,22 @@ describe("demo scene inspection", () => {
     expect(inspection.connectors[0]?.to.point).toEqual(inspection.objects[1]?.anchors.west);
     expect(inspection.diagnostics).toEqual([]);
   });
+
+  it("includes nested group children with ids, kinds, bbox, and anchors", () => {
+    const inspection = inspectScene(createBasicDemoScene());
+    const firstGroup = inspection.objects[0];
+    const firstChild = firstGroup?.children?.[0];
+    const secondChild = firstGroup?.children?.[1];
+
+    expect(firstGroup?.children).toHaveLength(2);
+    expect(firstChild?.id).toBe("A.label");
+    expect(firstChild?.kind).toBe("text");
+    expect(firstChild?.bbox).toBeDefined();
+    expect(firstChild?.anchors.center).toBeDefined();
+    expect(firstChild?.text).toBe("Raw data");
+    expect(secondChild?.id).toBe("A.frame");
+    expect(secondChild?.kind).toBe("rect");
+    expect(secondChild?.bbox).toBeDefined();
+    expect(secondChild?.anchors.east).toBeDefined();
+  });
 });

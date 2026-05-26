@@ -1,4 +1,4 @@
-import { type Diagnostic, defaultBoxStyle, defaultConnectorStyle } from "@vizx/core";
+import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle } from "@vizx/core";
 import {
   addPointVector,
   bboxFromRect,
@@ -29,6 +29,10 @@ export interface ResolvedObject {
   readonly bbox: BoundingBox;
   readonly anchors: AnchorMap;
   readonly renderNode: RenderNode;
+  readonly children?: readonly ResolvedObject[];
+  readonly style?: Style;
+  readonly text?: string;
+  readonly geometry?: Record<string, number | string | undefined>;
 }
 
 export interface ResolvedConnector {
@@ -157,6 +161,12 @@ function resolveObjectLocal(
         kind: object.kind,
         bbox,
         anchors: anchorsForBoundingBox(bbox),
+        style: object.style,
+        geometry: {
+          cx: object.center.x,
+          cy: object.center.y,
+          r: object.radius,
+        },
         renderNode: {
           kind: "circle",
           id: object.id,
@@ -191,6 +201,18 @@ function resolveTextLocal(object: TextObject): ResolvedObject {
     anchors: {
       ...anchorsForBoundingBox(bbox),
       baseline: point(object.center.x, object.center.y + metrics.baselineOffset),
+    },
+    style: {
+      fontFamily: object.style?.fontFamily ?? defaultBoxStyle.fontFamily,
+      fontSize,
+      fill: object.style?.fill ?? "black",
+      textAnchor: object.style?.textAnchor ?? "middle",
+      dominantBaseline: object.style?.dominantBaseline ?? "alphabetic",
+    },
+    text: object.text,
+    geometry: {
+      x: object.center.x,
+      y: object.center.y + metrics.baselineOffset,
     },
     renderNode: {
       kind: "text",
@@ -240,6 +262,15 @@ function resolveRectLocal(
     kind: object.kind,
     bbox,
     anchors: anchorsForBoundingBox(bbox),
+    style: { ...defaultBoxStyle, ...object.style },
+    geometry: {
+      x: bbox.x,
+      y: bbox.y,
+      width: bbox.width,
+      height: bbox.height,
+      rx: object.rx,
+      ry: object.ry,
+    },
     renderNode: {
       kind: "rect",
       id: object.id,
@@ -271,6 +302,8 @@ function resolveGroupLocal(object: GroupObject, diagnostics: Diagnostic[]): Reso
     kind: object.kind,
     bbox,
     anchors: anchorsForBoundingBox(bbox),
+    children: localChildren,
+    style: object.style,
     renderNode: {
       kind: "group",
       id: object.id,
@@ -313,10 +346,15 @@ function applyPlacement(
     return object;
   }
 
+  return translateResolvedObject(object, offset);
+}
+
+function translateResolvedObject(object: ResolvedObject, offset: Vector): ResolvedObject {
   return {
     ...object,
     bbox: bboxTranslate(object.bbox, offset),
     anchors: translateAnchors(object.anchors, offset),
+    children: object.children?.map((child) => translateResolvedObject(child, offset)),
     renderNode: translateRenderNode(object.renderNode, offset),
   };
 }
