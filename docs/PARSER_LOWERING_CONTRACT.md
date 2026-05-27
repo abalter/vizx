@@ -11,6 +11,7 @@ Scope of this document:
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current Core IR target model.
 See [PARSER_FIXTURE_MATRIX.md](./PARSER_FIXTURE_MATRIX.md) for planned fixture-family to example-reference mapping.
 See [PARSER_LOWERING_PLACEMENT_TEST_PLAN.md](./PARSER_LOWERING_PLACEMENT_TEST_PLAN.md) for a concrete docs-only test-plan stub pattern.
+See [PARSER_LOWERING_ALIGNMENT_TEST_PLAN.md](./PARSER_LOWERING_ALIGNMENT_TEST_PLAN.md) for the alignment-family concrete docs-only test-plan stub pattern.
 
 ## Status
 
