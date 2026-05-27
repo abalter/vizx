@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
-import { requireVizxExample } from "@vizx/examples";
-import { convertJsonCoreIrV0ToObjectScene } from "./jsonCoreIrV0";
+import { requireVizxExample } from "./index";
 
 describe("convertJsonCoreIrV0ToObjectScene", () => {
   it("converts a minimal basic-like JSON object to an ObjectScene", () => {

@@ -1,4 +1,4 @@
-import type { AnchorRef } from "./anchors";
+import type { AnchorName, AnchorRef } from "./anchors";
 import type { ConnectorObject, DrawableObject, ObjectPlacement } from "./objects";
 import type { ObjectScene } from "./scene";
 
@@ -326,7 +326,7 @@ function isRecord(value: unknown): value is JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function isAnchorName(value: string): boolean {
+function isAnchorName(value: string): value is AnchorName {
   return value === "center"
     || value === "north"
     || value === "south"
