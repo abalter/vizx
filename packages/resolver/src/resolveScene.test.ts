@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { point } from "@vizx/geometry";
-import type { ObjectScene } from "@vizx/object-model";
+import type { AnchorName, ObjectScene } from "@vizx/object-model";
 import { resolveScene } from "./resolveScene";
 
 describe("resolveScene", () => {
@@ -485,6 +485,26 @@ describe("resolveScene", () => {
     expect(connector?.end).toEqual(target.anchors.west);
   });
 
+  it("alignX can match target center.x to a reference center anchor", () => {
+    assertAlignXAgainstReferenceAnchor("center");
+  });
+
+  it("alignX can match target center.x to a reference north anchor", () => {
+    assertAlignXAgainstReferenceAnchor("north");
+  });
+
+  it("alignX can match target center.x to a reference south anchor", () => {
+    assertAlignXAgainstReferenceAnchor("south");
+  });
+
+  it("alignX can match target center.x to a reference east anchor", () => {
+    assertAlignXAgainstReferenceAnchor("east");
+  });
+
+  it("alignX can match target center.x to a reference west anchor", () => {
+    assertAlignXAgainstReferenceAnchor("west");
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
@@ -568,7 +588,139 @@ describe("resolveScene", () => {
       },
     ]);
   });
+
+  it("reports a diagnostic when an alignX reference object is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignX", reference: { objectId: "Missing", anchor: "center" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Orphan" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference object Missing",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an alignX reference anchor is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 80) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "Center" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignX", reference: { objectId: "A", anchor: "baseline" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Target" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference anchor A.baseline",
+      },
+    ]);
+  });
 });
+
+function assertAlignXAgainstReferenceAnchor(referenceAnchor: AnchorName): void {
+  const unalignedScene: ObjectScene = {
+    objects: [
+      {
+        kind: "group",
+        id: "Reference",
+        placement: { kind: "absolute", position: point(220, 170) },
+        children: [
+          { kind: "text", id: "Reference.label", center: point(0, 0), text: "Reference" },
+          { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+        ],
+      },
+      {
+        kind: "group",
+        id: "Target",
+        placement: { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 48 },
+        children: [
+          {
+            kind: "group",
+            id: "Target.inner",
+            children: [
+              { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+              { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 14, paddingY: 10 }, rx: 8, ry: 8 },
+            ],
+          },
+        ],
+      },
+    ],
+    connectors: [
+      {
+        kind: "connector",
+        id: `reference-to-target-${referenceAnchor}-x`,
+        from: { objectId: "Reference", anchor: referenceAnchor },
+        to: { objectId: "Target", anchor: "center" },
+      },
+    ],
+  };
+
+  const alignedScene: ObjectScene = {
+    ...unalignedScene,
+    objects: unalignedScene.objects.map((object) => {
+      if (object.id !== "Target") {
+        return object;
+      }
+
+      return {
+        ...object,
+        align: { relation: "alignX", reference: { objectId: "Reference", anchor: referenceAnchor } },
+      };
+    }),
+  };
+
+  const unaligned = resolveScene(unalignedScene);
+  const aligned = resolveScene(alignedScene);
+  const reference = requireResolvedObject(aligned, "Reference");
+  const target = requireResolvedObject(aligned, "Target");
+  const unalignedTarget = requireResolvedObject(unaligned, "Target");
+  const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+  const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+  const connector = aligned.resolved.connectors.find((entry) => entry.id === `reference-to-target-${referenceAnchor}-x`);
+  const expectedReference = reference.anchors[referenceAnchor];
+
+  expect(aligned.diagnostics).toEqual([]);
+  expect(expectedReference?.x).toBeDefined();
+  expect(target.anchors.center?.x).toBe(expectedReference?.x);
+  expect(target.anchors.center?.y).toBe(unalignedTarget.anchors.center?.y);
+  expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+  expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+  expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+  expect(nestedFrame?.anchors.center?.x).toBe(target.anchors.center?.x);
+  expect(connector?.end).toEqual(target.anchors.center);
+}
 
 function requireResolvedObject(result: ReturnType<typeof resolveScene>, id: string) {
   const object = result.resolved.objects.find((entry) => entry.id === id);

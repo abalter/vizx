@@ -407,13 +407,31 @@ function applyAlignment(
     return object;
   }
 
-  const offset: Vector = {
-    dx: 0,
-    dy: referenceAnchor.y - targetAnchor.y,
-  };
+  let offset: Vector;
+
+  if (alignment.relation === "alignY") {
+    offset = {
+      dx: 0,
+      dy: referenceAnchor.y - targetAnchor.y,
+    };
+  } else if (alignment.relation === "alignX") {
+    offset = {
+      dx: referenceAnchor.x - targetAnchor.x,
+      dy: 0,
+    };
+  } else {
+    const unsupported = alignment as { relation: string };
+    diagnostics.push({
+      severity: "error",
+      message: `Unsupported alignment relation ${unsupported.relation} for ${source.id}`,
+    });
+    return object;
+  }
 
   if (offset.dy === 0) {
-    return object;
+    if (offset.dx === 0) {
+      return object;
+    }
   }
 
   return translateResolvedObject(object, offset);

@@ -22,7 +22,12 @@ export interface AlignYRelation {
   readonly reference: AnchorRef;
 }
 
-export type ObjectAlignment = AlignYRelation;
+export interface AlignXRelation {
+  readonly relation: "alignX";
+  readonly reference: AnchorRef;
+}
+
+export type ObjectAlignment = AlignYRelation | AlignXRelation;
 
 export interface BaseObject {
   readonly id: string;

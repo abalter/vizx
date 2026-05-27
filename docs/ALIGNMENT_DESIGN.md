@@ -11,7 +11,7 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 The intended first operations are:
 
 - `alignY`: make a target object's center `y` match the referenced anchor's `y`
-- `alignX`: make a target object's center `x` match a reference object's center `x`
+- `alignX`: make a target object's center `x` match the referenced anchor's `x`
 - `alignLeft`: align left edges
 - `alignRight`: align right edges
 - `alignTop`: align top edges
@@ -25,6 +25,15 @@ The current `alignY` behavior is intentionally narrow:
 
 - target side: always `target.center.y`
 - reference side: `referenceAnchor.y` (for example `center`, `north`, `south`, `east`, or `west`)
+
+Arbitrary target-anchor-to-reference-anchor alignment is not implemented yet.
+
+## Current alignX semantics
+
+The current `alignX` behavior is the horizontal counterpart of `alignY`:
+
+- target side: always `target.center.x`
+- reference side: `referenceAnchor.x` (for example `center`, `north`, `south`, `east`, or `west`)
 
 Arbitrary target-anchor-to-reference-anchor alignment is not implemented yet.
 
