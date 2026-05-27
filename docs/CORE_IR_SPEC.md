@@ -273,6 +273,8 @@ Separation goal:
 
 A JSON Core IR format is planned but not implemented in this pass.
 
+See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for the docs-only planning note on future schema surface, validation boundaries, and fixture strategy.
+
 Intended direction:
 
 - Define a JSON representation equivalent to current `ObjectScene` and related object/connector/alignment/distribution types.

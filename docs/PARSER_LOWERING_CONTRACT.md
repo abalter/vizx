@@ -9,6 +9,7 @@ Scope of this document:
 - no grammar lock-in
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current Core IR target model.
+See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for planned JSON interchange/schema guidance; parser lowering still targets Core IR directly and does not require JSON text as an intermediate.
 See [PARSER_FIXTURE_MATRIX.md](./PARSER_FIXTURE_MATRIX.md) for planned fixture-family to example-reference mapping.
 See [PARSER_LOWERING_PLACEMENT_TEST_PLAN.md](./PARSER_LOWERING_PLACEMENT_TEST_PLAN.md) for a concrete docs-only test-plan stub pattern.
 See [PARSER_LOWERING_ALIGNMENT_TEST_PLAN.md](./PARSER_LOWERING_ALIGNMENT_TEST_PLAN.md) for the alignment-family concrete docs-only test-plan stub pattern.
