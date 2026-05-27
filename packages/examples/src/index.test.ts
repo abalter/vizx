@@ -352,6 +352,52 @@ describe("example registry", () => {
       expect(Number.isFinite(connector.end.y)).toBe(true);
     }
   });
+
+  it("keeps alignment-family inspection output readable with object and connector references", () => {
+    const inspection = inspectScene(requireVizxExample("alignment-family").createScene());
+    const expectedIds = ["Reference", "AxisX", "AxisY", "EdgeLeft", "EdgeRight", "EdgeTop", "EdgeBottom"];
+    const topLevelIds = inspection.objects.map((object) => object.id);
+
+    expect(inspection.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(topLevelIds).toEqual(expectedIds);
+    expect(inspection.connectors.length).toBeGreaterThanOrEqual(6);
+
+    for (const connector of inspection.connectors) {
+      expect(connector.id.length).toBeGreaterThan(0);
+      expect(connector.from.objectId.length).toBeGreaterThan(0);
+      expect(connector.from.anchor.length).toBeGreaterThan(0);
+      expect(connector.to.objectId.length).toBeGreaterThan(0);
+      expect(connector.to.anchor.length).toBeGreaterThan(0);
+      expect(Number.isFinite(connector.from.point.x)).toBe(true);
+      expect(Number.isFinite(connector.from.point.y)).toBe(true);
+      expect(Number.isFinite(connector.to.point.x)).toBe(true);
+      expect(Number.isFinite(connector.to.point.y)).toBe(true);
+    }
+
+    for (const objectId of expectedIds) {
+      const object = requireInspectionObject(inspection, objectId);
+
+      expect(object.bbox).toBeDefined();
+      expect(object.anchors).toBeDefined();
+
+      if (objectId === "Reference" || objectId.startsWith("Axis") || objectId.startsWith("Edge")) {
+        const anchorNames = ["center", "north", "south", "east", "west"] as const;
+
+        for (const anchorName of anchorNames) {
+          const anchor = object.anchors[anchorName];
+
+          expect(anchor).toBeDefined();
+
+          if (!anchor) {
+            throw new Error(`Expected ${objectId}.${anchorName} anchor in inspection`);
+          }
+
+          expect(Number.isFinite(anchor.x)).toBe(true);
+          expect(Number.isFinite(anchor.y)).toBe(true);
+        }
+      }
+    }
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {
