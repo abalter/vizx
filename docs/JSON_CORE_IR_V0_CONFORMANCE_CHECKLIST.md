@@ -2,6 +2,8 @@
 
 This checklist turns the v0 shape and `basic` mapping notes into future pass/fail acceptance criteria for schema drafts and JSON-to-`ObjectScene` conversion work.
 
+This planning boundary now sits next to a minimal converter skeleton in code, but the checklist itself still defines future acceptance criteria.
+
 Status:
 
 - planning only
