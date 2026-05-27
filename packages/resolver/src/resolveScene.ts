@@ -489,6 +489,31 @@ function applyAlignment(
       dx: referenceAnchor.x - targetAnchor.x,
       dy: 0,
     };
+  } else if (alignment.relation === "alignTop") {
+    const referenceAnchor = referenceObject.anchors.north;
+
+    if (!referenceAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.north`,
+      });
+      return object;
+    }
+
+    const targetAnchor = object.anchors.north;
+
+    if (!targetAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing target anchor north`,
+      });
+      return object;
+    }
+
+    offset = {
+      dx: 0,
+      dy: referenceAnchor.y - targetAnchor.y,
+    };
   } else {
     const unsupported = alignment as { relation: string };
     diagnostics.push({

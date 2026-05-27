@@ -637,6 +637,72 @@ describe("resolveScene", () => {
     expect(connector?.end).toEqual(target.anchors.east);
   });
 
+  it("alignTop can match target north.y to a reference north.y", () => {
+    const unalignedScene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: point(220, 170) },
+          children: [
+            { kind: "text", id: "Reference.label", center: point(0, 0), text: "Reference" },
+            { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 56 },
+          children: [
+            {
+              kind: "group",
+              id: "Target.inner",
+              children: [
+                { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+                { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 14, paddingY: 10 }, rx: 8, ry: 8 },
+              ],
+            },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-to-target-top", from: { objectId: "Reference", anchor: "north" }, to: { objectId: "Target", anchor: "north" } },
+      ],
+    };
+
+    const alignedScene: ObjectScene = {
+      ...unalignedScene,
+      objects: unalignedScene.objects.map((object) => {
+        if (object.id !== "Target") {
+          return object;
+        }
+
+        return {
+          ...object,
+          align: { relation: "alignTop", reference: { objectId: "Reference", anchor: "north" } },
+        };
+      }),
+    };
+
+    const unaligned = resolveScene(unalignedScene);
+    const aligned = resolveScene(alignedScene);
+    const reference = requireResolvedObject(aligned, "Reference");
+    const target = requireResolvedObject(aligned, "Target");
+    const unalignedTarget = requireResolvedObject(unaligned, "Target");
+    const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+    const connector = aligned.resolved.connectors.find((entry) => entry.id === "reference-to-target-top");
+
+    expect(aligned.diagnostics).toEqual([]);
+    expect(target.anchors.north?.y).toBe(reference.anchors.north?.y);
+    expect(target.anchors.center?.x).toBe(unalignedTarget.anchors.center?.x);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.north?.y).toBe(target.anchors.north?.y);
+    expect(connector?.end).toEqual(target.anchors.north);
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
@@ -812,6 +878,31 @@ describe("resolveScene", () => {
           kind: "group",
           id: "B",
           align: { relation: "alignRight", reference: { objectId: "Missing", anchor: "east" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Orphan" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference object Missing",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an alignTop reference object is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignTop", reference: { objectId: "Missing", anchor: "north" } },
           children: [
             { kind: "text", id: "B.label", center: point(0, 0), text: "Orphan" },
             { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
