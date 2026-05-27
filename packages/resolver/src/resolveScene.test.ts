@@ -1119,6 +1119,34 @@ describe("resolveScene", () => {
     });
   });
 
+  it("reports a diagnostic when an unsupported distribution relation is provided", () => {
+    const scene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 150) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "Only" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeZ" as never, objectIds: ["A"] }],
+    } as unknown as ObjectScene;
+
+    const run = () => resolveScene(scene);
+
+    expect(run).not.toThrow();
+
+    const result = run();
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Unsupported distribution relation distributeZ",
+    });
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
