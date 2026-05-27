@@ -50,6 +50,7 @@ The current syntax is intentionally provisional. The active development path is 
 
 See [Core IR specification](./docs/CORE_IR_SPEC.md) for the current structured model consumed by the resolver.
 See [parser lowering contract](./docs/PARSER_LOWERING_CONTRACT.md) for planned AST-to-Core-IR boundaries.
+See [parser fixture matrix](./docs/PARSER_FIXTURE_MATRIX.md) for planned parser-lowering fixture families and reference examples.
 
 ## Repository layout
 

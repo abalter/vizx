@@ -9,6 +9,7 @@ Scope of this document:
 - no grammar lock-in
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current Core IR target model.
+See [PARSER_FIXTURE_MATRIX.md](./PARSER_FIXTURE_MATRIX.md) for planned fixture-family to example-reference mapping.
 
 ## Status
 
