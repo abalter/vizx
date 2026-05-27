@@ -16,8 +16,8 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 | `alignRight` | implemented | `target.east.x = reference.east.x` |
 | `alignTop` | implemented | `target.north.y = reference.north.y` |
 | `alignBottom` | implemented | `target.south.y = reference.south.y` |
-| `distributeX` | future | Not designed yet |
-| `distributeY` | future | Not designed yet |
+| `distributeX` | future | Designed, not implemented (`docs/DISTRIBUTION_DESIGN.md`) |
+| `distributeY` | future | Designed, not implemented (`docs/DISTRIBUTION_DESIGN.md`) |
 
 ## Implemented Center-Axis Alignment
 
@@ -56,7 +56,7 @@ Arbitrary target-edge-to-arbitrary-reference-anchor behavior is still deferred.
 - `distributeX`
 - `distributeY`
 
-Distribution behavior and spacing policy are not designed yet.
+Distribution behavior is designed in [`docs/DISTRIBUTION_DESIGN.md`](./DISTRIBUTION_DESIGN.md) and remains unimplemented.
 
 ## Current alignY semantics
 

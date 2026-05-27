@@ -29,7 +29,7 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 - Parser-driven example sources
 - General graph layout
 - align (other than `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, and `alignY`)
-- distribute
+- distribute (designed in [`docs/DISTRIBUTION_DESIGN.md`](./DISTRIBUTION_DESIGN.md), not implemented)
 - Flowchart semantics
 - Plotting or chart grammars
 - Nonlinear constraints or a full constraint solver
