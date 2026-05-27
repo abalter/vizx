@@ -191,7 +191,7 @@ function convertPlacement(value: unknown, path: string, diagnostics: string[]): 
     };
   }
 
-  if (kind === "rightOf") {
+  if (kind === "rightOf" || kind === "leftOf" || kind === "above" || kind === "below") {
     const reference = readAnchorRef(value.reference, `${path}.reference`, diagnostics);
     const gap = readNumber(value.gap, `${path}.gap`, diagnostics);
 
@@ -200,13 +200,13 @@ function convertPlacement(value: unknown, path: string, diagnostics: string[]): 
     }
 
     return {
-      kind: "rightOf",
+      kind,
       reference,
       gap,
     };
   }
 
-  diagnostics.push(`${path}.kind must be absolute or rightOf.`);
+  diagnostics.push(`${path}.kind must be absolute, rightOf, leftOf, above, or below.`);
   return undefined;
 }
 

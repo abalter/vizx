@@ -1,0 +1,223 @@
+{
+  "objects": [
+    {
+      "id": "Center",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 180,
+          "y": 120
+        }
+      },
+      "children": [
+        {
+          "id": "Center.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Center"
+        },
+        {
+          "id": "Center.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Center.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Right",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "Center",
+          "anchor": "east"
+        },
+        "gap": 44
+      },
+      "children": [
+        {
+          "id": "Right.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Right"
+        },
+        {
+          "id": "Right.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Right.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Left",
+      "kind": "group",
+      "placement": {
+        "kind": "leftOf",
+        "reference": {
+          "objectId": "Center",
+          "anchor": "west"
+        },
+        "gap": 44
+      },
+      "children": [
+        {
+          "id": "Left.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Left"
+        },
+        {
+          "id": "Left.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Left.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Above",
+      "kind": "group",
+      "placement": {
+        "kind": "above",
+        "reference": {
+          "objectId": "Center",
+          "anchor": "north"
+        },
+        "gap": 36
+      },
+      "children": [
+        {
+          "id": "Above.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Above"
+        },
+        {
+          "id": "Above.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Above.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Below",
+      "kind": "group",
+      "placement": {
+        "kind": "below",
+        "reference": {
+          "objectId": "Center",
+          "anchor": "south"
+        },
+        "gap": 36
+      },
+      "children": [
+        {
+          "id": "Below.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Below"
+        },
+        {
+          "id": "Below.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Below.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "kind": "connector",
+      "id": "center-right",
+      "from": {
+        "objectId": "Center",
+        "anchor": "east"
+      },
+      "to": {
+        "objectId": "Right",
+        "anchor": "west"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "center-left",
+      "from": {
+        "objectId": "Center",
+        "anchor": "west"
+      },
+      "to": {
+        "objectId": "Left",
+        "anchor": "east"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "center-above",
+      "from": {
+        "objectId": "Center",
+        "anchor": "north"
+      },
+      "to": {
+        "objectId": "Above",
+        "anchor": "south"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "center-below",
+      "from": {
+        "objectId": "Center",
+        "anchor": "south"
+      },
+      "to": {
+        "objectId": "Below",
+        "anchor": "north"
+      }
+    }
+  ]
+}
