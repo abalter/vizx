@@ -988,6 +988,43 @@ describe("resolveScene", () => {
     });
   });
 
+  it("reports a diagnostic when distributeX has duplicate object ids", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 150) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "First" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "B",
+          placement: { kind: "absolute", position: point(300, 190) },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Second" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeX", objectIds: ["A", "B", "A"] }],
+    };
+
+    const run = () => resolveScene(scene);
+
+    expect(run).not.toThrow();
+
+    const result = run();
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeX: duplicate object id A",
+    });
+  });
+
   it("reports a diagnostic when distributeY references a missing object id", () => {
     const scene: ObjectScene = {
       objects: [
@@ -1042,6 +1079,43 @@ describe("resolveScene", () => {
     expect(result.diagnostics).toContainEqual({
       severity: "error",
       message: "Could not distributeY: expected at least 2 object ids",
+    });
+  });
+
+  it("reports a diagnostic when distributeY has duplicate object ids", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Top",
+          placement: { kind: "absolute", position: point(200, 90) },
+          children: [
+            { kind: "text", id: "Top.label", center: point(0, 0), text: "Top" },
+            { kind: "rect", id: "Top.frame", fitToText: { textId: "Top.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Bottom",
+          placement: { kind: "absolute", position: point(280, 360) },
+          children: [
+            { kind: "text", id: "Bottom.label", center: point(0, 0), text: "Bottom" },
+            { kind: "rect", id: "Bottom.frame", fitToText: { textId: "Bottom.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Bottom", "Top"] }],
+    };
+
+    const run = () => resolveScene(scene);
+
+    expect(run).not.toThrow();
+
+    const result = run();
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeY: duplicate object id Top",
     });
   });
 
