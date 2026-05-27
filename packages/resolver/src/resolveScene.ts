@@ -19,6 +19,7 @@ import {
   type ObjectScene,
   type PlacementRelation,
   type RectObject,
+  type SceneDistribution,
   type TextObject,
 } from "@vizx/object-model";
 import type { RenderDef, RenderNode, RenderScene } from "@vizx/renderer-svg";
@@ -90,6 +91,9 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
       objectMap.set(source.id, alignedObject);
     }
   }
+
+  // Distribution runs after placement/alignment, before connectors.
+  applyDistribution(resolvedObjects, objectMap, scene.distribution, diagnostics);
 
   const resolvedConnectors: ResolvedConnector[] = [];
   const connectorNodes: RenderNode[] = [];
@@ -631,6 +635,128 @@ function resolveRelativePlacementOffset(
         dy: referenceAnchor.y + placement.gap - targetAnchor.y,
       };
   }
+}
+
+function applyDistribution(
+  resolvedObjects: ResolvedObject[],
+  objectMap: Map<string, ResolvedObject>,
+  distributions: readonly SceneDistribution[] | undefined,
+  diagnostics: Diagnostic[],
+): void {
+  for (const distribution of distributions ?? []) {
+    if (distribution.relation === "distributeX") {
+      applyDistributeX(distribution, resolvedObjects, objectMap, diagnostics);
+      continue;
+    }
+
+    const unsupported = distribution as { relation: string };
+    diagnostics.push({
+      severity: "error",
+      message: `Unsupported distribution relation ${unsupported.relation}`,
+    });
+  }
+}
+
+function applyDistributeX(
+  distribution: SceneDistribution,
+  resolvedObjects: ResolvedObject[],
+  objectMap: Map<string, ResolvedObject>,
+  diagnostics: Diagnostic[],
+): void {
+  if (distribution.objectIds.length < 2) {
+    diagnostics.push({
+      severity: "error",
+      message: "Could not distributeX: expected at least 2 object ids",
+    });
+    return;
+  }
+
+  const duplicateObjectId = findDuplicateObjectId(distribution.objectIds);
+
+  if (duplicateObjectId) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not distributeX: duplicate object id ${duplicateObjectId}`,
+    });
+    return;
+  }
+
+  const resolvedIndexes = new Map<string, number>();
+
+  for (const [index, object] of resolvedObjects.entries()) {
+    resolvedIndexes.set(object.id, index);
+  }
+
+  const targets: Array<{ objectId: string; object: ResolvedObject; index: number }> = [];
+
+  for (const objectId of distribution.objectIds) {
+    const resolvedObject = objectMap.get(objectId);
+    const resolvedIndex = resolvedIndexes.get(objectId);
+
+    if (!resolvedObject || resolvedIndex === undefined) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not distributeX: missing object ${objectId}`,
+      });
+      return;
+    }
+
+    if (!resolvedObject.anchors.center) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not distributeX: missing center anchor for ${objectId}`,
+      });
+      return;
+    }
+
+    targets.push({ objectId, object: resolvedObject, index: resolvedIndex });
+  }
+
+  const firstCenterX = targets[0]?.object.anchors.center?.x;
+  const lastCenterX = targets[targets.length - 1]?.object.anchors.center?.x;
+
+  if (firstCenterX === undefined || lastCenterX === undefined) {
+    return;
+  }
+
+  const denominator = targets.length - 1;
+
+  for (let index = 1; index < targets.length - 1; index += 1) {
+    const target = targets[index];
+    const targetCenter = target?.object.anchors.center;
+
+    if (!target || !targetCenter) {
+      continue;
+    }
+
+    const expectedCenterX = firstCenterX + ((lastCenterX - firstCenterX) * index) / denominator;
+    const offset = {
+      dx: expectedCenterX - targetCenter.x,
+      dy: 0,
+    };
+
+    if (offset.dx === 0) {
+      continue;
+    }
+
+    const translated = translateResolvedObject(target.object, offset);
+    resolvedObjects[target.index] = translated;
+    objectMap.set(target.objectId, translated);
+  }
+}
+
+function findDuplicateObjectId(objectIds: readonly string[]): string | undefined {
+  const seen = new Set<string>();
+
+  for (const objectId of objectIds) {
+    if (seen.has(objectId)) {
+      return objectId;
+    }
+
+    seen.add(objectId);
+  }
+
+  return undefined;
 }
 
 function translateResolvedObject(object: ResolvedObject, offset: Vector): ResolvedObject {

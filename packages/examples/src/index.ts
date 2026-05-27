@@ -3,6 +3,7 @@ import { alignmentReferenceExample } from "./alignmentReference";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
 import { connectorsExample } from "./connectors";
+import { distributeXExample } from "./distributeX";
 import { mixedNestedPlacementExample } from "./mixedNestedPlacement";
 import { nestedGroupsExample } from "./nestedGroups";
 import { relativePlacementExample } from "./relativePlacement";
@@ -14,6 +15,7 @@ export const vizxExamples: readonly VizxExample[] = [
   alignmentFamilyExample,
   alignmentReferenceExample,
   basicExample,
+  distributeXExample,
   anchorsExample,
   nestedGroupsExample,
   connectorsExample,

@@ -769,8 +769,8 @@ describe("resolveScene", () => {
     expect(connector?.end).toEqual(target.anchors.south);
   });
 
-  it.skip("distributeX evenly spaces center.x across ordered objects while preserving first/last center.x", () => {
-    const scene = {
+  it("distributeX evenly spaces center.x across ordered objects while preserving first/last center.x", () => {
+    const baselineScene: ObjectScene = {
       objects: [
         {
           kind: "group",
@@ -804,25 +804,50 @@ describe("resolveScene", () => {
         { kind: "connector", id: "a-b", from: { objectId: "A", anchor: "center" }, to: { objectId: "B", anchor: "center" } },
         { kind: "connector", id: "b-c", from: { objectId: "B", anchor: "center" }, to: { objectId: "C", anchor: "center" } },
       ],
-      distribute: {
-        relation: "distributeX",
-        targets: ["A", "B", "C"],
-      },
-    } as unknown as ObjectScene;
+    };
 
+    const scene: ObjectScene = {
+      ...baselineScene,
+      distribution: [{ relation: "distributeX", objectIds: ["A", "B", "C"] }],
+    };
+
+    const baseline = resolveScene(baselineScene);
     const result = resolveScene(scene);
+    const baselineA = requireResolvedObject(baseline, "A");
+    const baselineB = requireResolvedObject(baseline, "B");
+    const baselineC = requireResolvedObject(baseline, "C");
     const a = requireResolvedObject(result, "A");
     const b = requireResolvedObject(result, "B");
     const c = requireResolvedObject(result, "C");
+    const baselineBFrame = baselineB.children?.find((child) => child.id === "B.frame");
+    const bFrame = b.children?.find((child) => child.id === "B.frame");
+    const aToB = result.resolved.connectors.find((connector) => connector.id === "a-b");
+    const bToC = result.resolved.connectors.find((connector) => connector.id === "b-c");
 
     const expectedB = ((a.anchors.center?.x ?? 0) + (c.anchors.center?.x ?? 0)) / 2;
+    const appliedDx = (b.anchors.center?.x ?? 0) - (baselineB.anchors.center?.x ?? 0);
 
     expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
-    expect(a.anchors.center?.x).toBeDefined();
-    expect(c.anchors.center?.x).toBeDefined();
+    expect(a.anchors.center?.x).toBe(baselineA.anchors.center?.x);
+    expect(c.anchors.center?.x).toBe(baselineC.anchors.center?.x);
+    expect(b.anchors.center?.x).not.toBe(baselineB.anchors.center?.x);
     expect(b.anchors.center?.x).toBeCloseTo(expectedB, 8);
-    expect(b.anchors.center?.y).toBeDefined();
-    expect(result.resolved.connectors.every((connector) => Number.isFinite(connector.end.x) && Number.isFinite(connector.end.y))).toBe(true);
+    expect(b.anchors.center?.y).toBe(baselineB.anchors.center?.y);
+
+    expect(bFrame?.geometry?.x).toBe(bFrame?.bbox.x);
+    expect(bFrame?.geometry?.y).toBe(bFrame?.bbox.y);
+    expect(b.anchors.west?.x).toBeCloseTo(b.bbox.x, 8);
+    expect(b.anchors.east?.x).toBeCloseTo(b.bbox.x + b.bbox.width, 8);
+    expect(b.anchors.north?.y).toBeCloseTo(b.bbox.y, 8);
+    expect(b.anchors.south?.y).toBeCloseTo(b.bbox.y + b.bbox.height, 8);
+
+    expect(bFrame?.anchors.center?.x).toBeCloseTo((baselineBFrame?.anchors.center?.x ?? 0) + appliedDx, 8);
+    expect(bFrame?.anchors.center?.y).toBeCloseTo(baselineBFrame?.anchors.center?.y ?? 0, 8);
+
+    expect(aToB?.start).toEqual(a.anchors.center);
+    expect(aToB?.end).toEqual(b.anchors.center);
+    expect(bToC?.start).toEqual(b.anchors.center);
+    expect(bToC?.end).toEqual(c.anchors.center);
   });
 
   it.skip("distributeY evenly spaces center.y across ordered objects while preserving first/last center.y", () => {
@@ -860,10 +885,7 @@ describe("resolveScene", () => {
         { kind: "connector", id: "top-middle", from: { objectId: "Top", anchor: "center" }, to: { objectId: "Middle", anchor: "center" } },
         { kind: "connector", id: "middle-bottom", from: { objectId: "Middle", anchor: "center" }, to: { objectId: "Bottom", anchor: "center" } },
       ],
-      distribute: {
-        relation: "distributeY",
-        targets: ["Top", "Middle", "Bottom"],
-      },
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }],
     } as unknown as ObjectScene;
 
     const result = resolveScene(scene);
@@ -879,6 +901,63 @@ describe("resolveScene", () => {
     expect(middle.anchors.center?.y).toBeCloseTo(expectedMiddle, 8);
     expect(middle.anchors.center?.x).toBeDefined();
     expect(result.resolved.connectors.every((connector) => Number.isFinite(connector.end.x) && Number.isFinite(connector.end.y))).toBe(true);
+  });
+
+  it("reports a diagnostic when distributeX references a missing object id", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 150) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "First" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "C",
+          placement: { kind: "absolute", position: point(420, 190) },
+          children: [
+            { kind: "text", id: "C.label", center: point(0, 0), text: "Last" },
+            { kind: "rect", id: "C.frame", fitToText: { textId: "C.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeX", objectIds: ["A", "Missing", "C"] }],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeX: missing object Missing",
+    });
+  });
+
+  it("reports a diagnostic when distributeX has fewer than two object ids", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "A",
+          placement: { kind: "absolute", position: point(120, 150) },
+          children: [
+            { kind: "text", id: "A.label", center: point(0, 0), text: "Only" },
+            { kind: "rect", id: "A.frame", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeX", objectIds: ["A"] }],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeX: expected at least 2 object ids",
+    });
   });
 
   it("reports a diagnostic when a relative placement reference object is missing", () => {
