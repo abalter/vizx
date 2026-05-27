@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ObjectScene } from "@vizx/object-model";
 import type { RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { renderSvg } from "@vizx/renderer-svg";
 import { createDebugRenderScene, inspectScene, resolveScene } from "@vizx/resolver";
@@ -251,8 +252,8 @@ describe("example registry", () => {
     expect(target.anchors.center.y).toBe(reference.anchors.center.y);
   });
 
-  it.skip("pending spec: alignLeft makes target.west.x match reference.west.x", () => {
-    const scene = {
+  it("alignLeft makes target.west.x match reference.west.x", () => {
+    const scene: ObjectScene = {
       objects: [
         {
           kind: "group",
@@ -277,7 +278,7 @@ describe("example registry", () => {
       connectors: [
         { kind: "connector", id: "reference-to-target-left", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "Target", anchor: "west" } },
       ],
-    } as unknown as Parameters<typeof resolveScene>[0];
+    };
 
     const result = resolveScene(scene);
     const reference = requireResolvedObject(result, "Reference");

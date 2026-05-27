@@ -27,7 +27,12 @@ export interface AlignXRelation {
   readonly reference: AnchorRef;
 }
 
-export type ObjectAlignment = AlignYRelation | AlignXRelation;
+export interface AlignLeftRelation {
+  readonly relation: "alignLeft";
+  readonly reference: AnchorRef;
+}
+
+export type ObjectAlignment = AlignYRelation | AlignXRelation | AlignLeftRelation;
 
 export interface BaseObject {
   readonly id: string;

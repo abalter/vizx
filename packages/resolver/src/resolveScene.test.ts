@@ -505,6 +505,72 @@ describe("resolveScene", () => {
     assertAlignXAgainstReferenceAnchor("west");
   });
 
+  it("alignLeft can match target west.x to a reference west.x", () => {
+    const unalignedScene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: point(220, 170) },
+          children: [
+            { kind: "text", id: "Reference.label", center: point(0, 0), text: "Reference" },
+            { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 56 },
+          children: [
+            {
+              kind: "group",
+              id: "Target.inner",
+              children: [
+                { kind: "text", id: "Target.inner.label", center: point(0, 0), text: "Target" },
+                { kind: "rect", id: "Target.inner.frame", fitToText: { textId: "Target.inner.label", paddingX: 14, paddingY: 10 }, rx: 8, ry: 8 },
+              ],
+            },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-to-target-left", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "Target", anchor: "west" } },
+      ],
+    };
+
+    const alignedScene: ObjectScene = {
+      ...unalignedScene,
+      objects: unalignedScene.objects.map((object) => {
+        if (object.id !== "Target") {
+          return object;
+        }
+
+        return {
+          ...object,
+          align: { relation: "alignLeft", reference: { objectId: "Reference", anchor: "west" } },
+        };
+      }),
+    };
+
+    const unaligned = resolveScene(unalignedScene);
+    const aligned = resolveScene(alignedScene);
+    const reference = requireResolvedObject(aligned, "Reference");
+    const target = requireResolvedObject(aligned, "Target");
+    const unalignedTarget = requireResolvedObject(unaligned, "Target");
+    const nestedGroup = target.children?.find((child) => child.id === "Target.inner");
+    const nestedFrame = nestedGroup?.children?.find((child) => child.id === "Target.inner.frame");
+    const connector = aligned.resolved.connectors.find((entry) => entry.id === "reference-to-target-left");
+
+    expect(aligned.diagnostics).toEqual([]);
+    expect(target.anchors.west?.x).toBe(reference.anchors.west?.x);
+    expect(target.anchors.center?.y).toBe(unalignedTarget.anchors.center?.y);
+    expect(nestedGroup?.children?.length).toBeGreaterThan(0);
+    expect(nestedFrame?.geometry?.x).toBe(nestedFrame?.bbox.x);
+    expect(nestedFrame?.geometry?.y).toBe(nestedFrame?.bbox.y);
+    expect(nestedFrame?.anchors.west?.x).toBe(target.anchors.west?.x);
+    expect(connector?.end).toEqual(target.anchors.west);
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
@@ -644,6 +710,56 @@ describe("resolveScene", () => {
       {
         severity: "error",
         message: "Could not align B: missing reference anchor A.baseline",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an alignLeft reference object is missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignLeft", reference: { objectId: "Missing", anchor: "west" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Orphan" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Could not align B: missing reference object Missing",
+      },
+    ]);
+  });
+
+  it("reports a diagnostic when an unsupported alignment relation is provided", () => {
+    const scene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          align: { relation: "alignUnknown", reference: { objectId: "B", anchor: "west" } },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Target" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    } as unknown as ObjectScene;
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toEqual([
+      {
+        severity: "error",
+        message: "Unsupported alignment relation alignUnknown for B",
       },
     ]);
   });

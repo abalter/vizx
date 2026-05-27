@@ -12,7 +12,7 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 | --- | --- | --- |
 | `alignX` | implemented | `target.center.x = referenceAnchor.x` |
 | `alignY` | implemented | `target.center.y = referenceAnchor.y` |
-| `alignLeft` | future | `target.west.x = reference.west.x` |
+| `alignLeft` | implemented | `target.west.x = reference.west.x` |
 | `alignRight` | future | `target.east.x = reference.east.x` |
 | `alignTop` | future | `target.north.y = reference.north.y` |
 | `alignBottom` | future | `target.south.y = reference.south.y` |
@@ -28,7 +28,7 @@ The current alignment model is intentionally narrow and deterministic:
 
 Reference anchors currently used in tests are `center`, `north`, `south`, `east`, and `west`.
 
-## Future Edge Alignment
+## Edge Alignment
 
 Edge alignment is intentionally distinct from center-axis alignment.
 
@@ -37,12 +37,12 @@ Edge alignment is intentionally distinct from center-axis alignment.
 
 The first intended edge semantics are:
 
-- `alignLeft`
+- `alignLeft` (implemented)
 - `alignRight`
 - `alignTop`
 - `alignBottom`
 
-- `alignLeft`: `target.west.x = reference.west.x`
+- `alignLeft`: `target.west.x = reference.west.x` (implemented)
 - `alignRight`: `target.east.x = reference.east.x`
 - `alignTop`: `target.north.y = reference.north.y`
 - `alignBottom`: `target.south.y = reference.south.y`

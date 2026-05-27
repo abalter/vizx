@@ -387,34 +387,79 @@ function applyAlignment(
     return object;
   }
 
-  const referenceAnchor = referenceObject.anchors[alignment.reference.anchor];
-
-  if (!referenceAnchor) {
-    diagnostics.push({
-      severity: "error",
-      message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.${alignment.reference.anchor}`,
-    });
-    return object;
-  }
-
-  const targetAnchor = object.anchors.center;
-
-  if (!targetAnchor) {
-    diagnostics.push({
-      severity: "error",
-      message: `Could not align ${source.id}: missing target anchor center`,
-    });
-    return object;
-  }
-
   let offset: Vector;
 
   if (alignment.relation === "alignY") {
+    const referenceAnchor = referenceObject.anchors[alignment.reference.anchor];
+
+    if (!referenceAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.${alignment.reference.anchor}`,
+      });
+      return object;
+    }
+
+    const targetAnchor = object.anchors.center;
+
+    if (!targetAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing target anchor center`,
+      });
+      return object;
+    }
+
     offset = {
       dx: 0,
       dy: referenceAnchor.y - targetAnchor.y,
     };
   } else if (alignment.relation === "alignX") {
+    const referenceAnchor = referenceObject.anchors[alignment.reference.anchor];
+
+    if (!referenceAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.${alignment.reference.anchor}`,
+      });
+      return object;
+    }
+
+    const targetAnchor = object.anchors.center;
+
+    if (!targetAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing target anchor center`,
+      });
+      return object;
+    }
+
+    offset = {
+      dx: referenceAnchor.x - targetAnchor.x,
+      dy: 0,
+    };
+  } else if (alignment.relation === "alignLeft") {
+    const referenceAnchor = referenceObject.anchors.west;
+
+    if (!referenceAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing reference anchor ${alignment.reference.objectId}.west`,
+      });
+      return object;
+    }
+
+    const targetAnchor = object.anchors.west;
+
+    if (!targetAnchor) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not align ${source.id}: missing target anchor west`,
+      });
+      return object;
+    }
+
     offset = {
       dx: referenceAnchor.x - targetAnchor.x,
       dy: 0,
