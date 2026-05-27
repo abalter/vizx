@@ -286,6 +286,72 @@ describe("example registry", () => {
 
     expect(target.anchors.west?.x).toBe(reference.anchors.west?.x);
   });
+
+  it("covers the full alignment family in a registry-backed example", () => {
+    const example = requireVizxExample("alignment-family");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(example.title).toBe("Alignment Family");
+    expect(example.expectedCapabilities).toEqual([
+      "alignX",
+      "alignY",
+      "alignLeft",
+      "alignRight",
+      "alignTop",
+      "alignBottom",
+      "rect anchors",
+      "group bbox",
+      "inspect output",
+      "debug overlay",
+    ]);
+
+    const expectedIds = ["Reference", "AxisX", "AxisY", "EdgeLeft", "EdgeRight", "EdgeTop", "EdgeBottom"];
+    const topLevelIds = inspection.objects.map((object) => object.id);
+
+    expect(topLevelIds).toEqual(expectedIds);
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+
+    const reference = requireResolvedObject(result, "Reference");
+    const axisX = requireResolvedObject(result, "AxisX");
+    const axisY = requireResolvedObject(result, "AxisY");
+    const edgeLeft = requireResolvedObject(result, "EdgeLeft");
+    const edgeRight = requireResolvedObject(result, "EdgeRight");
+    const edgeTop = requireResolvedObject(result, "EdgeTop");
+    const edgeBottom = requireResolvedObject(result, "EdgeBottom");
+
+    expect(axisX.anchors.center?.x).toBe(reference.anchors.center?.x);
+    expect(axisY.anchors.center?.y).toBe(reference.anchors.center?.y);
+    expect(edgeLeft.anchors.west?.x).toBe(reference.anchors.west?.x);
+    expect(edgeRight.anchors.east?.x).toBe(reference.anchors.east?.x);
+    expect(edgeTop.anchors.north?.y).toBe(reference.anchors.north?.y);
+    expect(edgeBottom.anchors.south?.y).toBe(reference.anchors.south?.y);
+
+    for (const object of [reference, axisX, axisY, edgeLeft, edgeRight, edgeTop, edgeBottom]) {
+      const frame = object.children?.find((child) => child.id === `${object.id}.frame`);
+
+      expect(frame?.geometry?.x).toBe(frame?.bbox.x);
+      expect(frame?.geometry?.y).toBe(frame?.bbox.y);
+      expect(object.anchors.north?.y).toBe(object.bbox.y);
+      expect(object.anchors.south?.y).toBeCloseTo(object.bbox.y + object.bbox.height, 8);
+      expect(object.anchors.west?.x).toBeCloseTo(object.bbox.x, 8);
+      expect(object.anchors.east?.x).toBeCloseTo(object.bbox.x + object.bbox.width, 8);
+    }
+
+    expect(result.resolved.connectors.length).toBeGreaterThanOrEqual(6);
+
+    for (const connector of result.resolved.connectors) {
+      expect(Number.isFinite(connector.start.x)).toBe(true);
+      expect(Number.isFinite(connector.start.y)).toBe(true);
+      expect(Number.isFinite(connector.end.x)).toBe(true);
+      expect(Number.isFinite(connector.end.y)).toBe(true);
+    }
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

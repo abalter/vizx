@@ -1,3 +1,4 @@
+import { alignmentFamilyExample } from "./alignmentFamily";
 import { alignmentReferenceExample } from "./alignmentReference";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
@@ -10,6 +11,7 @@ import type { VizxExample } from "./types";
 export * from "./types";
 
 export const vizxExamples: readonly VizxExample[] = [
+  alignmentFamilyExample,
   alignmentReferenceExample,
   basicExample,
   anchorsExample,
