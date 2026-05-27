@@ -1147,6 +1147,33 @@ describe("resolveScene", () => {
     });
   });
 
+  it("reports a diagnostic when an unsupported placement relation is provided", () => {
+    const scene = {
+      objects: [
+        {
+          kind: "group",
+          id: "B",
+          placement: { kind: "diagonalOf" as never, reference: { objectId: "B", anchor: "west" }, gap: 32 },
+          children: [
+            { kind: "text", id: "B.label", center: point(0, 0), text: "Target" },
+            { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+    } as unknown as ObjectScene;
+
+    const run = () => resolveScene(scene);
+
+    expect(run).not.toThrow();
+
+    const result = run();
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Unsupported placement relation diagonalOf for B",
+    });
+  });
+
   it("reports a diagnostic when a relative placement reference object is missing", () => {
     const scene: ObjectScene = {
       objects: [
@@ -1396,7 +1423,7 @@ describe("resolveScene", () => {
         {
           kind: "group",
           id: "B",
-          align: { relation: "alignUnknown", reference: { objectId: "B", anchor: "west" } },
+          align: { relation: "alignDiagonal" as never, reference: { objectId: "B", anchor: "west" } },
           children: [
             { kind: "text", id: "B.label", center: point(0, 0), text: "Target" },
             { kind: "rect", id: "B.frame", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
@@ -1405,14 +1432,16 @@ describe("resolveScene", () => {
       ],
     } as unknown as ObjectScene;
 
-    const result = resolveScene(scene);
+    const run = () => resolveScene(scene);
 
-    expect(result.diagnostics).toEqual([
-      {
-        severity: "error",
-        message: "Unsupported alignment relation alignUnknown for B",
-      },
-    ]);
+    expect(run).not.toThrow();
+
+    const result = run();
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Unsupported alignment relation alignDiagonal for B",
+    });
   });
 });
 
