@@ -48,6 +48,8 @@ This repository is a design scaffold and early TypeScript prototype. It includes
 
 The current syntax is intentionally provisional. The active development path is the core model and pipeline, built from the inside out.
 
+See [Core IR specification](./docs/CORE_IR_SPEC.md) for the current structured model consumed by the resolver.
+
 ## Repository layout
 
 ```text

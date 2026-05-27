@@ -2,6 +2,8 @@
 
 Current examples and tests cover the active inside-out pipeline only: unresolved object graph to resolved scene to render scene to SVG.
 
+For the current formal model behind these capabilities, see [CORE_IR_SPEC.md](./CORE_IR_SPEC.md).
+
 | Capability | Unit test | Resolver test | Example | Debug overlay | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Rect bbox | [packages/geometry/src/geometry.test.ts](../packages/geometry/src/geometry.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `anchors` | Yes | Resolved bbox values are in scene coordinates. |
