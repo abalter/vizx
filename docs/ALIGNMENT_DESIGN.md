@@ -13,7 +13,7 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 | `alignX` | implemented | `target.center.x = referenceAnchor.x` |
 | `alignY` | implemented | `target.center.y = referenceAnchor.y` |
 | `alignLeft` | implemented | `target.west.x = reference.west.x` |
-| `alignRight` | future | `target.east.x = reference.east.x` |
+| `alignRight` | implemented | `target.east.x = reference.east.x` |
 | `alignTop` | future | `target.north.y = reference.north.y` |
 | `alignBottom` | future | `target.south.y = reference.south.y` |
 | `distributeX` | future | Not designed yet |
@@ -38,12 +38,12 @@ Edge alignment is intentionally distinct from center-axis alignment.
 The first intended edge semantics are:
 
 - `alignLeft` (implemented)
-- `alignRight`
+- `alignRight` (implemented)
 - `alignTop`
 - `alignBottom`
 
 - `alignLeft`: `target.west.x = reference.west.x` (implemented)
-- `alignRight`: `target.east.x = reference.east.x`
+- `alignRight`: `target.east.x = reference.east.x` (implemented)
 - `alignTop`: `target.north.y = reference.north.y`
 - `alignBottom`: `target.south.y = reference.south.y`
 
