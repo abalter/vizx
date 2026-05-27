@@ -5,7 +5,7 @@ This note captures the converter-facing v0 JSON shape currently expected by `con
 Status:
 
 - illustrative stub only
-- not a JSON fixture file
+- now mirrored by a real fixture file at `packages/examples/fixtures/json-core-ir-v0/basic.json`
 - not validated by JSON Schema
 - not a public stable format
 - intentionally limited to the `basic` slice
@@ -33,7 +33,6 @@ Not supported yet:
 - alignment JSON
 - distribution JSON
 - JSON Schema validation
-- real fixture loading from `.json` files
 - parser lowering integration
 - public format stability guarantees
 
@@ -88,7 +87,7 @@ Compact basic-style scene shape accepted by the converter:
 
 ## 4. Relationship to Converter Tests
 
-Current converter tests keep JSON scene payloads inline in TypeScript code and convert them directly, then compare the converted scene against the TypeScript `basic` example at structural and semantic levels.
+Converter tests now load `packages/examples/fixtures/json-core-ir-v0/basic.json` from disk, convert it directly, and compare the converted scene against the TypeScript `basic` example at structural and semantic levels.
 
 This document is not tested directly and does not replace test assertions.
 

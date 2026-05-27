@@ -1,78 +1,29 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
 import { requireVizxExample } from "./index";
 
+function loadBasicJsonCoreIrFixture(): unknown {
+  const fixtureUrl = new URL("../fixtures/json-core-ir-v0/basic.json", import.meta.url);
+  const fixtureText = readFileSync(fixtureUrl, "utf8");
+  return JSON.parse(fixtureText) as unknown;
+}
+
 describe("convertJsonCoreIrV0ToObjectScene", () => {
-  it("converts a minimal basic-like JSON object to an ObjectScene", () => {
-    const result = convertJsonCoreIrV0ToObjectScene({
-      objects: [
-        {
-          id: "A",
-          kind: "group",
-          placement: { kind: "absolute", position: { x: 80, y: 60 } },
-          children: [
-            { id: "A.label", kind: "text", center: { x: 0, y: 0 }, text: "Raw data" },
-            { id: "A.frame", kind: "rect", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
-          ],
-        },
-        {
-          id: "B",
-          kind: "group",
-          placement: { kind: "rightOf", reference: { objectId: "A", anchor: "east" }, gap: 90 },
-          children: [
-            { id: "B.label", kind: "text", center: { x: 0, y: 0 }, text: "Clean" },
-            { id: "B.frame", kind: "rect", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
-          ],
-        },
-      ],
-      connectors: [
-        { kind: "connector", id: "edge-1", from: { objectId: "A", anchor: "east" }, to: { objectId: "B", anchor: "west" } },
-      ],
-    });
+  it("loads the basic JSON fixture and converts it to an ObjectScene", () => {
+    const fixture = loadBasicJsonCoreIrFixture();
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
 
     expect(result.diagnostics).toEqual([]);
     expect(result.scene).toBeDefined();
-    expect(result.scene?.objects.map((object) => object.id)).toEqual(["A", "B"]);
-    expect(result.scene?.connectors?.map((connector) => connector.id)).toEqual(["edge-1"]);
+    expect(result.scene?.objects.map((object) => object.id)).toEqual(["A", "B", "C"]);
+    expect(result.scene?.connectors?.map((connector) => connector.id)).toEqual(["edge-1", "edge-2"]);
   });
 
-  it("converts a basic-like scene that resolves without error diagnostics", () => {
-    const result = convertJsonCoreIrV0ToObjectScene({
-      objects: [
-        {
-          id: "A",
-          kind: "group",
-          placement: { kind: "absolute", position: { x: 80, y: 60 } },
-          children: [
-            { id: "A.label", kind: "text", center: { x: 0, y: 0 }, text: "Raw data" },
-            { id: "A.frame", kind: "rect", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
-          ],
-        },
-        {
-          id: "B",
-          kind: "group",
-          placement: { kind: "rightOf", reference: { objectId: "A", anchor: "east" }, gap: 90 },
-          children: [
-            { id: "B.label", kind: "text", center: { x: 0, y: 0 }, text: "Clean" },
-            { id: "B.frame", kind: "rect", fitToText: { textId: "B.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
-          ],
-        },
-        {
-          id: "C",
-          kind: "group",
-          placement: { kind: "rightOf", reference: { objectId: "B", anchor: "east" }, gap: 90 },
-          children: [
-            { id: "C.label", kind: "text", center: { x: 0, y: 0 }, text: "Model" },
-            { id: "C.frame", kind: "rect", fitToText: { textId: "C.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
-          ],
-        },
-      ],
-      connectors: [
-        { kind: "connector", id: "edge-1", from: { objectId: "A", anchor: "east" }, to: { objectId: "B", anchor: "west" } },
-        { kind: "connector", id: "edge-2", from: { objectId: "B", anchor: "east" }, to: { objectId: "C", anchor: "west" } },
-      ],
-    });
+  it("fixture-converted scene matches the TypeScript basic example semantically", () => {
+    const fixture = loadBasicJsonCoreIrFixture();
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
 
     const convertedInspection = inspectScene(result.scene!);
     const convertedResolved = resolveScene(result.scene!);

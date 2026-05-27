@@ -1,0 +1,131 @@
+{
+  "objects": [
+    {
+      "id": "A",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 80,
+          "y": 60
+        }
+      },
+      "children": [
+        {
+          "id": "A.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Raw data"
+        },
+        {
+          "id": "A.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "A.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "A",
+          "anchor": "east"
+        },
+        "gap": 90
+      },
+      "children": [
+        {
+          "id": "B.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Clean"
+        },
+        {
+          "id": "B.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "B.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "B",
+          "anchor": "east"
+        },
+        "gap": 90
+      },
+      "children": [
+        {
+          "id": "C.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Model"
+        },
+        {
+          "id": "C.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "C.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "kind": "connector",
+      "id": "edge-1",
+      "from": {
+        "objectId": "A",
+        "anchor": "east"
+      },
+      "to": {
+        "objectId": "B",
+        "anchor": "west"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "edge-2",
+      "from": {
+        "objectId": "B",
+        "anchor": "east"
+      },
+      "to": {
+        "objectId": "C",
+        "anchor": "west"
+      }
+    }
+  ]
+}
