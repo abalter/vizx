@@ -12,6 +12,7 @@ Status:
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contract.
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
+See [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for docs-only pass/fail acceptance checks for future v0 schema/converter work.
 
 ## 1. Purpose
 

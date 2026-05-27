@@ -10,7 +10,7 @@ Status:
 - not a parser-lowering contract
 - not a public stability guarantee
 
-See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the v0 shape proposal and [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current runtime contract.
+See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the v0 shape proposal, [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for pass/fail acceptance checks, and [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current runtime contract.
 
 ## 1. Purpose
 
