@@ -15,7 +15,7 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 | `alignLeft` | implemented | `target.west.x = reference.west.x` |
 | `alignRight` | implemented | `target.east.x = reference.east.x` |
 | `alignTop` | implemented | `target.north.y = reference.north.y` |
-| `alignBottom` | future | `target.south.y = reference.south.y` |
+| `alignBottom` | implemented | `target.south.y = reference.south.y` |
 | `distributeX` | future | Not designed yet |
 | `distributeY` | future | Not designed yet |
 
@@ -40,12 +40,14 @@ The first intended edge semantics are:
 - `alignLeft` (implemented)
 - `alignRight` (implemented)
 - `alignTop` (implemented)
-- `alignBottom`
+- `alignBottom` (implemented)
 
 - `alignLeft`: `target.west.x = reference.west.x` (implemented)
 - `alignRight`: `target.east.x = reference.east.x` (implemented)
 - `alignTop`: `target.north.y = reference.north.y` (implemented)
-- `alignBottom`: `target.south.y = reference.south.y`
+- `alignBottom`: `target.south.y = reference.south.y` (implemented)
+
+This completes the first corresponding-edge alignment family.
 
 Arbitrary target-edge-to-arbitrary-reference-anchor behavior is still deferred.
 

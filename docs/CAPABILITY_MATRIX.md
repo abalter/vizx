@@ -17,6 +17,7 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 | `alignLeft` alignment | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | — | Indirect | Runs after placement and sets target `west.x` to the reference object's `west.x`. |
 | `alignRight` alignment | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | — | Indirect | Runs after placement and sets target `east.x` to the reference object's `east.x`. |
 | `alignTop` alignment | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | — | Indirect | Runs after placement and sets target `north.y` to the reference object's `north.y`. |
+| `alignBottom` alignment | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | — | Indirect | Runs after placement and sets target `south.y` to the reference object's `south.y`. |
 | Straight connector | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `basic`, `connectors`, `mixed-nested-placement`, `alignment-reference` | Yes | Connectors resolve anchor endpoints and serialize as straight paths. |
 | Inspect output | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/cli/src/demoScene.test.ts](../packages/cli/src/demoScene.test.ts) | All registered examples | Indirect | Example harness verifies every example can be inspected. |
 | Debug overlay | [packages/resolver/src/debugOverlay.test.ts](../packages/resolver/src/debugOverlay.test.ts) | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | All registered examples | Yes | Overlay is generated from resolved model data using render nodes. |
@@ -27,10 +28,10 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 
 - Parser-driven example sources
 - General graph layout
-- align (other than `alignLeft`, `alignRight`, `alignTop`, `alignX`, and `alignY`; edge alignment semantics are partially implemented)
+- align (other than `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, and `alignY`)
 - distribute
 - Flowchart semantics
 - Plotting or chart grammars
 - Nonlinear constraints or a full constraint solver
 
-The `alignment-reference` example remains a reference fixture for ongoing alignment and future distribution work. `alignLeft`, `alignRight`, `alignTop`, `alignX`, and `alignY` are implemented, while remaining edge alignments and distribution remain future work in [`docs/ALIGNMENT_DESIGN.md`](./ALIGNMENT_DESIGN.md).
+The `alignment-reference` example remains a reference fixture for ongoing alignment and future distribution work. `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, and `alignY` are implemented, while distribution remains future work in [`docs/ALIGNMENT_DESIGN.md`](./ALIGNMENT_DESIGN.md).
