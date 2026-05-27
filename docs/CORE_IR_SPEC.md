@@ -274,6 +274,7 @@ Separation goal:
 A JSON Core IR format is planned but not implemented in this pass.
 
 See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for the docs-only planning note on future schema surface, validation boundaries, and fixture strategy.
+See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 JSON shape centered on the current `basic` example.
 
 Intended direction:
 

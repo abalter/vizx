@@ -11,6 +11,7 @@ Status:
 - no runtime behavior changes in this pass
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contract.
+See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
 
 ## 1. Purpose
 
