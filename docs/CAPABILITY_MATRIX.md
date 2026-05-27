@@ -3,6 +3,7 @@
 Current examples and tests cover the active inside-out pipeline only: unresolved object graph to resolved scene to render scene to SVG.
 
 For the current formal model behind these capabilities, see [CORE_IR_SPEC.md](./CORE_IR_SPEC.md).
+For parser-readiness planning (not implementation status), see [PARSER_LOWERING_CONTRACT.md](./PARSER_LOWERING_CONTRACT.md).
 
 | Capability | Unit test | Resolver test | Example | Debug overlay | Notes |
 | --- | --- | --- | --- | --- | --- |
