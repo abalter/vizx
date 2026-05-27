@@ -15,6 +15,7 @@ Status:
 
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the minimal v0 shape and [JSON_CORE_IR_BASIC_MAPPING.md](./JSON_CORE_IR_BASIC_MAPPING.md) for field-by-field mapping.
 See [JSON_CORE_IR_V0_OWNERSHIP_LANES.md](./JSON_CORE_IR_V0_OWNERSHIP_LANES.md) for the future review lanes associated with each checklist area.
+See [JSON_CORE_IR_BASIC_EXAMPLE_STUB.md](./JSON_CORE_IR_BASIC_EXAMPLE_STUB.md) for the converter-facing inline basic JSON stub.
 
 ## 1. Purpose
 
