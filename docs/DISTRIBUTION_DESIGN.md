@@ -4,10 +4,10 @@ VizX should treat initial distribution as a deterministic post-alignment transla
 
 ## Scope
 
-The first distribution model is partially implemented.
+The first distribution model is implemented.
 
 - `distributeX`: implemented
-- `distributeY`: designed, not implemented
+- `distributeY`: implemented
 
 Distribution is intended to run on already-resolved objects after placement and alignment, using scene-coordinate anchors and the existing translation path.
 
@@ -31,7 +31,7 @@ Given an ordered list of target object ids:
 - move intermediate objects vertically so `center.y` values are evenly spaced between first and last
 - preserve each object's current `center.x` (except for effects already introduced by earlier placement/alignment)
 
-This behavior remains pending.
+This behavior is implemented.
 
 ## Coordinate and Translation Guarantees
 
@@ -70,6 +70,4 @@ This ordering keeps alignment deterministic and lets distribution operate on fin
 
 ## Pending Specs
 
-Current pending specs are tracked in resolver tests as skipped cases:
-
-- `distributeY evenly spaces center.y across ordered objects while preserving first/last center.y`
+The initial center-based distribution family (`distributeX` and `distributeY`) is complete.

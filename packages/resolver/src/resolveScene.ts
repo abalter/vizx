@@ -649,6 +649,11 @@ function applyDistribution(
       continue;
     }
 
+    if (distribution.relation === "distributeY") {
+      applyDistributeY(distribution, resolvedObjects, objectMap, diagnostics);
+      continue;
+    }
+
     const unsupported = distribution as { relation: string };
     diagnostics.push({
       severity: "error",
@@ -736,6 +741,94 @@ function applyDistributeX(
     };
 
     if (offset.dx === 0) {
+      continue;
+    }
+
+    const translated = translateResolvedObject(target.object, offset);
+    resolvedObjects[target.index] = translated;
+    objectMap.set(target.objectId, translated);
+  }
+}
+
+function applyDistributeY(
+  distribution: SceneDistribution,
+  resolvedObjects: ResolvedObject[],
+  objectMap: Map<string, ResolvedObject>,
+  diagnostics: Diagnostic[],
+): void {
+  if (distribution.objectIds.length < 2) {
+    diagnostics.push({
+      severity: "error",
+      message: "Could not distributeY: expected at least 2 object ids",
+    });
+    return;
+  }
+
+  const duplicateObjectId = findDuplicateObjectId(distribution.objectIds);
+
+  if (duplicateObjectId) {
+    diagnostics.push({
+      severity: "error",
+      message: `Could not distributeY: duplicate object id ${duplicateObjectId}`,
+    });
+    return;
+  }
+
+  const resolvedIndexes = new Map<string, number>();
+
+  for (const [index, object] of resolvedObjects.entries()) {
+    resolvedIndexes.set(object.id, index);
+  }
+
+  const targets: Array<{ objectId: string; object: ResolvedObject; index: number }> = [];
+
+  for (const objectId of distribution.objectIds) {
+    const resolvedObject = objectMap.get(objectId);
+    const resolvedIndex = resolvedIndexes.get(objectId);
+
+    if (!resolvedObject || resolvedIndex === undefined) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not distributeY: missing object ${objectId}`,
+      });
+      return;
+    }
+
+    if (!resolvedObject.anchors.center) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not distributeY: missing center anchor for ${objectId}`,
+      });
+      return;
+    }
+
+    targets.push({ objectId, object: resolvedObject, index: resolvedIndex });
+  }
+
+  const firstCenterY = targets[0]?.object.anchors.center?.y;
+  const lastCenterY = targets[targets.length - 1]?.object.anchors.center?.y;
+
+  if (firstCenterY === undefined || lastCenterY === undefined) {
+    return;
+  }
+
+  const denominator = targets.length - 1;
+
+  for (let index = 1; index < targets.length - 1; index += 1) {
+    const target = targets[index];
+    const targetCenter = target?.object.anchors.center;
+
+    if (!target || !targetCenter) {
+      continue;
+    }
+
+    const expectedCenterY = firstCenterY + ((lastCenterY - firstCenterY) * index) / denominator;
+    const offset = {
+      dx: 0,
+      dy: expectedCenterY - targetCenter.y,
+    };
+
+    if (offset.dy === 0) {
       continue;
     }
 

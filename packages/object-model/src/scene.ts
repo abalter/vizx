@@ -5,7 +5,12 @@ export interface DistributeXOperation {
   readonly objectIds: readonly string[];
 }
 
-export type SceneDistribution = DistributeXOperation;
+export interface DistributeYOperation {
+  readonly relation: "distributeY";
+  readonly objectIds: readonly string[];
+}
+
+export type SceneDistribution = DistributeXOperation | DistributeYOperation;
 
 export interface ObjectScene {
   readonly objects: readonly DrawableObject[];

@@ -17,7 +17,7 @@ Alignment is applied after an object's intrinsic geometry is resolved and after 
 | `alignTop` | implemented | `target.north.y = reference.north.y` |
 | `alignBottom` | implemented | `target.south.y = reference.south.y` |
 | `distributeX` | implemented | Distributes ordered object `center.x` values evenly between fixed first/last objects (`docs/DISTRIBUTION_DESIGN.md`) |
-| `distributeY` | future | Designed, not implemented (`docs/DISTRIBUTION_DESIGN.md`) |
+| `distributeY` | implemented | Distributes ordered object `center.y` values evenly between fixed first/last objects (`docs/DISTRIBUTION_DESIGN.md`) |
 
 ## Implemented Center-Axis Alignment
 
@@ -53,9 +53,7 @@ Arbitrary target-edge-to-arbitrary-reference-anchor behavior is still deferred.
 
 ## Future Distribution
 
-- `distributeY`
-
-`distributeX` is implemented. `distributeY` is designed in [`docs/DISTRIBUTION_DESIGN.md`](./DISTRIBUTION_DESIGN.md) and remains unimplemented.
+`distributeX` and `distributeY` are implemented in the initial center-based distribution family.
 
 ## Current alignY semantics
 
@@ -94,7 +92,6 @@ Alignment is not a general constraint solver. The following are explicitly defer
 
 - arbitrary target-anchor-to-reference-anchor alignment
 - multi-object alignment groups
-- distributeY
 - solver behavior and general constraint solving
 - collision avoidance
 - automatic graph layout

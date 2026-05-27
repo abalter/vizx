@@ -850,8 +850,8 @@ describe("resolveScene", () => {
     expect(bToC?.end).toEqual(c.anchors.center);
   });
 
-  it.skip("distributeY evenly spaces center.y across ordered objects while preserving first/last center.y", () => {
-    const scene = {
+  it("distributeY evenly spaces center.y across ordered objects while preserving first/last center.y", () => {
+    const baselineScene: ObjectScene = {
       objects: [
         {
           kind: "group",
@@ -885,22 +885,50 @@ describe("resolveScene", () => {
         { kind: "connector", id: "top-middle", from: { objectId: "Top", anchor: "center" }, to: { objectId: "Middle", anchor: "center" } },
         { kind: "connector", id: "middle-bottom", from: { objectId: "Middle", anchor: "center" }, to: { objectId: "Bottom", anchor: "center" } },
       ],
-      distribution: [{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }],
-    } as unknown as ObjectScene;
+    };
 
+    const scene: ObjectScene = {
+      ...baselineScene,
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }],
+    };
+
+    const baseline = resolveScene(baselineScene);
     const result = resolveScene(scene);
+    const baselineTop = requireResolvedObject(baseline, "Top");
+    const baselineMiddle = requireResolvedObject(baseline, "Middle");
+    const baselineBottom = requireResolvedObject(baseline, "Bottom");
     const top = requireResolvedObject(result, "Top");
     const middle = requireResolvedObject(result, "Middle");
     const bottom = requireResolvedObject(result, "Bottom");
+    const baselineMiddleFrame = baselineMiddle.children?.find((child) => child.id === "Middle.frame");
+    const middleFrame = middle.children?.find((child) => child.id === "Middle.frame");
+    const topToMiddle = result.resolved.connectors.find((connector) => connector.id === "top-middle");
+    const middleToBottom = result.resolved.connectors.find((connector) => connector.id === "middle-bottom");
 
     const expectedMiddle = ((top.anchors.center?.y ?? 0) + (bottom.anchors.center?.y ?? 0)) / 2;
+    const appliedDy = (middle.anchors.center?.y ?? 0) - (baselineMiddle.anchors.center?.y ?? 0);
 
     expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
-    expect(top.anchors.center?.y).toBeDefined();
-    expect(bottom.anchors.center?.y).toBeDefined();
+    expect(top.anchors.center?.y).toBe(baselineTop.anchors.center?.y);
+    expect(bottom.anchors.center?.y).toBe(baselineBottom.anchors.center?.y);
+    expect(middle.anchors.center?.y).not.toBe(baselineMiddle.anchors.center?.y);
     expect(middle.anchors.center?.y).toBeCloseTo(expectedMiddle, 8);
-    expect(middle.anchors.center?.x).toBeDefined();
-    expect(result.resolved.connectors.every((connector) => Number.isFinite(connector.end.x) && Number.isFinite(connector.end.y))).toBe(true);
+    expect(middle.anchors.center?.x).toBe(baselineMiddle.anchors.center?.x);
+
+    expect(middleFrame?.geometry?.x).toBe(middleFrame?.bbox.x);
+    expect(middleFrame?.geometry?.y).toBe(middleFrame?.bbox.y);
+    expect(middle.anchors.west?.x).toBeCloseTo(middle.bbox.x, 8);
+    expect(middle.anchors.east?.x).toBeCloseTo(middle.bbox.x + middle.bbox.width, 8);
+    expect(middle.anchors.north?.y).toBeCloseTo(middle.bbox.y, 8);
+    expect(middle.anchors.south?.y).toBeCloseTo(middle.bbox.y + middle.bbox.height, 8);
+
+    expect(middleFrame?.anchors.center?.y).toBeCloseTo((baselineMiddleFrame?.anchors.center?.y ?? 0) + appliedDy, 8);
+    expect(middleFrame?.anchors.center?.x).toBeCloseTo(baselineMiddleFrame?.anchors.center?.x ?? 0, 8);
+
+    expect(topToMiddle?.start).toEqual(top.anchors.center);
+    expect(topToMiddle?.end).toEqual(middle.anchors.center);
+    expect(middleToBottom?.start).toEqual(middle.anchors.center);
+    expect(middleToBottom?.end).toEqual(bottom.anchors.center);
   });
 
   it("reports a diagnostic when distributeX references a missing object id", () => {
@@ -957,6 +985,63 @@ describe("resolveScene", () => {
     expect(result.diagnostics).toContainEqual({
       severity: "error",
       message: "Could not distributeX: expected at least 2 object ids",
+    });
+  });
+
+  it("reports a diagnostic when distributeY references a missing object id", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Top",
+          placement: { kind: "absolute", position: point(200, 90) },
+          children: [
+            { kind: "text", id: "Top.label", center: point(0, 0), text: "Top" },
+            { kind: "rect", id: "Top.frame", fitToText: { textId: "Top.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Bottom",
+          placement: { kind: "absolute", position: point(280, 360) },
+          children: [
+            { kind: "text", id: "Bottom.label", center: point(0, 0), text: "Bottom" },
+            { kind: "rect", id: "Bottom.frame", fitToText: { textId: "Bottom.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Missing", "Bottom"] }],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeY: missing object Missing",
+    });
+  });
+
+  it("reports a diagnostic when distributeY has fewer than two object ids", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Top",
+          placement: { kind: "absolute", position: point(200, 90) },
+          children: [
+            { kind: "text", id: "Top.label", center: point(0, 0), text: "Top" },
+            { kind: "rect", id: "Top.frame", fitToText: { textId: "Top.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Top"] }],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics).toContainEqual({
+      severity: "error",
+      message: "Could not distributeY: expected at least 2 object ids",
     });
   });
 

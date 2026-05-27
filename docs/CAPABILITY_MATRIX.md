@@ -19,6 +19,7 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 | `alignTop` alignment | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `alignment-family` | Indirect | Runs after placement and sets target `north.y` to the reference object's `north.y`. |
 | `alignBottom` alignment | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `alignment-family` | Indirect | Runs after placement and sets target `south.y` to the reference object's `south.y`. |
 | `distributeX` distribution | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `distribute-x` | Indirect | Runs after alignment and evenly spaces ordered `center.x` values between fixed first/last objects. |
+| `distributeY` distribution | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `distribute-y` | Indirect | Runs after alignment and evenly spaces ordered `center.y` values between fixed first/last objects. |
 | Straight connector | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `basic`, `connectors`, `mixed-nested-placement`, `alignment-reference` | Yes | Connectors resolve anchor endpoints and serialize as straight paths. |
 | Inspect output | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/cli/src/demoScene.test.ts](../packages/cli/src/demoScene.test.ts) | All registered examples | Indirect | Example harness verifies every example can be inspected. |
 | Debug overlay | [packages/resolver/src/debugOverlay.test.ts](../packages/resolver/src/debugOverlay.test.ts) | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | All registered examples | Yes | Overlay is generated from resolved model data using render nodes. |
@@ -30,9 +31,8 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 - Parser-driven example sources
 - General graph layout
 - align (other than `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, and `alignY`)
-- distributeY (designed in [`docs/DISTRIBUTION_DESIGN.md`](./DISTRIBUTION_DESIGN.md), not implemented)
 - Flowchart semantics
 - Plotting or chart grammars
 - Nonlinear constraints or a full constraint solver
 
-The `alignment-reference` example remains a reference fixture for ongoing alignment and future distribution work. `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, `alignY`, and `distributeX` are implemented, while `distributeY` remains future work in [`docs/ALIGNMENT_DESIGN.md`](./ALIGNMENT_DESIGN.md).
+The `alignment-reference` example remains a reference fixture for ongoing alignment and future distribution work. `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, `alignY`, `distributeX`, and `distributeY` are implemented in the initial center-based distribution family.
