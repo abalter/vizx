@@ -6,18 +6,55 @@ VizX should treat alignment as a small deterministic post-placement operation, n
 
 Alignment is applied after an object's intrinsic geometry is resolved and after any explicit placement has been applied. It should adjust already-resolved objects into a shared baseline or edge relationship without introducing global layout behavior.
 
-## Initial operations
+## Operation Status
 
-The intended first operations are:
+| Operation | Status | Meaning |
+| --- | --- | --- |
+| `alignX` | implemented | `target.center.x = referenceAnchor.x` |
+| `alignY` | implemented | `target.center.y = referenceAnchor.y` |
+| `alignLeft` | future | `target.west.x = reference.west.x` |
+| `alignRight` | future | `target.east.x = reference.east.x` |
+| `alignTop` | future | `target.north.y = reference.north.y` |
+| `alignBottom` | future | `target.south.y = reference.south.y` |
+| `distributeX` | future | Not designed yet |
+| `distributeY` | future | Not designed yet |
 
-- `alignY`: make a target object's center `y` match the referenced anchor's `y`
-- `alignX`: make a target object's center `x` match the referenced anchor's `x`
-- `alignLeft`: align left edges
-- `alignRight`: align right edges
-- `alignTop`: align top edges
-- `alignBottom`: align bottom edges
+## Implemented Center-Axis Alignment
 
-The first implementation target should be the simplest one available in the current object model, preferably `alignY` using the target center and a reference anchor.
+The current alignment model is intentionally narrow and deterministic:
+
+- `alignX`: `target.center.x` is translated until it matches `referenceAnchor.x`
+- `alignY`: `target.center.y` is translated until it matches `referenceAnchor.y`
+
+Reference anchors currently used in tests are `center`, `north`, `south`, `east`, and `west`.
+
+## Future Edge Alignment
+
+Edge alignment is intentionally distinct from center-axis alignment.
+
+- `alignX` and `alignY` align the target center axes (`target.center.x` or `target.center.y`) to a selected reference anchor coordinate.
+- Edge alignment instead aligns corresponding target and reference edges by default.
+
+The first intended edge semantics are:
+
+- `alignLeft`
+- `alignRight`
+- `alignTop`
+- `alignBottom`
+
+- `alignLeft`: `target.west.x = reference.west.x`
+- `alignRight`: `target.east.x = reference.east.x`
+- `alignTop`: `target.north.y = reference.north.y`
+- `alignBottom`: `target.south.y = reference.south.y`
+
+Arbitrary target-edge-to-arbitrary-reference-anchor behavior is still deferred.
+
+## Future Distribution
+
+- `distributeX`
+- `distributeY`
+
+Distribution behavior and spacing policy are not designed yet.
 
 ## Current alignY semantics
 
@@ -43,17 +80,23 @@ VizX currently uses SVG-style scene coordinates, so larger `y` values move downw
 
 ## Relationship to placement
 
-Alignment should conceptually happen after intrinsic object geometry is resolved and after explicit placement relations have been applied. The current placement system establishes the scene baseline; alignment can then make a selected axis or edge consistent with a reference object.
+Alignment ordering is shared across implemented and future alignment operations:
+
+- resolve intrinsic object geometry
+- apply absolute and relative placement
+- apply alignment adjustments
+- resolve connectors and render scene from final anchors
 
 ## No solver yet
 
-Alignment is not a general constraint solver. The following remain out of scope for now:
+Alignment is not a general constraint solver. The following are explicitly deferred:
 
-- cycles
-- multi-object distribution
+- arbitrary target-anchor-to-reference-anchor alignment
+- multi-object alignment groups
+- distributeX and distributeY
+- solver behavior and general constraint solving
 - collision avoidance
 - automatic graph layout
-- general nonlinear constraint solving
 
 ## Diagnostics
 
@@ -65,5 +108,3 @@ When alignment is implemented, it should eventually report diagnostics for:
 - missing reference anchor
 - unsupported alignment relation
 - ambiguous or cyclic alignment
-
-This note is intentionally preparatory. It documents the intended model before implementation begins.

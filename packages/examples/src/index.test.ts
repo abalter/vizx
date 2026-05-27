@@ -250,6 +250,41 @@ describe("example registry", () => {
 
     expect(target.anchors.center.y).toBe(reference.anchors.center.y);
   });
+
+  it.skip("pending spec: alignLeft makes target.west.x match reference.west.x", () => {
+    const scene = {
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: { x: 220, y: 160 } },
+          children: [
+            { kind: "text", id: "Reference.label", center: { x: 0, y: 0 }, text: "Reference" },
+            { kind: "rect", id: "Reference.frame", fitToText: { textId: "Reference.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 64 },
+          align: { relation: "alignLeft", reference: { objectId: "Reference", anchor: "west" } },
+          children: [
+            { kind: "text", id: "Target.label", center: { x: 0, y: 0 }, text: "Target" },
+            { kind: "rect", id: "Target.frame", fitToText: { textId: "Target.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-to-target-left", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "Target", anchor: "west" } },
+      ],
+    } as unknown as Parameters<typeof resolveScene>[0];
+
+    const result = resolveScene(scene);
+    const reference = requireResolvedObject(result, "Reference");
+    const target = requireResolvedObject(result, "Target");
+
+    expect(target.anchors.west?.x).toBe(reference.anchors.west?.x);
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

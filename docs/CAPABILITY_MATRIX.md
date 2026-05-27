@@ -24,7 +24,7 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 
 - Parser-driven example sources
 - General graph layout
-- align (other than `alignX` and `alignY`)
+- align (other than `alignX` and `alignY`; edge alignment semantics are designed but not implemented)
 - distribute
 - Flowchart semantics
 - Plotting or chart grammars
