@@ -11,6 +11,7 @@ Status:
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for current effective Core IR contracts.
 See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for broader schema-planning context.
+See [JSON_CORE_IR_BASIC_MAPPING.md](./JSON_CORE_IR_BASIC_MAPPING.md) for strict field-by-field mapping from proposed v0 JSON keys to current `ObjectScene` fields for `basic`.
 
 ## 1. Purpose
 
