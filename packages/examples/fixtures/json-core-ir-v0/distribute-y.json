@@ -1,0 +1,136 @@
+{
+  "objects": [
+    {
+      "id": "Top",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 200,
+          "y": 90
+        }
+      },
+      "children": [
+        {
+          "id": "Top.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Top"
+        },
+        {
+          "id": "Top.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Top.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Middle",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "Top",
+          "anchor": "east"
+        },
+        "gap": 74
+      },
+      "children": [
+        {
+          "id": "Middle.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Middle"
+        },
+        {
+          "id": "Middle.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Middle.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "Bottom",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 280,
+          "y": 360
+        }
+      },
+      "children": [
+        {
+          "id": "Bottom.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Bottom"
+        },
+        {
+          "id": "Bottom.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Bottom.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "kind": "connector",
+      "id": "top-middle",
+      "from": {
+        "objectId": "Top",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "Middle",
+        "anchor": "center"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "middle-bottom",
+      "from": {
+        "objectId": "Middle",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "Bottom",
+        "anchor": "center"
+      }
+    }
+  ],
+  "distribution": [
+    {
+      "relation": "distributeY",
+      "objectIds": ["Top", "Middle", "Bottom"]
+    }
+  ]
+}

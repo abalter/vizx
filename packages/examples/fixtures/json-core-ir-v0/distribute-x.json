@@ -1,0 +1,136 @@
+{
+  "objects": [
+    {
+      "id": "A",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 120,
+          "y": 150
+        }
+      },
+      "children": [
+        {
+          "id": "A.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "First"
+        },
+        {
+          "id": "A.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "A.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "kind": "group",
+      "placement": {
+        "kind": "below",
+        "reference": {
+          "objectId": "A",
+          "anchor": "south"
+        },
+        "gap": 52
+      },
+      "children": [
+        {
+          "id": "B.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Middle"
+        },
+        {
+          "id": "B.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "B.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 420,
+          "y": 190
+        }
+      },
+      "children": [
+        {
+          "id": "C.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Last"
+        },
+        {
+          "id": "C.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "C.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "kind": "connector",
+      "id": "a-b",
+      "from": {
+        "objectId": "A",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "B",
+        "anchor": "center"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "b-c",
+      "from": {
+        "objectId": "B",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "C",
+        "anchor": "center"
+      }
+    }
+  ],
+  "distribution": [
+    {
+      "relation": "distributeX",
+      "objectIds": ["A", "B", "C"]
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
 import { requireVizxExample } from "./index";
 
-function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment-family"): unknown {
+function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment-family" | "distribute-x" | "distribute-y"): unknown {
   const fixtureUrl = new URL(`../fixtures/json-core-ir-v0/${name}.json`, import.meta.url);
   const fixtureText = readFileSync(fixtureUrl, "utf8");
   return JSON.parse(fixtureText) as unknown;
@@ -242,6 +242,138 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
     expect(edgeBottomSouth.y).toBe(referenceSouth.y);
   });
 
+  it("loads the distribute-x JSON fixture and converts it to an ObjectScene", () => {
+    const fixture = loadJsonCoreIrFixture("distribute-x");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.scene).toBeDefined();
+    expect(result.scene?.objects.map((object) => object.id)).toEqual(["A", "B", "C"]);
+    expect(result.scene?.distribution).toEqual([{ relation: "distributeX", objectIds: ["A", "B", "C"] }]);
+    expect(result.scene?.connectors?.map((connector) => connector.id)).toEqual(["a-b", "b-c"]);
+  });
+
+  it("fixture-converted distribute-x scene matches TypeScript example semantics", () => {
+    const fixture = loadJsonCoreIrFixture("distribute-x");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+    const convertedScene = result.scene!;
+
+    const convertedInspection = inspectScene(convertedScene);
+    const convertedResolved = resolveScene(convertedScene);
+    const exampleScene = requireVizxExample("distribute-x").createScene();
+    const exampleInspection = inspectScene(exampleScene);
+    const exampleResolved = resolveScene(exampleScene);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(convertedResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(exampleResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(convertedScene.distribution).toEqual(exampleScene.distribution);
+    expect(convertedInspection.objects.map((object) => object.id)).toEqual(exampleInspection.objects.map((object) => object.id));
+    expect(convertedInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    }))).toEqual(exampleInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    })));
+
+    const convertedById = new Map(convertedInspection.objects.map((object) => [object.id, object]));
+    const exampleById = new Map(exampleInspection.objects.map((object) => [object.id, object]));
+    const a = convertedById.get("A");
+    const b = convertedById.get("B");
+    const c = convertedById.get("C");
+    const exampleB = exampleById.get("B");
+
+    expect(a).toBeDefined();
+    expect(b).toBeDefined();
+    expect(c).toBeDefined();
+    expect(exampleB).toBeDefined();
+
+    if (!a || !b || !c || !exampleB) {
+      throw new Error("Expected distribute-x objects to be present in inspection output.");
+    }
+
+    const aCenter = a.anchors.center;
+    const bCenter = b.anchors.center;
+    const cCenter = c.anchors.center;
+    const exampleBCenter = exampleB.anchors.center;
+
+    if (!aCenter || !bCenter || !cCenter || !exampleBCenter) {
+      throw new Error("Expected distribute-x objects to expose center anchors.");
+    }
+
+    expect((bCenter.x - aCenter.x) * 2).toBeCloseTo(cCenter.x - aCenter.x, 8);
+    expect(bCenter.y).toBeCloseTo(exampleBCenter.y, 8);
+  });
+
+  it("loads the distribute-y JSON fixture and converts it to an ObjectScene", () => {
+    const fixture = loadJsonCoreIrFixture("distribute-y");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.scene).toBeDefined();
+    expect(result.scene?.objects.map((object) => object.id)).toEqual(["Top", "Middle", "Bottom"]);
+    expect(result.scene?.distribution).toEqual([{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }]);
+    expect(result.scene?.connectors?.map((connector) => connector.id)).toEqual(["top-middle", "middle-bottom"]);
+  });
+
+  it("fixture-converted distribute-y scene matches TypeScript example semantics", () => {
+    const fixture = loadJsonCoreIrFixture("distribute-y");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+    const convertedScene = result.scene!;
+
+    const convertedInspection = inspectScene(convertedScene);
+    const convertedResolved = resolveScene(convertedScene);
+    const exampleScene = requireVizxExample("distribute-y").createScene();
+    const exampleInspection = inspectScene(exampleScene);
+    const exampleResolved = resolveScene(exampleScene);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(convertedResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(exampleResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(convertedScene.distribution).toEqual(exampleScene.distribution);
+    expect(convertedInspection.objects.map((object) => object.id)).toEqual(exampleInspection.objects.map((object) => object.id));
+    expect(convertedInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    }))).toEqual(exampleInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    })));
+
+    const convertedById = new Map(convertedInspection.objects.map((object) => [object.id, object]));
+    const exampleById = new Map(exampleInspection.objects.map((object) => [object.id, object]));
+    const top = convertedById.get("Top");
+    const middle = convertedById.get("Middle");
+    const bottom = convertedById.get("Bottom");
+    const exampleMiddle = exampleById.get("Middle");
+
+    expect(top).toBeDefined();
+    expect(middle).toBeDefined();
+    expect(bottom).toBeDefined();
+    expect(exampleMiddle).toBeDefined();
+
+    if (!top || !middle || !bottom || !exampleMiddle) {
+      throw new Error("Expected distribute-y objects to be present in inspection output.");
+    }
+
+    const topCenter = top.anchors.center;
+    const middleCenter = middle.anchors.center;
+    const bottomCenter = bottom.anchors.center;
+    const exampleMiddleCenter = exampleMiddle.anchors.center;
+
+    if (!topCenter || !middleCenter || !bottomCenter || !exampleMiddleCenter) {
+      throw new Error("Expected distribute-y objects to expose center anchors.");
+    }
+
+    expect((middleCenter.y - topCenter.y) * 2).toBeCloseTo(bottomCenter.y - topCenter.y, 8);
+    expect(middleCenter.x).toBeCloseTo(exampleMiddleCenter.x, 8);
+  });
+
   it("returns diagnostics and no scene for malformed input", () => {
     const result = convertJsonCoreIrV0ToObjectScene(42);
 
@@ -305,6 +437,29 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
 
     expect(result.scene).toBeUndefined();
     expect(result.diagnostics.some((message) => message.includes("align.relation must be alignX, alignY, alignLeft, alignRight, alignTop, or alignBottom"))).toBe(true);
+  });
+
+  it("returns diagnostics for an unsupported distribution relation", () => {
+    const result = convertJsonCoreIrV0ToObjectScene({
+      objects: [
+        {
+          id: "A",
+          kind: "group",
+          placement: { kind: "absolute", position: { x: 80, y: 60 } },
+          children: [
+            { id: "A.label", kind: "text", center: { x: 0, y: 0 }, text: "Raw data" },
+            { id: "A.frame", kind: "rect", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      connectors: [],
+      distribution: [
+        { relation: "distributeDiagonal", objectIds: ["A"] },
+      ],
+    });
+
+    expect(result.scene).toBeUndefined();
+    expect(result.diagnostics.some((message) => message.includes("distribution[0].relation must be distributeX or distributeY"))).toBe(true);
   });
 
   it("returns diagnostics for malformed connector endpoints", () => {

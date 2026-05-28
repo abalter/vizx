@@ -8,6 +8,7 @@ Status:
 - now mirrored by a real fixture file at `packages/examples/fixtures/json-core-ir-v0/basic.json`
 - additional placement coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/relative-placement.json`
 - additional alignment coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/alignment-family.json`
+- additional distribution coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/distribute-x.json` and `packages/examples/fixtures/json-core-ir-v0/distribute-y.json`
 - not validated by JSON Schema
 - not a public stable format
 - intentionally limited to the `basic` slice
@@ -26,13 +27,15 @@ Currently supported by the converter skeleton:
 
 - scene `objects` array
 - scene `connectors` array
+- scene `distribution` array
 - object kinds: `group`, `text`, `rect`
-- `rightOf` placement (plus `absolute` for the baseline anchor object)
+- placement relations: `rightOf`, `leftOf`, `above`, `below` (plus `absolute`)
+- alignment relations: `alignX`, `alignY`, `alignLeft`, `alignRight`, `alignTop`, `alignBottom`
+- distribution relations: `distributeX`, `distributeY`
 - connector endpoint anchor refs (`from`/`to` with `objectId` and `anchor`)
 
 Not supported yet:
 
-- distribution JSON
 - JSON Schema validation
 - parser lowering integration
 - public format stability guarantees
@@ -88,7 +91,7 @@ Compact basic-style scene shape accepted by the converter:
 
 ## 4. Relationship to Converter Tests
 
-Converter tests now load fixture files from `packages/examples/fixtures/json-core-ir-v0/` (including `basic.json`, `relative-placement.json`, and `alignment-family.json`) from disk, convert them directly, and compare converted scenes against matching TypeScript examples at structural and semantic levels.
+Converter tests now load fixture files from `packages/examples/fixtures/json-core-ir-v0/` (including `basic.json`, `relative-placement.json`, `alignment-family.json`, `distribute-x.json`, and `distribute-y.json`) from disk, convert them directly, and compare converted scenes against matching TypeScript examples at structural and semantic levels.
 
 This document is not tested directly and does not replace test assertions.
 

@@ -1,6 +1,6 @@
 import type { AnchorName, AnchorRef } from "./anchors";
 import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement } from "./objects";
-import type { ObjectScene } from "./scene";
+import type { ObjectScene, SceneDistribution } from "./scene";
 
 export interface JsonCoreIrV0ConversionResult {
   readonly scene?: ObjectScene;
@@ -52,6 +52,24 @@ export function convertJsonCoreIrV0ToObjectScene(input: unknown): JsonCoreIrV0Co
     }
   }
 
+  const distributionValue = input.distribution;
+  const convertedDistribution: SceneDistribution[] = [];
+
+  if (distributionValue !== undefined) {
+    if (!Array.isArray(distributionValue)) {
+      diagnostics.push("Scene distribution must be an array.");
+    } else {
+      for (let index = 0; index < distributionValue.length; index += 1) {
+        const distributionResult = convertDistribution(distributionValue[index], `distribution[${index}]`);
+        diagnostics.push(...distributionResult.diagnostics);
+
+        if (distributionResult.operation) {
+          convertedDistribution.push(distributionResult.operation);
+        }
+      }
+    }
+  }
+
   if (diagnostics.length > 0) {
     return { diagnostics };
   }
@@ -59,6 +77,7 @@ export function convertJsonCoreIrV0ToObjectScene(input: unknown): JsonCoreIrV0Co
   const scene: ObjectScene = {
     objects: convertedObjects,
     connectors: convertedConnectors,
+    distribution: convertedDistribution.length > 0 ? convertedDistribution : undefined,
   };
 
   return { scene, diagnostics };
@@ -250,6 +269,34 @@ function convertAlignment(value: unknown, path: string, diagnostics: string[]): 
   return undefined;
 }
 
+function convertDistribution(value: unknown, path: string): { operation?: SceneDistribution; diagnostics: string[] } {
+  const diagnostics: string[] = [];
+
+  if (!isRecord(value)) {
+    return failAt(path, "Distribution operation must be an object.");
+  }
+
+  const relation = readString(value.relation, `${path}.relation`, diagnostics);
+  const objectIds = readStringArray(value.objectIds, `${path}.objectIds`, diagnostics);
+
+  if (!relation || !objectIds || diagnostics.length > 0) {
+    return { diagnostics };
+  }
+
+  if (relation !== "distributeX" && relation !== "distributeY") {
+    diagnostics.push(`${path}.relation must be distributeX or distributeY.`);
+    return { diagnostics };
+  }
+
+  return {
+    operation: {
+      relation,
+      objectIds,
+    },
+    diagnostics,
+  };
+}
+
 function convertConnector(value: unknown, path: string): { connector?: ConnectorObject; diagnostics: string[] } {
   const diagnostics: string[] = [];
 
@@ -343,6 +390,29 @@ function readString(value: unknown, path: string, diagnostics: string[]) {
   }
 
   return value;
+}
+
+function readStringArray(value: unknown, path: string, diagnostics: string[]) {
+  if (!Array.isArray(value)) {
+    diagnostics.push(`${path} must be an array.`);
+    return undefined;
+  }
+
+  const entries: string[] = [];
+
+  for (let index = 0; index < value.length; index += 1) {
+    const entry = readString(value[index], `${path}[${index}]`, diagnostics);
+
+    if (entry) {
+      entries.push(entry);
+    }
+  }
+
+  if (diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return entries;
 }
 
 function readNumber(value: unknown, path: string, diagnostics: string[]) {
