@@ -9,10 +9,12 @@ Status:
 - no validator library has been chosen
 - parser implementation and parser-lowering tests remain out of scope
 - current code now includes a provisional JSON-to-`ObjectScene` converter plus committed fixture coverage for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
+- a draft review schema file now exists at `schemas/json-core-ir-v0.schema.json`, but it is not enforced by runtime validation or tests
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contract.
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
 See [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for docs-only pass/fail acceptance checks for future v0 schema/converter work.
+See `schemas/json-core-ir-v0.schema.json` for the current draft static schema artifact describing the supported fixture surface.
 
 ## 1. Purpose
 
@@ -47,6 +49,12 @@ Current implementation status:
 ## 3. Initial Schema Surface (Planned)
 
 Future JSON schema coverage should map directly to current Core IR concepts in `ObjectScene` and related object-model types.
+
+Current draft artifact note:
+
+- `schemas/json-core-ir-v0.schema.json` is a static draft review artifact only
+- it describes the currently supported fixture/converter slice, not the full future Core IR surface
+- it is not yet wired into runtime validation, tests, or dependency-based schema tooling
 
 ### 3.1 Scene and Objects
 

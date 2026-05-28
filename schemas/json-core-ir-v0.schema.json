@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./json-core-ir-v0.schema.json",
+  "title": "VizX JSON Core IR v0 (draft review artifact)",
+  "description": "Draft schema for the currently supported JSON Core IR v0 fixture surface. This file is not enforced by runtime validation yet and does not imply public format stability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["objects", "connectors"],
+  "properties": {
+    "objects": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/drawableObject" }
+    },
+    "connectors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/connector" }
+    },
+    "distribution": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/distributionOperation" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "anchorName": {
+      "type": "string",
+      "enum": [
+        "center",
+        "north",
+        "south",
+        "east",
+        "west",
+        "northEast",
+        "northWest",
+        "southEast",
+        "southWest",
+        "baseline"
+      ]
+    },
+    "anchorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objectId", "anchor"],
+      "properties": {
+        "objectId": { "$ref": "#/$defs/nonEmptyString" },
+        "anchor": { "$ref": "#/$defs/anchorName" }
+      }
+    },
+    "fitToText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["textId", "paddingX", "paddingY"],
+      "properties": {
+        "textId": { "$ref": "#/$defs/nonEmptyString" },
+        "paddingX": { "type": "number" },
+        "paddingY": { "type": "number" }
+      }
+    },
+    "alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation", "reference"],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": [
+            "alignX",
+            "alignY",
+            "alignLeft",
+            "alignRight",
+            "alignTop",
+            "alignBottom"
+          ]
+        },
+        "reference": { "$ref": "#/$defs/anchorRef" }
+      }
+    },
+    "absolutePlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "position"],
+      "properties": {
+        "kind": { "const": "absolute" },
+        "position": { "$ref": "#/$defs/point" }
+      }
+    },
+    "relativePlacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reference", "gap"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["rightOf", "leftOf", "above", "below"]
+        },
+        "reference": { "$ref": "#/$defs/anchorRef" },
+        "gap": { "type": "number" }
+      }
+    },
+    "placement": {
+      "oneOf": [
+        { "$ref": "#/$defs/absolutePlacement" },
+        { "$ref": "#/$defs/relativePlacement" }
+      ]
+    },
+    "groupObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "placement", "children"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "group" },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/drawableObject" }
+        }
+      }
+    },
+    "textObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "center", "text"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "text" },
+        "center": { "$ref": "#/$defs/point" },
+        "text": { "$ref": "#/$defs/nonEmptyString" },
+        "align": { "$ref": "#/$defs/alignment" }
+      }
+    },
+    "rectObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "fitToText"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "rect" },
+        "fitToText": { "$ref": "#/$defs/fitToText" },
+        "rx": { "type": "number" },
+        "ry": { "type": "number" },
+        "align": { "$ref": "#/$defs/alignment" }
+      }
+    },
+    "drawableObject": {
+      "oneOf": [
+        { "$ref": "#/$defs/groupObject" },
+        { "$ref": "#/$defs/textObject" },
+        { "$ref": "#/$defs/rectObject" }
+      ]
+    },
+    "connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "from", "to"],
+      "properties": {
+        "kind": { "const": "connector" },
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "from": { "$ref": "#/$defs/anchorRef" },
+        "to": { "$ref": "#/$defs/anchorRef" }
+      }
+    },
+    "distributionOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relation", "objectIds"],
+      "properties": {
+        "relation": {
+          "type": "string",
+          "enum": ["distributeX", "distributeY"]
+        },
+        "objectIds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        }
+      }
+    }
+  }
+}
