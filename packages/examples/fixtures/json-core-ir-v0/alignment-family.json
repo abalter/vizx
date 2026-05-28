@@ -1,0 +1,357 @@
+{
+  "objects": [
+    {
+      "id": "Reference",
+      "kind": "group",
+      "placement": {
+        "kind": "absolute",
+        "position": {
+          "x": 260,
+          "y": 180
+        }
+      },
+      "children": [
+        {
+          "id": "Reference.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Reference nucleus"
+        },
+        {
+          "id": "Reference.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "Reference.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "AxisX",
+      "kind": "group",
+      "placement": {
+        "kind": "below",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "south"
+        },
+        "gap": 88
+      },
+      "align": {
+        "relation": "alignX",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "center"
+        }
+      },
+      "children": [
+        {
+          "id": "AxisX.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Axis X target"
+        },
+        {
+          "id": "AxisX.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "AxisX.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "AxisY",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "east"
+        },
+        "gap": 96
+      },
+      "align": {
+        "relation": "alignY",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "center"
+        }
+      },
+      "children": [
+        {
+          "id": "AxisY.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Axis Y receiver with wider text"
+        },
+        {
+          "id": "AxisY.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "AxisY.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "EdgeLeft",
+      "kind": "group",
+      "placement": {
+        "kind": "below",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "south"
+        },
+        "gap": 24
+      },
+      "align": {
+        "relation": "alignLeft",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "west"
+        }
+      },
+      "children": [
+        {
+          "id": "EdgeLeft.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Left edge"
+        },
+        {
+          "id": "EdgeLeft.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "EdgeLeft.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "EdgeRight",
+      "kind": "group",
+      "placement": {
+        "kind": "above",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "north"
+        },
+        "gap": 24
+      },
+      "align": {
+        "relation": "alignRight",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "east"
+        }
+      },
+      "children": [
+        {
+          "id": "EdgeRight.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Right edge with longer text"
+        },
+        {
+          "id": "EdgeRight.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "EdgeRight.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "EdgeTop",
+      "kind": "group",
+      "placement": {
+        "kind": "rightOf",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "east"
+        },
+        "gap": 48
+      },
+      "align": {
+        "relation": "alignTop",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "north"
+        }
+      },
+      "children": [
+        {
+          "id": "EdgeTop.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Top edge target"
+        },
+        {
+          "id": "EdgeTop.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "EdgeTop.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    },
+    {
+      "id": "EdgeBottom",
+      "kind": "group",
+      "placement": {
+        "kind": "leftOf",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "west"
+        },
+        "gap": 48
+      },
+      "align": {
+        "relation": "alignBottom",
+        "reference": {
+          "objectId": "Reference",
+          "anchor": "south"
+        }
+      },
+      "children": [
+        {
+          "id": "EdgeBottom.label",
+          "kind": "text",
+          "center": {
+            "x": 0,
+            "y": 0
+          },
+          "text": "Bottom edge"
+        },
+        {
+          "id": "EdgeBottom.frame",
+          "kind": "rect",
+          "fitToText": {
+            "textId": "EdgeBottom.label",
+            "paddingX": 12,
+            "paddingY": 10
+          },
+          "rx": 6,
+          "ry": 6
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "kind": "connector",
+      "id": "reference-axis-x",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "AxisX",
+        "anchor": "center"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "reference-axis-y",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "center"
+      },
+      "to": {
+        "objectId": "AxisY",
+        "anchor": "center"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "reference-edge-left",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "west"
+      },
+      "to": {
+        "objectId": "EdgeLeft",
+        "anchor": "west"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "reference-edge-right",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "east"
+      },
+      "to": {
+        "objectId": "EdgeRight",
+        "anchor": "east"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "reference-edge-top",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "north"
+      },
+      "to": {
+        "objectId": "EdgeTop",
+        "anchor": "north"
+      }
+    },
+    {
+      "kind": "connector",
+      "id": "reference-edge-bottom",
+      "from": {
+        "objectId": "Reference",
+        "anchor": "south"
+      },
+      "to": {
+        "objectId": "EdgeBottom",
+        "anchor": "south"
+      }
+    }
+  ]
+}

@@ -7,6 +7,7 @@ Status:
 - illustrative stub only
 - now mirrored by a real fixture file at `packages/examples/fixtures/json-core-ir-v0/basic.json`
 - additional placement coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/relative-placement.json`
+- additional alignment coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/alignment-family.json`
 - not validated by JSON Schema
 - not a public stable format
 - intentionally limited to the `basic` slice
@@ -88,7 +89,7 @@ Compact basic-style scene shape accepted by the converter:
 
 ## 4. Relationship to Converter Tests
 
-Converter tests now load fixture files from `packages/examples/fixtures/json-core-ir-v0/` (including `basic.json` and `relative-placement.json`) from disk, convert them directly, and compare converted scenes against matching TypeScript examples at structural and semantic levels.
+Converter tests now load fixture files from `packages/examples/fixtures/json-core-ir-v0/` (including `basic.json`, `relative-placement.json`, and `alignment-family.json`) from disk, convert them directly, and compare converted scenes against matching TypeScript examples at structural and semantic levels.
 
 This document is not tested directly and does not replace test assertions.
 

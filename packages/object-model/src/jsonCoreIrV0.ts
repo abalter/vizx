@@ -1,5 +1,5 @@
 import type { AnchorName, AnchorRef } from "./anchors";
-import type { ConnectorObject, DrawableObject, ObjectPlacement } from "./objects";
+import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement } from "./objects";
 import type { ObjectScene } from "./scene";
 
 export interface JsonCoreIrV0ConversionResult {
@@ -98,6 +98,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
     }
 
     const placement = convertPlacement(value.placement, `${path}.placement`, diagnostics);
+    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
 
     if (!id) {
       return { diagnostics };
@@ -112,6 +113,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         kind: "group",
         id,
         placement,
+        align,
         children,
       },
       diagnostics,
@@ -121,6 +123,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
   if (kind === "text") {
     const center = readPoint(value.center, `${path}.center`, diagnostics);
     const text = readString(value.text, `${path}.text`, diagnostics);
+    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
 
     if (!id) {
       return { diagnostics };
@@ -136,6 +139,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         id,
         center,
         text,
+        align,
       },
       diagnostics,
     };
@@ -145,6 +149,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
     const fitToText = readFitToText(value.fitToText, `${path}.fitToText`, diagnostics);
     const rx = readOptionalNumber(value.rx, `${path}.rx`, diagnostics);
     const ry = readOptionalNumber(value.ry, `${path}.ry`, diagnostics);
+    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
 
     if (!id) {
       return { diagnostics };
@@ -161,6 +166,7 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         fitToText,
         rx,
         ry,
+        align,
       },
       diagnostics,
     };
@@ -207,6 +213,40 @@ function convertPlacement(value: unknown, path: string, diagnostics: string[]): 
   }
 
   diagnostics.push(`${path}.kind must be absolute, rightOf, leftOf, above, or below.`);
+  return undefined;
+}
+
+function convertAlignment(value: unknown, path: string, diagnostics: string[]): ObjectAlignment | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (!isRecord(value)) {
+    diagnostics.push(`${path} must be an object.`);
+    return undefined;
+  }
+
+  const relation = readString(value.relation, `${path}.relation`, diagnostics);
+
+  if (relation === "alignX"
+    || relation === "alignY"
+    || relation === "alignLeft"
+    || relation === "alignRight"
+    || relation === "alignTop"
+    || relation === "alignBottom") {
+    const reference = readAnchorRef(value.reference, `${path}.reference`, diagnostics);
+
+    if (!reference) {
+      return undefined;
+    }
+
+    return {
+      relation,
+      reference,
+    };
+  }
+
+  diagnostics.push(`${path}.relation must be alignX, alignY, alignLeft, alignRight, alignTop, or alignBottom.`);
   return undefined;
 }
 

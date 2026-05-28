@@ -4,7 +4,7 @@ import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
 import { requireVizxExample } from "./index";
 
-function loadJsonCoreIrFixture(name: "basic" | "relative-placement"): unknown {
+function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment-family"): unknown {
   const fixtureUrl = new URL(`../fixtures/json-core-ir-v0/${name}.json`, import.meta.url);
   const fixtureText = readFileSync(fixtureUrl, "utf8");
   return JSON.parse(fixtureText) as unknown;
@@ -128,6 +128,120 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
     expect(belowAnchor.y).toBeGreaterThan(centerAnchor.y);
   });
 
+  it("loads the alignment-family JSON fixture and converts it to an ObjectScene", () => {
+    const fixture = loadJsonCoreIrFixture("alignment-family");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.scene).toBeDefined();
+    expect(result.scene?.objects.map((object) => object.id)).toEqual([
+      "Reference",
+      "AxisX",
+      "AxisY",
+      "EdgeLeft",
+      "EdgeRight",
+      "EdgeTop",
+      "EdgeBottom",
+    ]);
+    expect(result.scene?.connectors?.map((connector) => connector.id)).toEqual([
+      "reference-axis-x",
+      "reference-axis-y",
+      "reference-edge-left",
+      "reference-edge-right",
+      "reference-edge-top",
+      "reference-edge-bottom",
+    ]);
+  });
+
+  it("fixture-converted alignment-family scene matches TypeScript example semantics", () => {
+    const fixture = loadJsonCoreIrFixture("alignment-family");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+    const convertedScene = result.scene!;
+
+    const convertedInspection = inspectScene(convertedScene);
+    const convertedResolved = resolveScene(convertedScene);
+    const exampleScene = requireVizxExample("alignment-family").createScene();
+    const exampleInspection = inspectScene(exampleScene);
+    const exampleResolved = resolveScene(exampleScene);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(convertedResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(exampleResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    expect(convertedScene.objects.map((object) => ({
+      id: object.id,
+      placementKind: object.placement?.kind,
+      alignRelation: object.align?.relation,
+      alignReference: object.align ? {
+        objectId: object.align.reference.objectId,
+        anchor: object.align.reference.anchor,
+      } : undefined,
+    }))).toEqual(exampleScene.objects.map((object) => ({
+      id: object.id,
+      placementKind: object.placement?.kind,
+      alignRelation: object.align?.relation,
+      alignReference: object.align ? {
+        objectId: object.align.reference.objectId,
+        anchor: object.align.reference.anchor,
+      } : undefined,
+    })));
+
+    expect(convertedInspection.objects.map((object) => object.id)).toEqual(exampleInspection.objects.map((object) => object.id));
+    expect(convertedInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    }))).toEqual(exampleInspection.connectors.map((connector) => ({
+      id: connector.id,
+      from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
+      to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+    })));
+
+    const convertedById = new Map(convertedInspection.objects.map((object) => [object.id, object]));
+    const reference = convertedById.get("Reference");
+    const axisX = convertedById.get("AxisX");
+    const axisY = convertedById.get("AxisY");
+    const edgeLeft = convertedById.get("EdgeLeft");
+    const edgeRight = convertedById.get("EdgeRight");
+    const edgeTop = convertedById.get("EdgeTop");
+    const edgeBottom = convertedById.get("EdgeBottom");
+
+    expect(reference).toBeDefined();
+    expect(axisX).toBeDefined();
+    expect(axisY).toBeDefined();
+    expect(edgeLeft).toBeDefined();
+    expect(edgeRight).toBeDefined();
+    expect(edgeTop).toBeDefined();
+    expect(edgeBottom).toBeDefined();
+
+    if (!reference || !axisX || !axisY || !edgeLeft || !edgeRight || !edgeTop || !edgeBottom) {
+      throw new Error("Expected alignment-family objects to be present in inspection output.");
+    }
+
+    const referenceCenter = reference.anchors.center;
+    const axisXCenter = axisX.anchors.center;
+    const axisYCenter = axisY.anchors.center;
+    const referenceWest = reference.anchors.west;
+    const edgeLeftWest = edgeLeft.anchors.west;
+    const referenceEast = reference.anchors.east;
+    const edgeRightEast = edgeRight.anchors.east;
+    const referenceNorth = reference.anchors.north;
+    const edgeTopNorth = edgeTop.anchors.north;
+    const referenceSouth = reference.anchors.south;
+    const edgeBottomSouth = edgeBottom.anchors.south;
+
+    if (!referenceCenter || !axisXCenter || !axisYCenter || !referenceWest || !edgeLeftWest || !referenceEast || !edgeRightEast || !referenceNorth || !edgeTopNorth || !referenceSouth || !edgeBottomSouth) {
+      throw new Error("Expected alignment-family objects to expose required anchors.");
+    }
+
+    expect(axisXCenter.x).toBe(referenceCenter.x);
+    expect(axisYCenter.y).toBe(referenceCenter.y);
+    expect(edgeLeftWest.x).toBe(referenceWest.x);
+    expect(edgeRightEast.x).toBe(referenceEast.x);
+    expect(edgeTopNorth.y).toBe(referenceNorth.y);
+    expect(edgeBottomSouth.y).toBe(referenceSouth.y);
+  });
+
   it("returns diagnostics and no scene for malformed input", () => {
     const result = convertJsonCoreIrV0ToObjectScene(42);
 
@@ -170,6 +284,27 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
 
     expect(result.scene).toBeUndefined();
     expect(result.diagnostics.some((message) => message.includes("placement.kind must be absolute, rightOf, leftOf, above, or below"))).toBe(true);
+  });
+
+  it("returns diagnostics for an unsupported alignment relation", () => {
+    const result = convertJsonCoreIrV0ToObjectScene({
+      objects: [
+        {
+          id: "A",
+          kind: "group",
+          placement: { kind: "absolute", position: { x: 80, y: 60 } },
+          align: { relation: "alignDiagonal", reference: { objectId: "B", anchor: "center" } },
+          children: [
+            { id: "A.label", kind: "text", center: { x: 0, y: 0 }, text: "Raw data" },
+            { id: "A.frame", kind: "rect", fitToText: { textId: "A.label", paddingX: 12, paddingY: 10 }, rx: 6, ry: 6 },
+          ],
+        },
+      ],
+      connectors: [],
+    });
+
+    expect(result.scene).toBeUndefined();
+    expect(result.diagnostics.some((message) => message.includes("align.relation must be alignX, alignY, alignLeft, alignRight, alignTop, or alignBottom"))).toBe(true);
   });
 
   it("returns diagnostics for malformed connector endpoints", () => {
