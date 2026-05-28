@@ -9,6 +9,7 @@ Status:
 - not a JSON fixture file
 - not a parser-lowering contract
 - not a public stability guarantee
+- committed JSON fixtures now exist separately for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`; this document remains intentionally `basic`-only
 
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the v0 shape proposal, [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for pass/fail acceptance checks, [JSON_CORE_IR_BASIC_EXAMPLE_STUB.md](./JSON_CORE_IR_BASIC_EXAMPLE_STUB.md) for a converter-facing inline JSON stub, and [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current runtime contract.
 
@@ -20,7 +21,7 @@ This document is intentionally narrow:
 
 - baseline: `basic`
 - mapping target: current object-model contracts
-- no implementation in this pass
+- not a full inventory of current converter coverage
 
 ## 2. Scene-Level Mapping Table
 
@@ -130,7 +131,6 @@ This mapping note explicitly defers:
 
 - executable JSON Schema
 - validator library choice
-- real JSON fixture files
 - full object-kind coverage beyond `basic` needs
 - alignment/distribution JSON mapping
 - parser implementation or parser-lowering tests

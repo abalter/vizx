@@ -5,9 +5,10 @@ This document proposes a minimal v0 JSON shape for future Core IR fixture/schema
 Status:
 
 - planning only
-- not an implemented format
+- still framed as a planning note around the original `basic` baseline
 - not an executable JSON Schema
 - not a public stability guarantee
+- current code now includes a provisional converter plus committed JSON fixtures for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for current effective Core IR contracts.
 See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for broader schema-planning context.
@@ -43,6 +44,12 @@ Why `basic` is the correct vertical slice:
 - already passes resolve, inspect, debug-overlay, and SVG render paths in current tests/CLI
 
 This keeps v0 grounded in behavior that exists now.
+
+Current implementation status:
+
+- the original `basic` baseline remains the narrowest explanatory slice for this note
+- implementation coverage now extends beyond `basic` to additional placement, alignment, and distribution fixture families
+- this document should therefore be read as baseline-shape planning, not as an exhaustive list of all currently committed fixtures
 
 ## 3. Minimal Scene Shape (v0)
 
@@ -181,7 +188,6 @@ This v0 shape note defers:
 
 - executable JSON Schema
 - validator library choice
-- JSON fixture files in repo
 - full coverage of all object kinds and advanced fields
 - alignment/distribution JSON shape details
 - parser syntax work

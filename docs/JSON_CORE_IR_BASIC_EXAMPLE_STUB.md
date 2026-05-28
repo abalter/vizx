@@ -9,6 +9,7 @@ Status:
 - additional placement coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/relative-placement.json`
 - additional alignment coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/alignment-family.json`
 - additional distribution coverage is exercised by `packages/examples/fixtures/json-core-ir-v0/distribute-x.json` and `packages/examples/fixtures/json-core-ir-v0/distribute-y.json`
+- committed fixtures are implementation/test artifacts, not a public stable format
 - not validated by JSON Schema
 - not a public stable format
 - intentionally limited to the `basic` slice

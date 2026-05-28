@@ -10,6 +10,7 @@ Status:
 - not a fixture file
 - not a parser contract
 - not a public stability guarantee
+- committed converter and fixture coverage now exists; this document remains about review boundaries, not about whether code/fixtures exist
 
 See [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for the acceptance checklist this document organizes.
 
@@ -81,14 +82,14 @@ Recommended future order:
 
 This sequence keeps each pass reviewable and avoids mixing shape, conversion, and semantic behavior too early.
 
+That sequence has now been partially realized in code for the current provisional converter and fixture set, but the lane split remains useful for future schema-validation and stability work.
+
 ## 5. Explicitly Out of Scope
 
 This document defers:
 
 - choosing a validator library
 - writing executable schema
-- adding JSON fixtures
-- writing converter code
 - parser syntax work
 - parser lowering work
 - round-trip serialization

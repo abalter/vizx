@@ -13,6 +13,7 @@ Core IR here means the structured drawing model consumed by the resolver, not us
   - `packages/object-model/src/objects.ts`
   - `packages/object-model/src/scene.ts`
   - `packages/resolver/src/resolveScene.ts`
+- Related implementation/test artifacts: a provisional JSON Core IR converter and committed JSON fixtures for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
 
 ## 1. Scene
 

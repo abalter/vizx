@@ -5,10 +5,10 @@ This document outlines a future JSON schema strategy for VizX Core IR interchang
 Status:
 
 - planning only
-- no schema files implemented in this pass
-- no parser implementation in this pass
-- no parser-lowering tests in this pass
-- no runtime behavior changes in this pass
+- no executable JSON Schema exists
+- no validator library has been chosen
+- parser implementation and parser-lowering tests remain out of scope
+- current code now includes a provisional JSON-to-`ObjectScene` converter plus committed fixture coverage for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contract.
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
@@ -37,6 +37,12 @@ Today they are the most reliable executable references for Core IR semantics bec
 - already encode implemented placement/alignment/distribution behavior
 
 Future JSON fixtures should be able to express the same object-model concepts as these builders, with semantic parity validated through resolver/inspection comparisons.
+
+Current implementation status:
+
+- committed JSON fixtures now exist for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
+- the current converter supports `group`, `text`, `rect`, connectors, implemented placement relations, implemented alignment relations, and implemented distribution relations
+- these fixtures are implementation/test artifacts, not a public stable interchange guarantee
 
 ## 3. Initial Schema Surface (Planned)
 
@@ -198,7 +204,6 @@ This plan explicitly defers:
 
 - actual JSON schema implementation
 - schema validator dependency decision
-- JSON fixture file introduction
 - parser syntax changes
 - parser implementation changes
 - parser-lowering tests
@@ -215,3 +220,5 @@ When implementation begins later, a narrow sequence is recommended:
 4. Expand optional style coverage and fixture metadata only after baseline equivalence is stable.
 
 This keeps interchange planning incremental and aligned with existing Core IR behavior.
+
+Today, steps 2 and 3 now exist in a narrow provisional form through the committed converter and fixture set above; schema validation remains intentionally separate and unimplemented.

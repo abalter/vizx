@@ -4,6 +4,11 @@ This checklist turns the v0 shape and `basic` mapping notes into future pass/fai
 
 This planning boundary now sits next to a minimal converter skeleton in code, but the checklist itself still defines future acceptance criteria.
 
+Current implementation status:
+
+- committed converter and fixture coverage now exists for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
+- this checklist remains intentionally focused on the original `basic` baseline rather than the full implemented fixture family
+
 Status:
 
 - planning only
@@ -112,7 +117,6 @@ This checklist defers:
 
 - executable JSON Schema
 - validator selection
-- real JSON fixture files
 - full object-kind coverage
 - alignment/distribution JSON mapping
 - parser implementation
