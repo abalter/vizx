@@ -32,7 +32,6 @@ Currently supported by the converter skeleton:
 
 Not supported yet:
 
-- alignment JSON
 - distribution JSON
 - JSON Schema validation
 - parser lowering integration
