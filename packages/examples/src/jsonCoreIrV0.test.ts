@@ -4,6 +4,12 @@ import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
 import { requireVizxExample } from "./index";
 
+function loadJsonCoreIrSchema(): unknown {
+  const schemaUrl = new URL("../../../schemas/json-core-ir-v0.schema.json", import.meta.url);
+  const schemaText = readFileSync(schemaUrl, "utf8");
+  return JSON.parse(schemaText) as unknown;
+}
+
 function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment-family" | "distribute-x" | "distribute-y"): unknown {
   const fixtureUrl = new URL(`../fixtures/json-core-ir-v0/${name}.json`, import.meta.url);
   const fixtureText = readFileSync(fixtureUrl, "utf8");
@@ -11,6 +17,57 @@ function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment
 }
 
 describe("convertJsonCoreIrV0ToObjectScene", () => {
+  it("loads the draft schema file as JSON and exposes the expected top-level metadata", () => {
+    const schema = loadJsonCoreIrSchema() as {
+      $schema?: unknown;
+      $id?: unknown;
+      title?: unknown;
+      type?: unknown;
+      $defs?: Record<string, unknown>;
+    };
+
+    expect(schema.$schema).toBe("https://json-schema.org/draft/2020-12/schema");
+    expect(schema.$id).toBe("./json-core-ir-v0.schema.json");
+    expect(schema.title).toBe("VizX JSON Core IR v0 (draft review artifact)");
+    expect(schema.type).toBe("object");
+    expect(schema.$defs).toBeDefined();
+  });
+
+  it("includes the expected supported enums at a shallow structural level", () => {
+    const schema = loadJsonCoreIrSchema() as {
+      $defs?: {
+        groupObject?: { properties?: { kind?: { const?: unknown } } };
+        textObject?: { properties?: { kind?: { const?: unknown } } };
+        rectObject?: { properties?: { kind?: { const?: unknown } } };
+        alignment?: { properties?: { relation?: { enum?: unknown } } };
+        relativePlacement?: { properties?: { kind?: { enum?: unknown } } };
+        distributionOperation?: { properties?: { relation?: { enum?: unknown } } };
+      };
+    };
+
+    expect(schema.$defs?.groupObject?.properties?.kind?.const).toBe("group");
+    expect(schema.$defs?.textObject?.properties?.kind?.const).toBe("text");
+    expect(schema.$defs?.rectObject?.properties?.kind?.const).toBe("rect");
+    expect(schema.$defs?.distributionOperation?.properties?.relation?.enum).toEqual([
+      "distributeX",
+      "distributeY",
+    ]);
+    expect(schema.$defs?.alignment?.properties?.relation?.enum).toEqual([
+      "alignX",
+      "alignY",
+      "alignLeft",
+      "alignRight",
+      "alignTop",
+      "alignBottom",
+    ]);
+    expect(schema.$defs?.relativePlacement?.properties?.kind?.enum).toEqual([
+      "rightOf",
+      "leftOf",
+      "above",
+      "below",
+    ]);
+  });
+
   it("loads the basic JSON fixture and converts it to an ObjectScene", () => {
     const fixture = loadJsonCoreIrFixture("basic");
     const result = convertJsonCoreIrV0ToObjectScene(fixture);
