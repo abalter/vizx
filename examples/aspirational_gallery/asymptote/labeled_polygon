@@ -1,0 +1,8 @@
+size(200);
+pair A=dir(-40), B=dir(0);
+for(int k=0;k<9;++k)
+{
+pair C=dir(40*(k+1));
+D(A--D(MA(k*40+90,"\beta_{"+string(k)+"}",12,black,C,B,A,0.1,k,orange))--C);
+A=B;B=C;
+}
