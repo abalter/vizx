@@ -5,11 +5,11 @@ This document outlines a future JSON schema strategy for VizX Core IR interchang
 Status:
 
 - planning only
-- no executable JSON Schema exists
-- no validator library has been chosen
+- no runtime schema validation exists
+- Ajv is now used in tests for fixture-vs-schema validation of the current draft schema
 - parser implementation and parser-lowering tests remain out of scope
 - current code now includes a provisional JSON-to-`ObjectScene` converter plus committed fixture coverage for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
-- a draft review schema file now exists at `schemas/json-core-ir-v0.schema.json`, but it is not enforced by runtime validation or tests
+- a draft review schema file now exists at `schemas/json-core-ir-v0.schema.json`; committed fixtures are now validated against it in tests, but it is not enforced by runtime validation
 
 See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contract.
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
@@ -55,8 +55,9 @@ Current draft artifact note:
 
 - `schemas/json-core-ir-v0.schema.json` is a static draft review artifact only
 - it describes the currently supported fixture/converter slice, not the full future Core IR surface
-- it is not yet wired into runtime validation, tests, or dependency-based schema tooling
-- validator dependency choice remains deferred until the criteria in [JSON_SCHEMA_VALIDATOR_SELECTION.md](./JSON_SCHEMA_VALIDATOR_SELECTION.md) are reviewed against the current draft schema/test needs
+- it is now used for test-only fixture validation
+- it is not wired into runtime validation or the JSON-to-`ObjectScene` converter
+- Ajv is the current test-only validator choice for this draft schema/test slice
 
 ### 3.1 Scene and Objects
 
@@ -196,6 +197,11 @@ Recommended assertions:
 - diagnostics expectations (none for valid baseline fixtures, targeted diagnostics for malformed semantic fixtures)
 
 Avoid SVG snapshot coupling.
+
+Current implementation status:
+
+- committed JSON Core IR fixtures are now validated against `schemas/json-core-ir-v0.schema.json` in tests
+- runtime conversion still does not invoke schema validation
 
 ## 6. Relationship to Parser Lowering
 

@@ -5,9 +5,9 @@ This note defines what VizX should require from a JSON Schema validator before a
 Status:
 
 - planning only
-- no validator dependency is installed
+- Ajv is now installed as a dev dependency for test-only fixture validation
 - not wired into runtime conversion
-- not a final dependency decision
+- Ajv is the current validator choice for the test-only schema-validation slice
 - not a public format stability commitment
 
 See [JSON_CORE_IR_SCHEMA_PLAN.md](./JSON_CORE_IR_SCHEMA_PLAN.md) for the broader JSON schema strategy and [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current runtime Core IR contract.
@@ -47,7 +47,13 @@ Secondary preferences:
 
 Ajv is the likely default candidate for the first evaluation pass because it is widely used, supports modern JSON Schema drafts, and has solid TypeScript/Node usage patterns.
 
-That is a working default candidate, not a final project decision.
+That default candidate has now been adopted for the current test-only fixture-validation slice.
+
+Current constraint:
+
+- Ajv is used only in tests to validate committed JSON Core IR fixtures against the draft schema
+- Ajv is not wired into runtime conversion
+- this still does not imply a public stability guarantee for the schema or fixture format
 
 No dependency should be added from this note alone.
 

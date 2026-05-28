@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import Ajv2020 from "ajv/dist/2020";
 import { convertJsonCoreIrV0ToObjectScene } from "@vizx/object-model";
 import { inspectScene, resolveScene } from "@vizx/resolver";
 import { requireVizxExample } from "./index";
@@ -14,6 +15,22 @@ function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment
   const fixtureUrl = new URL(`../fixtures/json-core-ir-v0/${name}.json`, import.meta.url);
   const fixtureText = readFileSync(fixtureUrl, "utf8");
   return JSON.parse(fixtureText) as unknown;
+}
+
+function createJsonCoreIrSchemaValidator() {
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  const schema = loadJsonCoreIrSchema() as object;
+  return ajv.compile(schema);
+}
+
+function formatAjvErrors(errors: readonly { instancePath?: string; message?: string }[] | null | undefined): string {
+  if (!errors || errors.length === 0) {
+    return "unknown validation error";
+  }
+
+  return errors
+    .map((error) => `${error.instancePath || "/"} ${error.message || "validation error"}`)
+    .join("\n");
 }
 
 describe("convertJsonCoreIrV0ToObjectScene", () => {
@@ -66,6 +83,27 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       "above",
       "below",
     ]);
+  });
+
+  it("validates committed JSON Core IR fixtures against the draft schema", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const fixtureNames = [
+      "basic",
+      "relative-placement",
+      "alignment-family",
+      "distribute-x",
+      "distribute-y",
+    ] as const;
+
+    for (const fixtureName of fixtureNames) {
+      const fixture = loadJsonCoreIrFixture(fixtureName);
+      const isValid = validate(fixture);
+
+      expect(
+        isValid,
+        `Fixture ${fixtureName} failed schema validation:\n${formatAjvErrors(validate.errors)}`,
+      ).toBe(true);
+    }
   });
 
   it("loads the basic JSON fixture and converts it to an ObjectScene", () => {
