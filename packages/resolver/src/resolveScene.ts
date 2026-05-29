@@ -239,7 +239,7 @@ function resolveObjectLocal(
         kind: object.kind,
         bbox,
         anchors: anchorsForBoundingBox(bbox),
-        style: object.style,
+        style: { ...defaultLineStyle, ...object.style },
         geometry: {
           pointCount: object.points.length,
         },
@@ -247,7 +247,7 @@ function resolveObjectLocal(
           kind: "polygon",
           id: object.id,
           points: object.points.map((pt) => ({ x: pt.x, y: pt.y })),
-          style: object.style,
+          style: { ...defaultLineStyle, ...object.style },
         },
       };
     }
@@ -259,7 +259,7 @@ function resolveObjectLocal(
         kind: object.kind,
         bbox,
         anchors: anchorsForBoundingBox(bbox),
-        style: object.style,
+        style: { ...defaultLineStyle, ...object.style },
         geometry: {
           cx: object.center.x,
           cy: object.center.y,
@@ -273,7 +273,7 @@ function resolveObjectLocal(
           cy: object.center.y,
           rx: object.rx,
           ry: object.ry,
-          style: object.style,
+          style: { ...defaultLineStyle, ...object.style },
         },
       };
     }

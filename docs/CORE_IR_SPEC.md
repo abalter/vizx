@@ -56,6 +56,25 @@ Common object fields from `BaseObject`:
 - `placement?: ObjectPlacement`
 - `align?: ObjectAlignment`
 
+Current style baseline in `Style`:
+
+- `stroke?: string`
+- `fill?: string`
+- `strokeWidth?: number`
+- `fontFamily?: string`
+- `fontSize?: number`
+- `textAnchor?: "start" | "middle" | "end"`
+- `dominantBaseline?: string`
+- `opacity?: number`
+- `markerStart?: string`
+- `markerEnd?: string`
+
+Current primitive defaults:
+
+- line/polyline/ellipse/polygon use the line default (`stroke: black`, `fill: none`, `strokeWidth: 1`) when style is omitted.
+- rect uses the box default (`stroke: black`, `fill: white`, `strokeWidth: 1`) when style is omitted.
+- connector paths use a connector default (`stroke: black`, `fill: none`, `strokeWidth: 1.5`, `markerEnd: arrowhead`) when style is omitted.
+
 ### 2.1 Line
 
 ```ts
@@ -103,6 +122,7 @@ Ellipse semantics:
 - bbox is derived from center and radii: `x = center.x - rx`, `y = center.y - ry`, `width = rx * 2`, `height = ry * 2`.
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the ellipse's bounding box.
 - ellipse participates in placement/alignment/distribution through the same bbox-anchor model as the other primitives.
+- when style is omitted, ellipse uses line-style defaults (stroke-only).
 
 ### 2.4 Polygon
 
@@ -119,6 +139,7 @@ Polygon semantics:
 - bbox is derived from min/max x and y across all points.
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the polygon's bounding box.
 - polygons with fewer than three points are treated as invalid input and produce a resolver diagnostic.
+- when style is omitted, polygon uses line-style defaults (stroke-only).
 
 ### 2.5 Rect
 

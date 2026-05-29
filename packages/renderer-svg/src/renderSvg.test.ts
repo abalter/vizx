@@ -135,4 +135,48 @@ describe("renderSvg", () => {
     expect(svg).toContain("<polygon");
     expect(svg).toContain('points="20,80 60,20 120,40 132,92 48,104"');
   });
+
+  it("serializes primitive style attributes", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 200, height: 120 },
+      children: [
+        {
+          kind: "line",
+          x1: 10,
+          y1: 20,
+          x2: 80,
+          y2: 20,
+          style: { stroke: "#ef4444", strokeWidth: 2, opacity: 0.7, fill: "none" },
+        },
+        {
+          kind: "polyline",
+          points: [{ x: 20, y: 40 }, { x: 40, y: 60 }, { x: 70, y: 44 }],
+          style: { stroke: "#f97316", strokeWidth: 2, fill: "none" },
+        },
+        {
+          kind: "ellipse",
+          cx: 120,
+          cy: 48,
+          rx: 24,
+          ry: 14,
+          style: { stroke: "#0ea5e9", strokeWidth: 3, fill: "none" },
+        },
+        {
+          kind: "polygon",
+          points: [{ x: 128, y: 88 }, { x: 154, y: 64 }, { x: 186, y: 90 }, { x: 142, y: 106 }],
+          style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('stroke="#ef4444"');
+    expect(svg).toContain('stroke-width="2"');
+    expect(svg).toContain('opacity="0.7"');
+    expect(svg).toContain('stroke="#f97316"');
+    expect(svg).toContain('stroke="#0ea5e9"');
+    expect(svg).toContain('stroke="#0f766e"');
+  });
 });

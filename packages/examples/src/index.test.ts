@@ -131,6 +131,22 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the styled primitives example", () => {
+    const scene = requireVizxExample("styled-primitives").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "styled.line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "styled.ellipse")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "styled.polygon")).toBe(true);
+    expect(svg).toContain('stroke="#ef4444"');
+    expect(svg).toContain('stroke="#0ea5e9"');
+    expect(svg).toContain('stroke="#0f766e"');
+    expect(svg).toContain('opacity="0.8"');
+  });
+
   it("positions the relative-placement example around its center object", () => {
     const inspection = inspectScene(requireVizxExample("relative-placement").createScene());
     const center = requireInspectionObject(inspection, "Center");

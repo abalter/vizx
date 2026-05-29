@@ -12,6 +12,7 @@ import { polygonPrimitiveExample } from "./polygonPrimitive";
 import { polylinePrimitiveExample } from "./polylinePrimitive";
 import { linePrimitiveExample } from "./linePrimitive";
 import { relativePlacementExample } from "./relativePlacement";
+import { styledPrimitivesExample } from "./styledPrimitives";
 import type { VizxExample } from "./types";
 
 export * from "./types";
@@ -29,6 +30,7 @@ export const vizxExamples: readonly VizxExample[] = [
   polylinePrimitiveExample,
   ellipsePrimitiveExample,
   polygonPrimitiveExample,
+  styledPrimitivesExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];

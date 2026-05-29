@@ -24,9 +24,10 @@ What exists today in code:
 - alignment relations: `alignX`, `alignY`, `alignLeft`, `alignRight`, `alignTop`, `alignBottom`
 - scene-level distribution: `distributeX`, `distributeY`
 - bbox-derived anchors: `center`, `north`, `south`, `east`, `west`, and corners, plus `baseline`
-- SVG render nodes: `group`, `rect`, `circle`, `path`, `text`
+- SVG render nodes: `group`, `rect`, `circle`, `line`, `polyline`, `ellipse`, `polygon`, `path`, `text`
 - SVG renderer transform support: translate only
 - style support: stroke, fill, strokeWidth, font settings, opacity, markerStart, markerEnd
+- primitive defaults: line/polyline/ellipse/polygon default to stroke-only; rect defaults to stroke+fill
 
 Behavior that is already implemented:
 
@@ -191,8 +192,8 @@ Object-model shape:
 interface EllipseObject extends BaseObject {
   readonly kind: "ellipse";
   readonly center: Point;
-  readonly radiusX: number;
-  readonly radiusY: number;
+  readonly rx: number;
+  readonly ry: number;
 }
 ```
 

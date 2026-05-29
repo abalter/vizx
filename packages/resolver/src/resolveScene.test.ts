@@ -182,6 +182,48 @@ describe("resolveScene", () => {
     expect(result.diagnostics.some((diagnostic) => diagnostic.message.includes("at least 3 points"))).toBe(true);
   });
 
+  it("preserves explicit primitive style and applies default stroke style where missing", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "line",
+          id: "styled-line",
+          start: point(0, 0),
+          end: point(40, 0),
+          style: { stroke: "#ef4444", strokeWidth: 2 },
+        },
+        {
+          kind: "ellipse",
+          id: "default-ellipse",
+          center: point(60, 20),
+          rx: 12,
+          ry: 8,
+        },
+        {
+          kind: "polygon",
+          id: "styled-polygon",
+          points: [point(0, 40), point(15, 10), point(30, 40)],
+          style: { stroke: "#0f766e", strokeWidth: 3 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const line = result.resolved.objects.find((object) => object.id === "styled-line");
+    const ellipse = result.resolved.objects.find((object) => object.id === "default-ellipse");
+    const polygon = result.resolved.objects.find((object) => object.id === "styled-polygon");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(line?.renderNode.style?.stroke).toBe("#ef4444");
+    expect(line?.renderNode.style?.strokeWidth).toBe(2);
+    expect(ellipse?.renderNode.style?.stroke).toBe("black");
+    expect(ellipse?.renderNode.style?.fill).toBe("none");
+    expect(ellipse?.renderNode.style?.strokeWidth).toBe(1);
+    expect(polygon?.renderNode.style?.stroke).toBe("#0f766e");
+    expect(polygon?.renderNode.style?.strokeWidth).toBe(3);
+    expect(polygon?.renderNode.style?.fill).toBe("none");
+  });
+
   it("places two groups with a connector using anchor references", () => {
     const scene: ObjectScene = {
       objects: [
