@@ -10,10 +10,15 @@ import {
   bboxFromPolygon,
   bboxTranslate,
   bboxUnion,
+  circlePoint,
   distance,
+  angleOf,
   identityTransform,
   midpoint,
+  offsetPoint,
   point,
+  polar,
+  regularPolygonPoints,
   rotatePoint,
   scalePoint,
   subtractPoints,
@@ -27,6 +32,11 @@ describe("geometry kernel", () => {
     expect(addPointVector(point(10, 20), vector(5, -2))).toEqual(point(15, 18));
   });
 
+  it("creates and offsets points", () => {
+    expect(point(2, 3)).toEqual({ x: 2, y: 3 });
+    expect(offsetPoint(point(2, 3), 4, -1)).toEqual(point(6, 2));
+  });
+
   it("subtracts points into a vector", () => {
     expect(subtractPoints(point(10, 20), point(3, 5))).toEqual(vector(7, 15));
   });
@@ -34,6 +44,48 @@ describe("geometry kernel", () => {
   it("computes midpoint and distance", () => {
     expect(midpoint(point(0, 0), point(10, 20))).toEqual(point(5, 10));
     expect(distance(point(0, 0), point(3, 4))).toBe(5);
+  });
+
+  it("computes direction angles in degrees", () => {
+    expect(angleOf(point(0, 0), point(1, 0))).toBeCloseTo(0, 8);
+    expect(angleOf(point(0, 0), point(0, 1))).toBeCloseTo(90, 8);
+    expect(angleOf(point(0, 0), point(-1, 0))).toBeCloseTo(180, 8);
+    expect(angleOf(point(0, 0), point(0, -1))).toBeCloseTo(-90, 8);
+  });
+
+  it("computes polar and circle points", () => {
+    const polarPoint = polar(point(10, 20), 5, 0);
+    const circle = circlePoint(point(10, 20), 5, 90);
+
+    expect(polarPoint.x).toBeCloseTo(15, 8);
+    expect(polarPoint.y).toBeCloseTo(20, 8);
+    expect(circle.x).toBeCloseTo(10, 8);
+    expect(circle.y).toBeCloseTo(25, 8);
+  });
+
+  it("builds regular polygon points with the default upright rotation", () => {
+    const points = regularPolygonPoints(point(100, 100), 20, 5);
+
+    expect(points).toHaveLength(5);
+    expect(points[0]?.x).toBeCloseTo(100, 8);
+    expect(points[0]?.y).toBeCloseTo(80, 8);
+
+    for (const vertex of points) {
+      expect(distance(point(100, 100), vertex)).toBeCloseTo(20, 8);
+    }
+  });
+
+  it("builds rotated regular polygon points", () => {
+    const points = regularPolygonPoints(point(0, 0), 10, 4, 45);
+
+    expect(points).toHaveLength(4);
+    expect(points[0]?.x).toBeCloseTo(7.0710678119, 6);
+    expect(points[0]?.y).toBeCloseTo(7.0710678119, 6);
+  });
+
+  it("throws for invalid regular polygon side count", () => {
+    expect(() => regularPolygonPoints(point(0, 0), 10, 2)).toThrow("sides >= 3");
+    expect(() => regularPolygonPoints(point(0, 0), 10, 2.5)).toThrow("sides >= 3");
   });
 
   it("unions bounding boxes", () => {

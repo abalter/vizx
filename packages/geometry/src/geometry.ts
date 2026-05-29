@@ -59,6 +59,10 @@ export function point(x: number, y: number): Point {
   return { x, y };
 }
 
+export function offsetPoint(source: Point, dx: number, dy: number): Point {
+  return point(source.x + dx, source.y + dy);
+}
+
 export function vector(dx: number, dy: number): Vector {
   return { dx, dy };
 }
@@ -90,6 +94,46 @@ export function midpoint(a: Point, b: Point): Point {
 
 export function distance(a: Point, b: Point): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+export function angleOf(a: Point, b: Point): number {
+  return (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+}
+
+export function polar(origin: Point, radius: number, angleDegrees: number): Point {
+  const radians = (angleDegrees * Math.PI) / 180;
+
+  return point(
+    origin.x + radius * Math.cos(radians),
+    origin.y + radius * Math.sin(radians),
+  );
+}
+
+export function circlePoint(center: Point, radius: number, angleDegrees: number): Point {
+  return polar(center, radius, angleDegrees);
+}
+
+export function regularPolygonPoints(
+  center: Point,
+  radius: number,
+  sides: number,
+  rotationDegrees = -90,
+): readonly Point[] {
+  if (!Number.isFinite(center.x) || !Number.isFinite(center.y) || !Number.isFinite(radius) || !Number.isFinite(sides) || !Number.isFinite(rotationDegrees)) {
+    throw new TypeError("regularPolygonPoints expects finite numeric inputs");
+  }
+
+  if (!Number.isInteger(sides) || sides < 3) {
+    throw new RangeError("regularPolygonPoints expects sides >= 3");
+  }
+
+  if (radius < 0) {
+    throw new RangeError("regularPolygonPoints expects radius >= 0");
+  }
+
+  const stepDegrees = 360 / sides;
+
+  return Array.from({ length: sides }, (_, index) => circlePoint(center, radius, rotationDegrees + stepDegrees * index));
 }
 
 export function bboxFromRect(x: number, y: number, width: number, height: number): BoundingBox {

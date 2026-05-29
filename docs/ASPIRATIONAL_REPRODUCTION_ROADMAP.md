@@ -170,6 +170,12 @@ Detailed Milestone 2 plan:
 
 - [TECHNICAL_GEOMETRY_HELPER_PLAN.md](./TECHNICAL_GEOMETRY_HELPER_PLAN.md)
 
+Current status:
+
+- first pure geometry-helper slice implemented in `@vizx/geometry`
+- implemented helpers: `point`, `offsetPoint`, `distance`, `midpoint`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`
+- no arc helpers, angle-arc helpers, parser/JSON work, or runtime rendering features added in this slice
+
 ## 6. Milestone 3 - Arc And Angle-Mark Support
 
 Goal:

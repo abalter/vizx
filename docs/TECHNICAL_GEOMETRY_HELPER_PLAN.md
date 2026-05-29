@@ -9,6 +9,21 @@ Status:
 - no parser/JSON Core IR/AST changes
 - no dependency additions
 
+Current implementation status:
+
+- first pure-helper slice implemented in `packages/geometry/src/geometry.ts`
+- implemented helpers in this slice:
+  - `point`
+  - `offsetPoint`
+  - `distance`
+  - `midpoint`
+  - `angleOf`
+  - `polar`
+  - `circlePoint`
+  - `regularPolygonPoints`
+- helpers remain pure and dependency-free
+- arc/angle-arc helpers remain deferred
+
 ## 1. Purpose
 
 Milestone 2 goal:
