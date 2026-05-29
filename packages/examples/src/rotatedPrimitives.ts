@@ -4,11 +4,12 @@ import type { VizxExample } from "./types";
 export const rotatedPrimitivesExample: VizxExample = {
   id: "rotated-primitives",
   title: "Rotated primitives",
-  description: "Demonstrates ordered translate and rotate transforms on supported primitive geometry.",
+  description: "Demonstrates ordered translate, rotate, and scale transforms on supported primitive geometry.",
   expectedCapabilities: [
     "ordered transforms",
     "translate transform",
     "rotate transform",
+    "scale transform",
     "transformed bbox anchors",
     "inspect output",
     "debug overlay",
@@ -60,6 +61,7 @@ export const rotatedPrimitivesExample: VizxExample = {
         transform: [
           { kind: "translate", x: 236, y: 84 },
           { kind: "rotate", angleDegrees: -22, around: point(270, 104) },
+          { kind: "scale", sx: 1.15, sy: 0.8, around: point(270, 104) },
         ],
         style: { stroke: "#7c3aed", strokeWidth: 2, fill: "#f3e8ff" },
       },

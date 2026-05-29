@@ -62,16 +62,18 @@ Current transform baseline in `Transform`:
 - ordered operation support in code for:
   - `{ kind: "translate", x, y }`
   - `{ kind: "rotate", angleDegrees, around? }`
+  - `{ kind: "scale", sx, sy?, around? }`
 - compatibility input for previous translate-only shape is still accepted:
   - `{ translateX, translateY }`
 - operations are applied in listed order
+- for scale, `sy` defaults to `sx`
 - resolver applies transform operations before placement/alignment/distribution
 - transformed bboxes remain axis-aligned and anchors remain bbox-derived
 
 Current transform deferrals:
 
-- scale operation support
-- rotation support for `text` and `ellipse` objects (diagnostic + skip in v0)
+- rotation support for `text` objects (diagnostic + skip in v0)
+- scale support for `text` objects (diagnostic + skip in v0)
 - parser/JSON/AST transform surfaces
 
 Current style baseline in `Style`:
@@ -148,7 +150,7 @@ Ellipse semantics:
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the ellipse's bounding box.
 - ellipse participates in placement/alignment/distribution through the same bbox-anchor model as the other primitives.
 - when style is omitted, ellipse uses line-style defaults (stroke-only).
-- rotate transforms on ellipse are currently deferred in v0 (diagnostic + skipped); translate transforms are supported.
+- ordered translate/rotate/scale transforms on ellipse are supported.
 
 ### 2.4 Polygon
 
@@ -239,6 +241,7 @@ Text transform note:
 
 - translate transforms are supported
 - rotate transforms are currently deferred in v0 (diagnostic + skipped)
+- scale transforms are currently deferred in v0 (diagnostic + skipped)
 ```
 
 ### 2.9 Group

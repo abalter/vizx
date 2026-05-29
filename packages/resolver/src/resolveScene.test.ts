@@ -271,6 +271,66 @@ describe("resolveScene", () => {
     }
   });
 
+  it("applies scale transforms before placement and uses transformed anchors for downstream placement", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "line",
+          id: "A",
+          start: point(10, 10),
+          end: point(30, 10),
+          transform: [{ kind: "scale", sx: 2, sy: 0.5, around: point(10, 10) }],
+        },
+        {
+          kind: "line",
+          id: "B",
+          start: point(0, 0),
+          end: point(20, 0),
+          placement: { kind: "rightOf", reference: { objectId: "A", anchor: "east" }, gap: 10 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const a = result.resolved.objects.find((object) => object.id === "A");
+    const b = result.resolved.objects.find((object) => object.id === "B");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(a?.bbox).toEqual({ x: 10, y: 10, width: 40, height: 0 });
+    expect(a?.anchors.east).toEqual(point(50, 10));
+    expect(b?.anchors.west).toEqual(point(60, 10));
+  });
+
+  it("preserves ordered transform semantics when scale composes with translate and rotate", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "line",
+          id: "ordered-scale",
+          start: point(2, 1),
+          end: point(4, 1),
+          transform: [
+            { kind: "translate", x: 1, y: -1 },
+            { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+            { kind: "scale", sx: 2, sy: 0.5, around: point(0, 0) },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const ordered = result.resolved.objects.find((object) => object.id === "ordered-scale");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(ordered?.renderNode.kind).toBe("line");
+    if (ordered?.renderNode.kind === "line") {
+      expect(ordered.renderNode.x1).toBeCloseTo(0, 8);
+      expect(ordered.renderNode.y1).toBeCloseTo(1.5, 8);
+      expect(ordered.renderNode.x2).toBeCloseTo(0, 8);
+      expect(ordered.renderNode.y2).toBeCloseTo(2.5, 8);
+    }
+  });
+
   it("allows transformed objects to participate in placement and connector anchor resolution", () => {
     const scene: ObjectScene = {
       objects: [
@@ -332,6 +392,20 @@ describe("resolveScene", () => {
           end: point(20, 0),
           transform: [{ kind: "translate", x: Number.NaN, y: 10 }],
         },
+        {
+          kind: "line",
+          id: "bad-scale",
+          start: point(0, 0),
+          end: point(20, 0),
+          transform: [{ kind: "scale", sx: Number.POSITIVE_INFINITY, sy: 1 }],
+        },
+        {
+          kind: "text",
+          id: "text-scale",
+          center: point(10, 10),
+          text: "Not scaled",
+          transform: [{ kind: "scale", sx: 2 }],
+        },
       ],
     };
 
@@ -340,6 +414,8 @@ describe("resolveScene", () => {
 
     expect(messages.some((message) => message.includes("rotation is not supported"))).toBe(true);
     expect(messages.some((message) => message.includes("translate requires finite x/y"))).toBe(true);
+    expect(messages.some((message) => message.includes("scale requires finite sx/sy"))).toBe(true);
+    expect(messages.some((message) => message.includes("scaling is not supported"))).toBe(true);
   });
 
   it("reports invalid path diagnostics for empty commands and no explicit points", () => {

@@ -32,7 +32,14 @@ export interface RotateTransform {
   readonly around?: Point;
 }
 
-export type TransformOperation = TranslateTransform | RotateTransform;
+export interface ScaleTransform {
+  readonly kind: "scale";
+  readonly sx: number;
+  readonly sy?: number;
+  readonly around?: Point;
+}
+
+export type TransformOperation = TranslateTransform | RotateTransform | ScaleTransform;
 
 // Compatibility path for the previous transform shape.
 export interface LegacyTranslateTransform {
@@ -162,6 +169,13 @@ export function rotatePoint(source: Point, angleDegrees: number, around: Point =
   );
 }
 
+export function scalePoint(source: Point, sx: number, sy: number = sx, around: Point = point(0, 0)): Point {
+  return point(
+    around.x + (source.x - around.x) * sx,
+    around.y + (source.y - around.y) * sy,
+  );
+}
+
 export function normalizeTransforms(transform: Transform | readonly Transform[] | undefined): readonly TransformOperation[] {
   if (!transform) {
     return identityTransform;
@@ -188,7 +202,11 @@ export function transformPoint(source: Point, transform: Transform | readonly Tr
       return point(current.x + operation.x, current.y + operation.y);
     }
 
-    return rotatePoint(current, operation.angleDegrees, operation.around);
+    if (operation.kind === "rotate") {
+      return rotatePoint(current, operation.angleDegrees, operation.around);
+    }
+
+    return scalePoint(current, operation.sx, operation.sy, operation.around);
   }, source);
 }
 

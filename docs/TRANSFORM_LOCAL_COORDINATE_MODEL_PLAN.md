@@ -4,8 +4,7 @@ This document defines the practical v0 design for transforms and local coordinat
 
 Status:
 
-- first implementation slice is now landed for ordered transform operations with `translate` and `rotate`
-- `scale` remains deferred
+- first implementation slice is now landed for ordered transform operations with `translate`, `rotate`, and `scale`
 - parser syntax, JSON Core IR, and parser AST transform support remain deferred
 
 ## 1. Purpose
@@ -29,10 +28,14 @@ JS/TS remains the host-language layer for loops, functions, recursion, data gene
 Current code baseline relevant to transforms:
 
 - `BaseObject` already has `transform?: Transform`.
-- `Transform` in geometry is currently translate-only:
+- `Transform` in geometry supports ordered operations:
+  - `translate`
+  - `rotate`
+  - `scale` (with `sy` defaulting to `sx`)
+- compatibility input for prior translate-only shape remains accepted:
   - `translateX`
   - `translateY`
-- resolver consumes `source.transform` during placement as an additive translation offset.
+- resolver applies transform operations before placement.
 - placement/alignment/distribution are all translation-based and bbox-anchor based.
 - group bbox is currently the union of resolved child bboxes.
 - connectors resolve endpoints from final object anchors after placement/alignment/distribution.
@@ -41,15 +44,16 @@ Current code baseline relevant to transforms:
 Pipeline as implemented today:
 
 1. resolve local geometry and local bbox
-2. apply placement (includes transform translation)
-3. apply alignment
-4. apply distribution
-5. resolve connectors from final anchors
-6. render using final coordinates
+2. apply ordered transforms (`translate`/`rotate`/`scale`)
+3. apply placement
+4. apply alignment
+5. apply distribution
+6. resolve connectors from final anchors
+7. render using final coordinates
 
 Current limitations:
 
-- no rotate or scale in object model transform shape
+- no transform parser/JSON/AST surfaces in the current implementation
 - no explicit local coordinate frame semantics
 - no transform composition beyond one translate struct
 - no transform-aware bbox for non-translation transforms
@@ -66,6 +70,7 @@ Current implemented subset:
 
 - `translate`
 - `rotate`
+- `scale`
 
 Reasoning:
 
@@ -283,8 +288,8 @@ Transforms alone still do not unlock:
 Recommended first implementation slice after this plan:
 
 1. replace current translate struct with transform-op list on drawable objects
-2. support `translate` and `rotate` only in first code slice
-3. defer `scale` to immediate follow-up slice
+2. support ordered `translate`, `rotate`, and `scale` operations in first code slice
+3. keep all parser/JSON/AST transform surfaces deferred
 4. apply transforms in resolver to primitives and groups
 5. compute post-transform axis-aligned bbox/anchors
 6. keep placement/alignment/distribution as scene-space translation passes
@@ -295,13 +300,13 @@ Recommended first implementation slice after this plan:
 
 Why this is safest:
 
-- rotate is the largest semantic unlock not already covered by placement translation
+- rotate and scale are large semantic unlocks not already covered by placement translation
 - translate is already represented today and can be migrated into op-list form
-- deferring scale by one slice limits risk while preserving coherent design direction
+- including scale in the same slice keeps ordered-transform semantics coherent
 
 Implemented in this slice:
 
-- ordered transform operations are now supported in code for `translate` and `rotate`
+- ordered transform operations are now supported in code for `translate`, `rotate`, and `scale`
 - resolver applies transforms before placement/alignment/distribution
 - axis-aligned post-transform bbox/anchors are used for layout and connectors
 - connectors remain straight and anchor-derived
@@ -309,8 +314,8 @@ Implemented in this slice:
 
 Still deferred in this implementation slice:
 
-- `scale`
-- rotate support for `text` and `ellipse` objects (resolver emits diagnostics and skips those rotate ops)
+- rotate support for `text` objects (resolver emits diagnostics and skips those rotate ops)
+- scale support for `text` objects (resolver emits diagnostics and skips those scale ops)
 - parser/JSON/AST transform surfaces
 
 ## 13. Future Extensions

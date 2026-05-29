@@ -13,6 +13,7 @@ import {
   normalizeTransforms,
   point,
   rotatePoint,
+  scalePoint,
   transformPoint,
   transformPoints,
   type BoundingBox,
@@ -1100,6 +1101,35 @@ function applyObjectTransforms(
       continue;
     }
 
+    if (!Number.isFinite(operation.sx) || (operation.sy !== undefined && !Number.isFinite(operation.sy))) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not apply transform for ${source.id}: scale requires finite sx/sy`,
+      });
+      continue;
+    }
+
+    if (operation.around && (!Number.isFinite(operation.around.x) || !Number.isFinite(operation.around.y))) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not apply transform for ${source.id}: scale around requires finite point coordinates`,
+      });
+      continue;
+    }
+
+    if (!canScaleResolvedObject(transformed)) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not apply scale transform for ${source.id}: scaling is not supported for this object kind in v0`,
+      });
+      continue;
+    }
+
+    const around = operation.around ?? transformed.anchors.center ?? point(0, 0);
+    const sy = operation.sy ?? operation.sx;
+    transformed = scaleResolvedObject(transformed, operation.sx, sy, around);
+    continue;
+
     diagnostics.push({
       severity: "error",
       message: `Unsupported transform operation for ${source.id}`,
@@ -1114,6 +1144,11 @@ function canRotateResolvedObject(object: ResolvedObject): boolean {
     && (object.children?.every((child) => canRotateResolvedObject(child)) ?? true);
 }
 
+function canScaleResolvedObject(object: ResolvedObject): boolean {
+  return canScaleRenderNode(object.renderNode)
+    && (object.children?.every((child) => canScaleResolvedObject(child)) ?? true);
+}
+
 function canRotateRenderNode(node: RenderNode): boolean {
   switch (node.kind) {
     case "text":
@@ -1121,6 +1156,17 @@ function canRotateRenderNode(node: RenderNode): boolean {
       return false;
     case "group":
       return node.children.every((child) => canRotateRenderNode(child));
+    default:
+      return true;
+  }
+}
+
+function canScaleRenderNode(node: RenderNode): boolean {
+  switch (node.kind) {
+    case "text":
+      return false;
+    case "group":
+      return node.children.every((child) => canScaleRenderNode(child));
     default:
       return true;
   }
@@ -1149,6 +1195,32 @@ function rotateResolvedObject(object: ResolvedObject, angleDegrees: number, arou
     geometry: rotateGeometry(object.geometry, angleDegrees, around),
     children: rotatedChildren,
     renderNode: rotatedRenderNode,
+  };
+}
+
+function scaleResolvedObject(object: ResolvedObject, sx: number, sy: number, around: Point): ResolvedObject {
+  const scaledRenderNode = scaleRenderNode(object.renderNode, sx, sy, around);
+
+  if (!scaledRenderNode) {
+    return object;
+  }
+
+  const scaledChildren = object.children?.map((child) => scaleResolvedObject(child, sx, sy, around));
+  const scaledBounds = getNodeBounds([scaledRenderNode]);
+  const scaledBBox = bboxFromRect(
+    scaledBounds.minX,
+    scaledBounds.minY,
+    Math.max(0, scaledBounds.maxX - scaledBounds.minX),
+    Math.max(0, scaledBounds.maxY - scaledBounds.minY),
+  );
+
+  return {
+    ...object,
+    bbox: scaledBBox,
+    anchors: anchorsForBoundingBox(scaledBBox),
+    geometry: scaleGeometry(object.geometry, sx, sy, around),
+    children: scaledChildren,
+    renderNode: scaledRenderNode,
   };
 }
 
@@ -1229,6 +1301,109 @@ function rotateRenderNode(node: RenderNode, angleDegrees: number, around: Point)
   }
 }
 
+function scaleRenderNode(node: RenderNode, sx: number, sy: number, around: Point): RenderNode | undefined {
+  switch (node.kind) {
+    case "group": {
+      const children: RenderNode[] = [];
+
+      for (const child of node.children) {
+        const scaledChild = scaleRenderNode(child, sx, sy, around);
+
+        if (!scaledChild) {
+          return undefined;
+        }
+
+        children.push(scaledChild);
+      }
+
+      return {
+        ...node,
+        children,
+      };
+    }
+    case "rect": {
+      const transformedCorners = transformPoints([
+        point(node.x, node.y),
+        point(node.x + node.width, node.y),
+        point(node.x + node.width, node.y + node.height),
+        point(node.x, node.y + node.height),
+      ], [{ kind: "scale", sx, sy, around }]);
+      const bounds = bboxFromPoints(transformedCorners);
+
+      return {
+        ...node,
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+      };
+    }
+    case "circle": {
+      const center = scalePoint(point(node.cx, node.cy), sx, sy, around);
+      const absSx = Math.abs(sx);
+      const absSy = Math.abs(sy);
+
+      if (Math.abs(absSx - absSy) < 1e-9) {
+        return {
+          ...node,
+          cx: center.x,
+          cy: center.y,
+          r: node.r * absSx,
+        };
+      }
+
+      return {
+        kind: "ellipse",
+        id: node.id,
+        cx: center.x,
+        cy: center.y,
+        rx: node.r * absSx,
+        ry: node.r * absSy,
+        style: node.style,
+      };
+    }
+    case "ellipse": {
+      const center = scalePoint(point(node.cx, node.cy), sx, sy, around);
+      return {
+        ...node,
+        cx: center.x,
+        cy: center.y,
+        rx: node.rx * Math.abs(sx),
+        ry: node.ry * Math.abs(sy),
+      };
+    }
+    case "line": {
+      const start = scalePoint(point(node.x1, node.y1), sx, sy, around);
+      const end = scalePoint(point(node.x2, node.y2), sx, sy, around);
+
+      return {
+        ...node,
+        x1: start.x,
+        y1: start.y,
+        x2: end.x,
+        y2: end.y,
+      };
+    }
+    case "polyline":
+      return {
+        ...node,
+        points: transformPoints(node.points, [{ kind: "scale", sx, sy, around }]),
+      };
+    case "polygon":
+      return {
+        ...node,
+        points: transformPoints(node.points, [{ kind: "scale", sx, sy, around }]),
+      };
+    case "path":
+      return {
+        ...node,
+        d: scalePath(node.d, sx, sy, around),
+      };
+    case "text":
+      return undefined;
+  }
+}
+
 function rotatePath(d: string, angleDegrees: number, around: Point): string {
   const numbers = d.match(/-?\d+(?:\.\d+)?/g);
 
@@ -1259,6 +1434,39 @@ function rotatePath(d: string, angleDegrees: number, around: Point): string {
     const rotated = rotatePoint(point(xSource, ySource), angleDegrees, around);
     index += 1;
     return String(axisIndex === 0 ? rotated.x : rotated.y);
+  });
+}
+
+function scalePath(d: string, sx: number, sy: number, around: Point): string {
+  const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+
+  if (!numbers) {
+    return d;
+  }
+
+  let index = 0;
+
+  return d.replace(/-?\d+(?:\.\d+)?/g, (match) => {
+    const value = Number(match);
+
+    if (!Number.isFinite(value)) {
+      index += 1;
+      return match;
+    }
+
+    const axisIndex = index % 2;
+    const pairIndex = index - axisIndex;
+    const xSource = Number(numbers[pairIndex]);
+    const ySource = Number(numbers[pairIndex + 1]);
+
+    if (!Number.isFinite(xSource) || !Number.isFinite(ySource)) {
+      index += 1;
+      return match;
+    }
+
+    const scaled = scalePoint(point(xSource, ySource), sx, sy, around);
+    index += 1;
+    return String(axisIndex === 0 ? scaled.x : scaled.y);
   });
 }
 
@@ -1298,6 +1506,66 @@ function rotateGeometryPair(
   const rotated = rotatePoint(point(x, y), angleDegrees, around);
   geometry[xKey] = rotated.x;
   geometry[yKey] = rotated.y;
+}
+
+function scaleGeometry(
+  geometry: Record<string, number | string | undefined> | undefined,
+  sx: number,
+  sy: number,
+  around: Point,
+): Record<string, number | string | undefined> | undefined {
+  if (!geometry) {
+    return undefined;
+  }
+
+  const scaled = { ...geometry };
+
+  scaleGeometryPair(scaled, "x", "y", sx, sy, around);
+  scaleGeometryPair(scaled, "cx", "cy", sx, sy, around);
+  scaleGeometryPair(scaled, "x1", "y1", sx, sy, around);
+  scaleGeometryPair(scaled, "x2", "y2", sx, sy, around);
+
+  if (typeof scaled.width === "number") {
+    scaled.width = scaled.width * Math.abs(sx);
+  }
+
+  if (typeof scaled.height === "number") {
+    scaled.height = scaled.height * Math.abs(sy);
+  }
+
+  if (typeof scaled.r === "number") {
+    scaled.r = scaled.r * Math.max(Math.abs(sx), Math.abs(sy));
+  }
+
+  if (typeof scaled.rx === "number") {
+    scaled.rx = scaled.rx * Math.abs(sx);
+  }
+
+  if (typeof scaled.ry === "number") {
+    scaled.ry = scaled.ry * Math.abs(sy);
+  }
+
+  return scaled;
+}
+
+function scaleGeometryPair(
+  geometry: Record<string, number | string | undefined>,
+  xKey: string,
+  yKey: string,
+  sx: number,
+  sy: number,
+  around: Point,
+): void {
+  const x = geometry[xKey];
+  const y = geometry[yKey];
+
+  if (typeof x !== "number" || typeof y !== "number") {
+    return;
+  }
+
+  const scaled = scalePoint(point(x, y), sx, sy, around);
+  geometry[xKey] = scaled.x;
+  geometry[yKey] = scaled.y;
 }
 
 function translateGeometry(

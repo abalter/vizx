@@ -15,6 +15,7 @@ import {
   midpoint,
   point,
   rotatePoint,
+  scalePoint,
   subtractPoints,
   transformPoint,
   transformPoints,
@@ -109,6 +110,24 @@ describe("geometry kernel", () => {
     expect(rotated.y).toBeCloseTo(7, 8);
   });
 
+  it("scales points around origin and explicit pivot", () => {
+    expect(scalePoint(point(3, 4), 2)).toEqual(point(6, 8));
+
+    const scaledAroundPivot = scalePoint(point(7, 5), 2, 3, point(5, 5));
+    expect(scaledAroundPivot.x).toBeCloseTo(9, 8);
+    expect(scaledAroundPivot.y).toBeCloseTo(5, 8);
+  });
+
+  it("defaults sy to sx for uniform scale transforms", () => {
+    const scaled = transformPoint(
+      point(3, 4),
+      { kind: "scale", sx: 2, around: point(1, 1) },
+    );
+
+    expect(scaled.x).toBeCloseTo(5, 8);
+    expect(scaled.y).toBeCloseTo(7, 8);
+  });
+
   it("applies ordered transform operations to point sequences", () => {
     const translatedThenRotated = transformPoints(
       [point(1, 0)],
@@ -129,6 +148,20 @@ describe("geometry kernel", () => {
     expect(translatedThenRotated[0]?.y).toBeCloseTo(2, 8);
     expect(rotatedThenTranslated[0]?.x).toBeCloseTo(1, 8);
     expect(rotatedThenTranslated[0]?.y).toBeCloseTo(1, 8);
+  });
+
+  it("preserves ordered semantics across translate, rotate, and scale", () => {
+    const ordered = transformPoint(
+      point(2, 1),
+      [
+        { kind: "translate", x: 1, y: -1 },
+        { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+        { kind: "scale", sx: 2, sy: 0.5, around: point(0, 0) },
+      ],
+    );
+
+    expect(ordered.x).toBeCloseTo(0, 8);
+    expect(ordered.y).toBeCloseTo(1.5, 8);
   });
 
   it("computes axis-aligned bbox from transformed corners", () => {
