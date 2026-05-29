@@ -15,6 +15,7 @@ See [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) for the current effective Core IR contr
 See [JSON_CORE_IR_V0_SHAPE.md](./JSON_CORE_IR_V0_SHAPE.md) for the docs-only minimal v0 shape focused on the current `basic` baseline example.
 See [JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md](./JSON_CORE_IR_V0_CONFORMANCE_CHECKLIST.md) for docs-only pass/fail acceptance checks for future v0 schema/converter work.
 See [JSON_SCHEMA_VALIDATOR_SELECTION.md](./JSON_SCHEMA_VALIDATOR_SELECTION.md) for validator-selection criteria to use before adding any schema-validation dependency.
+See [JSON_CORE_IR_V0_CHECKPOINT.md](./JSON_CORE_IR_V0_CHECKPOINT.md) for a concise implementation checkpoint of the current v0 foundation and next-step options.
 See `schemas/json-core-ir-v0.schema.json` for the current draft static schema artifact describing the supported fixture surface.
 
 ## 1. Purpose
