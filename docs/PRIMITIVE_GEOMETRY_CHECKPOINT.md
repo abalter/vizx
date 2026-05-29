@@ -244,3 +244,4 @@ This pass is documentation only.
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) records the current effective model shape and current boundaries.
 - [ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md](./ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md) describes the gallery-driven capability gaps that this primitive foundation partially addresses.
 - [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md) defines when VizX should keep geometry/math helpers in-house versus evaluate external libraries.
+- [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md) compares VizX with common JavaScript graphics libraries and captures API/design lessons.

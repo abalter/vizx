@@ -116,6 +116,7 @@ For the minimal arrowhead and marker design that follows the current line/polyli
 For the docs-only checkpoint after the current 2D primitive foundation landed, see [Primitive Geometry Checkpoint](./PRIMITIVE_GEOMETRY_CHECKPOINT.md).
 For the docs-only checkpoint after the first path/Bezier foundation landed, see [Path Curve Checkpoint](./PATH_CURVE_CHECKPOINT.md).
 For the docs-only transform/local-coordinate design pass that follows that checkpoint, see [Transform Local Coordinate Model Plan](./TRANSFORM_LOCAL_COORDINATE_MODEL_PLAN.md).
+For a comparative note on how VizX should position itself relative to existing JavaScript graphics libraries, see [JS Graphics Library Landscape](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md).
 
 ## Future Fixture Recommendations
 
