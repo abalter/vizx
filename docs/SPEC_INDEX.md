@@ -18,3 +18,4 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`JS_TS_BUILDER_API_PLAN.md`](./JS_TS_BUILDER_API_PLAN.md) — design and status note for the implemented first builder helper slice.
 - [`JS_TS_BUILDER_API_COOKBOOK.md`](./JS_TS_BUILDER_API_COOKBOOK.md) — practical usage/cookbook examples for the current builder helper surface.
 - [`JS_TS_BUILDER_API_CHECKPOINT.md`](./JS_TS_BUILDER_API_CHECKPOINT.md) — post-parity checkpoint summary of implemented builder scope, identity, limits, and next branches.
+- [`ASPIRATIONAL_REPRODUCTION_ROADMAP.md`](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) — milestone-driven, example-first roadmap for reproducing selected aspirational gallery examples.

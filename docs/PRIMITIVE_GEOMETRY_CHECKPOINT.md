@@ -243,5 +243,6 @@ This pass is documentation only.
 - [MARKER_ARROWHEAD_MODEL_PLAN.md](./MARKER_ARROWHEAD_MODEL_PLAN.md) records the v0 built-in arrow marker model.
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) records the current effective model shape and current boundaries.
 - [ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md](./ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md) describes the gallery-driven capability gaps that this primitive foundation partially addresses.
+- [ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) defines the milestone-driven, example-first ordering for reproducing selected aspirational gallery examples.
 - [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md) defines when VizX should keep geometry/math helpers in-house versus evaluate external libraries.
 - [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md) compares VizX with common JavaScript graphics libraries and captures API/design lessons.
