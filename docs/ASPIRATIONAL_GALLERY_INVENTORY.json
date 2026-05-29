@@ -1,0 +1,1330 @@
+[
+  {
+    "path": "asymptote/barnsleys_fern",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 983,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "barnsley",
+      "box",
+      "fern",
+      "filldraw",
+      "path",
+      "rotate",
+      "scale",
+      "shift",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/example1",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 3125,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "box",
+      "circle",
+      "clip",
+      "cube",
+      "graph",
+      "label",
+      "path",
+      "projection",
+      "scale"
+    ]
+  },
+  {
+    "path": "asymptote/fig0010.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 736,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "graph",
+      "path",
+      "point",
+      "projection",
+      "surface"
+    ]
+  },
+  {
+    "path": "asymptote/fig0010b.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 253,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "graph",
+      "projection",
+      "sphere",
+      "surface"
+    ]
+  },
+  {
+    "path": "asymptote/fig0030.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 492,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "graph",
+      "projection",
+      "sphere",
+      "surface"
+    ]
+  },
+  {
+    "path": "asymptote/fig0040.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1591,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "circle",
+      "filldraw",
+      "path",
+      "point",
+      "rotate",
+      "scale",
+      "shift",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0040b.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 240,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "graph",
+      "path",
+      "polygon",
+      "projection",
+      "scale"
+    ]
+  },
+  {
+    "path": "asymptote/fig0060.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 381,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "axis",
+      "graph",
+      "label",
+      "projection"
+    ]
+  },
+  {
+    "path": "asymptote/fig0060b.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1653,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "clip",
+      "path",
+      "point",
+      "rotate",
+      "scale",
+      "shift",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0070.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 281,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "graph",
+      "projection",
+      "sphere",
+      "surface"
+    ]
+  },
+  {
+    "path": "asymptote/fig0090.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 811,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "axis",
+      "graph",
+      "label",
+      "point",
+      "projection",
+      "scale",
+      "spline",
+      "surface"
+    ]
+  },
+  {
+    "path": "asymptote/fig0090b.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1490,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arc",
+      "arrow",
+      "box",
+      "circle",
+      "graph",
+      "path",
+      "projection",
+      "rotate",
+      "scale",
+      "shift",
+      "sphere",
+      "surface",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0110.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 576,
+    "extension": ".asy",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "coordsys",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0120.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1603,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "graph",
+      "label",
+      "path",
+      "point",
+      "projection",
+      "rotate",
+      "shift",
+      "surface",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0140.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 536,
+    "extension": ".asy",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "arrow",
+      "label",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0140b.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 317,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "box",
+      "curve",
+      "path"
+    ]
+  },
+  {
+    "path": "asymptote/fig0150.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 449,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "coordsys",
+      "path",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0160.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 567,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "circle",
+      "graph",
+      "path",
+      "polygon",
+      "projection",
+      "scale"
+    ]
+  },
+  {
+    "path": "asymptote/fig0180.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1024,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "box",
+      "coordsys",
+      "point",
+      "projection",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0210.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 875,
+    "extension": ".asy",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "arrow",
+      "coordsys",
+      "label",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0270.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 629,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "circle",
+      "coordsys",
+      "path",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0300.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 641,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arrow",
+      "circle",
+      "coordsys",
+      "ellipse",
+      "point",
+      "rotate",
+      "scale",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/fig0400.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 501,
+    "extension": ".asy",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "axis",
+      "graph",
+      "label",
+      "point",
+      "projection"
+    ]
+  },
+  {
+    "path": "asymptote/fig0450.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 868,
+    "extension": ".asy",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "circle",
+      "point"
+    ]
+  },
+  {
+    "path": "asymptote/fig0810.asy",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 920,
+    "extension": ".asy",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "arrow",
+      "coordsys",
+      "ellipse",
+      "point",
+      "rotate",
+      "scale",
+      "transform"
+    ]
+  },
+  {
+    "path": "asymptote/geometry_1",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 1466,
+    "extension": "",
+    "category": "C",
+    "reason": "labels + simple geometry/coordinate systems",
+    "tags": [
+      "coordinate",
+      "coordsys",
+      "point",
+      "rotate"
+    ]
+  },
+  {
+    "path": "asymptote/labeled_cube",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 529,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/projection illustration",
+    "tags": [
+      "cube",
+      "label",
+      "projection"
+    ]
+  },
+  {
+    "path": "asymptote/labeled_polygon",
+    "family": "asymptote",
+    "kind": "file",
+    "sizeBytes": 170,
+    "extension": "",
+    "category": "C",
+    "reason": "labels + simple geometry/coordinate systems",
+    "tags": [
+      "label",
+      "polygon"
+    ]
+  },
+  {
+    "path": "metapost/arrow_label.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 388,
+    "extension": ".mp",
+    "category": "C",
+    "reason": "simple arrow/label or minimal diagram primitive gap",
+    "tags": [
+      "arrow",
+      "box",
+      "circle",
+      "cutafter",
+      "cutbefore",
+      "label",
+      "path",
+      "point",
+      "rotate",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/circuit.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1588,
+    "extension": ".mp",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arrow",
+      "buildcycle",
+      "circle",
+      "cutafter",
+      "cutbefore",
+      "label",
+      "node",
+      "path",
+      "rectangle",
+      "rotate",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/conicurv.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 3154,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "circle",
+      "label",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/conoscopy.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 2430,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "circle",
+      "label",
+      "path",
+      "rotation",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/cosmos.tex",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 18582,
+    "extension": ".tex",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "box",
+      "circle",
+      "clip",
+      "filldraw",
+      "graph",
+      "label",
+      "macro",
+      "path",
+      "point",
+      "polygon",
+      "rotate",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/data1",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 61,
+    "extension": "",
+    "category": "G",
+    "reason": "unclear/inference-only or likely out of current scope",
+    "tags": [
+      "data"
+    ]
+  },
+  {
+    "path": "metapost/dominos.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 4889,
+    "extension": ".mp",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "box",
+      "circle",
+      "filldraw",
+      "path",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/ellipticprism.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1061,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "circle",
+      "label",
+      "prism",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/example_legend.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1051,
+    "extension": ".mp",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "circle",
+      "graph",
+      "label",
+      "macro"
+    ]
+  },
+  {
+    "path": "metapost/example_schedule.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 2042,
+    "extension": ".mp",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "graph",
+      "scale",
+      "schedule"
+    ]
+  },
+  {
+    "path": "metapost/example_timeline.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 3047,
+    "extension": ".mp",
+    "category": "B",
+    "reason": "diagram-like boxes/labels/connectors with missing line/arrow styling",
+    "tags": [
+      "arc",
+      "graph",
+      "point",
+      "timeline"
+    ]
+  },
+  {
+    "path": "metapost/example_umlcomponent.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 4471,
+    "extension": ".mp",
+    "category": "B",
+    "reason": "diagram-like boxes/labels/connectors with missing line/arrow styling",
+    "tags": [
+      "data",
+      "graph",
+      "label",
+      "schedule"
+    ]
+  },
+  {
+    "path": "metapost/examples.mp.txt",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 120797,
+    "extension": ".txt",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "arc",
+      "arrow",
+      "bezier",
+      "box",
+      "buildcycle",
+      "circle",
+      "clip",
+      "curve",
+      "cutafter",
+      "cutbefore",
+      "data",
+      "ellipse",
+      "filldraw",
+      "graph",
+      "label",
+      "macro",
+      "node",
+      "path",
+      "plot",
+      "point",
+      "rectangle",
+      "rotate",
+      "scale",
+      "shift",
+      "sphere",
+      "transform",
+      "uv"
+    ]
+  },
+  {
+    "path": "metapost/graph.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 582,
+    "extension": ".mp",
+    "category": "C",
+    "reason": "simple arrow/label or minimal diagram primitive gap",
+    "tags": [
+      "graph",
+      "label"
+    ]
+  },
+  {
+    "path": "metapost/isometric_projection.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 940,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "cube",
+      "projection",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/kiviat.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 430,
+    "extension": ".mp",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "axis",
+      "circle",
+      "filldraw",
+      "kiviat",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/mandelbrot.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1716,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "axis",
+      "mandelbrot",
+      "path",
+      "point",
+      "rotate",
+      "scale"
+    ]
+  },
+  {
+    "path": "metapost/mechanism.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1274,
+    "extension": ".mp",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "label",
+      "point"
+    ]
+  },
+  {
+    "path": "metapost/paintball.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 615,
+    "extension": ".mp",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "circle",
+      "path",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/pappus.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 3965,
+    "extension": ".mp",
+    "category": "C",
+    "reason": "needs modest new primitives or coordinate geometry",
+    "tags": [
+      "circle",
+      "label",
+      "point"
+    ]
+  },
+  {
+    "path": "metapost/pendagon.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1780,
+    "extension": ".mp",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "label",
+      "point",
+      "polygon"
+    ]
+  },
+  {
+    "path": "metapost/preamble.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 805,
+    "extension": ".mp",
+    "category": "G",
+    "reason": "unclear/inference-only or likely out of current scope",
+    "tags": []
+  },
+  {
+    "path": "metapost/pullys.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 2741,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "label",
+      "path",
+      "point",
+      "rotate",
+      "shift",
+      "surface"
+    ]
+  },
+  {
+    "path": "metapost/rotating_cube.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 2399,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "circle",
+      "clip",
+      "cube",
+      "path",
+      "point",
+      "rotating",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "metapost/sphere.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1312,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "arrow",
+      "circle",
+      "label",
+      "sphere"
+    ]
+  },
+  {
+    "path": "metapost/surface.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 373,
+    "extension": ".mp",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "3d",
+      "path",
+      "surface"
+    ]
+  },
+  {
+    "path": "metapost/uv.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 1867,
+    "extension": ".mp",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "arrow",
+      "axis",
+      "cutafter",
+      "cutbefore",
+      "graph",
+      "label",
+      "path",
+      "point",
+      "rotate",
+      "scale",
+      "shift",
+      "uv"
+    ]
+  },
+  {
+    "path": "metapost/waves.mp",
+    "family": "metapost",
+    "kind": "file",
+    "sizeBytes": 3400,
+    "extension": ".mp",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "axis",
+      "label",
+      "plot",
+      "point",
+      "scale",
+      "shift",
+      "waves"
+    ]
+  },
+  {
+    "path": "tikz/A Venn diagram with PDF blending",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 585,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "blend",
+      "blending",
+      "circle",
+      "graph",
+      "node"
+    ]
+  },
+  {
+    "path": "tikz/Animation for Lower Riemann Sum",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1811,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "animation",
+      "arrow",
+      "clip",
+      "node",
+      "plot",
+      "rectangle",
+      "scale",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/CIELAB color space",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1080,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "axis",
+      "cielab",
+      "node",
+      "path",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/Circumscribed Parallelepiped",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3860,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "circle",
+      "coordinate",
+      "filldraw",
+      "node",
+      "tetrahedron"
+    ]
+  },
+  {
+    "path": "tikz/Coffee cup",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 2675,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "clip",
+      "ellipse",
+      "path",
+      "rotate",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Database decimation process",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 6058,
+    "extension": "",
+    "category": "B",
+    "reason": "diagram-like boxes/labels/connectors with missing line/arrow styling",
+    "tags": [
+      "arrow",
+      "box",
+      "coordinate",
+      "data",
+      "decimation",
+      "label",
+      "macro",
+      "node",
+      "path",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Diagram for the Bernoulli Principle",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3148,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "coordinate",
+      "curve",
+      "ellipse",
+      "node",
+      "path",
+      "rectangle"
+    ]
+  },
+  {
+    "path": "tikz/Diagram of Android activity life cycle",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 4054,
+    "extension": "",
+    "category": "B",
+    "reason": "diagram-like boxes/labels/connectors with missing line/arrow styling",
+    "tags": [
+      "arrow",
+      "life cycle",
+      "node",
+      "rectangle",
+      "rounded corners",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Flipping a coin",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 2367,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "box",
+      "circle",
+      "label",
+      "node",
+      "path",
+      "rectangle",
+      "rotate",
+      "rounded corners",
+      "scale",
+      "shift",
+      "transform"
+    ]
+  },
+  {
+    "path": "tikz/Linear regression",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1702,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "arrow",
+      "circle",
+      "coordinate",
+      "label",
+      "node",
+      "path",
+      "plot",
+      "regression",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Phyllotaxy",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1238,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "circle",
+      "macro",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/Semiconductor pn junction diagram",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3196,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arrow",
+      "circle",
+      "macro",
+      "node",
+      "path",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/Signpost with loads applied",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3563,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "axis",
+      "circle",
+      "coordinate",
+      "node",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Simulation approaches versus abstracti",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3047,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "box",
+      "coordinate",
+      "label",
+      "macro",
+      "node",
+      "path",
+      "rounded corners"
+    ]
+  },
+  {
+    "path": "tikz/Snowflakes with TikZ",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 2134,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/fractal/animation/projection/programmatic geometry",
+    "tags": [
+      "l-system",
+      "lindenmayer",
+      "rotate",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/Time course of events in an experiment",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1759,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "box",
+      "coordinate",
+      "experiment",
+      "label",
+      "macro",
+      "node",
+      "path",
+      "shift"
+    ]
+  },
+  {
+    "path": "tikz/Totoro sitting in the snow",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 6493,
+    "extension": "",
+    "category": "D",
+    "reason": "advanced 2D drawing/path/transform/macro features",
+    "tags": [
+      "arc",
+      "circle",
+      "node",
+      "path",
+      "rectangle",
+      "rotate",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/projectile_motion",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1499,
+    "extension": "",
+    "category": "E",
+    "reason": "plotting/data/graph-layout semantics",
+    "tags": [
+      "arc",
+      "axis",
+      "circle",
+      "filldraw",
+      "macro",
+      "node",
+      "plot",
+      "projectile",
+      "scale"
+    ]
+  },
+  {
+    "path": "tikz/regular_hexagonal_prism",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 5763,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/projection illustration",
+    "tags": [
+      "3d",
+      "axis",
+      "coordinate",
+      "macro",
+      "node",
+      "path",
+      "plot",
+      "prism"
+    ]
+  },
+  {
+    "path": "tikz/retular_tetrahedron",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 3944,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/projection illustration",
+    "tags": [
+      "3d",
+      "axis",
+      "coordinate",
+      "macro",
+      "node",
+      "path",
+      "plot",
+      "point",
+      "scale",
+      "shift",
+      "tetrahedron"
+    ]
+  },
+  {
+    "path": "tikz/rotation_of_sphere_in_3d",
+    "family": "tikz",
+    "kind": "file",
+    "sizeBytes": 1800,
+    "extension": "",
+    "category": "F",
+    "reason": "3D/projection illustration",
+    "tags": [
+      "3d",
+      "arc",
+      "axis",
+      "circle",
+      "coordinate",
+      "node",
+      "plot",
+      "point",
+      "rotate",
+      "rotation",
+      "scale",
+      "sphere"
+    ]
+  }
+]
