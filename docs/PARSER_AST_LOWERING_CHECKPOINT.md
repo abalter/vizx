@@ -8,6 +8,7 @@ Status:
 - no runtime behavior changes in this pass
 - no parser syntax implementation in this pass
 
+See [PARSER_MINIMAL_PLACEMENT_SYNTAX_SKETCH.md](./PARSER_MINIMAL_PLACEMENT_SYNTAX_SKETCH.md) for one tentative experimental placement-only source sketch.
 See [PARSER_LOWERING_CONTRACT.md](./PARSER_LOWERING_CONTRACT.md), [CORE_IR_SPEC.md](./CORE_IR_SPEC.md), and [PARSER_FIXTURE_MATRIX.md](./PARSER_FIXTURE_MATRIX.md) for surrounding context.
 
 ## 1. Implemented Now
