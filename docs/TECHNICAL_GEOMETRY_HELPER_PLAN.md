@@ -232,6 +232,10 @@ Recommendation:
 2. keep first-class angle-arc helpers deferred until the arc path model is designed
 3. optional polyline angle-arc approximation can be considered later only if clearly documented as approximation behavior
 
+Arc model follow-on design:
+
+- [ARC_AND_ANGLE_MARK_MODEL_PLAN.md](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md)
+
 Default recommendation:
 
 - avoid first-class angle-arc helper APIs in the first geometry-helper slice

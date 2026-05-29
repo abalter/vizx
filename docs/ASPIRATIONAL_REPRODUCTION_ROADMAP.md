@@ -205,6 +205,10 @@ Acceptance criteria:
 - transformed arcs behave predictably
 - tight arc bounds may remain deferred if documented clearly
 
+Detailed Milestone 3 plan:
+
+- [ARC_AND_ANGLE_MARK_MODEL_PLAN.md](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md)
+
 ## 7. Milestone 4 - Fill, Dash, And Style Expansion
 
 Goal:

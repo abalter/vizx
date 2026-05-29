@@ -1,0 +1,293 @@
+# Arc And Angle-Mark Model Plan
+
+This document is a docs-only design plan for Milestone 3 of the aspirational reproduction roadmap.
+
+Status:
+
+- docs-only plan
+- no runtime changes
+- no parser syntax changes
+- no JSON Core IR changes
+- no parser AST changes
+- no dependency additions
+
+## 1. Purpose
+
+Milestone 3 goal:
+
+- define a minimal first-class arc path model and angle-mark strategy that fits the current object-model -> resolver -> renderer pipeline
+- unlock the first arc and angle-heavy aspirational reproductions at Level 1 to Level 2
+
+This plan focuses on representational and behavioral decisions first, then a narrow implementation slice.
+
+## 2. Current Baseline
+
+Current path model and execution behavior:
+
+- `path` supports `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `closePath`
+- resolver serializes path commands to SVG `d` segments and validates command ordering
+- bbox for paths is conservative explicit-point bounds (not tight curve extrema)
+- anchors are bbox-derived
+- ordered transforms (`translate`, `rotate`, `scale`) apply to command points in resolver
+- renderer currently emits path data directly and does not interpret geometry semantics
+
+Relevant current limitations:
+
+- no arc command in `PathCommand`
+- no dedicated angle-mark object or helper
+- no arc-aware diagnostics
+- no arc bbox semantics
+
+## 3. Arc Representation Options
+
+### Option A - Endpoint-form SVG-aligned arc command
+
+Shape:
+
+- `arcTo { rx, ry, xAxisRotationDegrees, largeArc, sweepClockwise, point }`
+
+Pros:
+
+- directly maps to SVG `A` command
+- keeps renderer simple and mostly pass-through
+- matches eventual interchange/import pathways
+
+Cons:
+
+- author ergonomics are weak for geometry diagrams
+- harder to reason about angle marks from endpoint-only data
+- easier to encode invalid/incoherent combinations that need diagnostics
+
+### Option B - Center-angle-form arc command
+
+Shape:
+
+- `arcByCenter { center, radiusX, radiusY, startAngleDegrees, endAngleDegrees, clockwise }`
+
+Pros:
+
+- natural for geometry and physics diagrams
+- direct for angle-mark generation and placement
+- easier to derive helper-level APIs (`angleMark`, `angleLabelPoint`)
+
+Cons:
+
+- requires conversion to SVG endpoint-form in resolver/renderer
+- introduces angle convention decisions early
+- adds conversion diagnostics surface
+
+### Option C - Dual model (accept both forms)
+
+Shape:
+
+- support both endpoint-form and center-angle-form path commands
+
+Pros:
+
+- flexible for advanced users and import pipelines
+- can optimize both ergonomics and direct SVG mapping
+
+Cons:
+
+- larger API and validation surface
+- higher docs and test complexity
+- not ideal for a narrow first slice
+
+## 4. Recommended V0 Arc Command
+
+Recommendation:
+
+- choose Option A for v0 core model
+- add a single new command in `PathCommand`:
+  - `arcTo { rx, ry, xAxisRotationDegrees, largeArc, sweepClockwise, point }`
+
+Reasoning:
+
+- minimal extension to current path representation
+- straightforward SVG mapping (`A rx ry rot largeArc sweep x y`)
+- preserves clear layering: object-model stores command data, renderer writes SVG, helpers can later provide center-angle ergonomics outside core path command shape
+
+V0 notes:
+
+- `arcTo` remains path-relative in sequence (requires active current point)
+- `rx` and `ry` are explicit to allow elliptical arcs from day one
+- helper-layer center-angle adapters remain optional and deferred to post-v0
+
+## 5. Current-Point Semantics Choice
+
+Choice:
+
+- keep current path semantics: `arcTo` is invalid before `moveTo`
+- current point advances to `arcTo.point` after each command
+- `closePath` behavior remains unchanged
+
+Rationale:
+
+- consistent with existing `lineTo`/Bezier command stream rules
+- avoids introducing a second command-state model
+
+## 6. Bounding Box Strategy
+
+Options considered:
+
+- exact analytic arc bbox (tight, higher complexity)
+- sampled approximation bbox (medium complexity, approximation error)
+- conservative endpoint/control bbox (low complexity)
+
+V0 recommendation:
+
+- use conservative arc bbox in resolver for v0, consistent with current non-tight curve policy
+- include at least:
+  - current point at arc start
+  - arc endpoint (`arcTo.point`)
+  - optional axis-extrema candidates when cheaply derivable for common cases
+
+Policy statement:
+
+- tight arc bounds are explicitly deferred
+- docs and diagnostics should call out conservative bounds when inspecting/debugging
+
+## 7. Transform Policy
+
+Baseline continuation:
+
+- keep ordered transform semantics unchanged
+- resolver applies object transforms before rendering and derives transformed bbox/anchors
+
+Arc-specific policy:
+
+- `translate` and `rotate` on arcs are fully supported
+- uniform `scale` (`sx == sy` or omitted `sy`) on arcs is supported predictably
+- non-uniform `scale` (`sx != sy`) is permitted but diagnostics must flag downgraded geometric guarantees in v0
+
+Recommended diagnostic behavior for non-uniform scale:
+
+- emit warning (not error): arc semantics may be approximated/non-tight under non-uniform scaling in v0
+- render should continue; no hard failure by default
+
+## 8. Renderer SVG Mapping And Angle Convention
+
+Renderer mapping for Option A:
+
+- `arcTo` serializes to SVG `A` segment:
+  - `A rx ry xAxisRotation largeArcFlag sweepFlag x y`
+
+Boolean to flag mapping:
+
+- `largeArc: false -> 0`, `true -> 1`
+- `sweepClockwise: false -> 0`, `true -> 1`
+
+Angle convention policy (for helper-layer and docs):
+
+- degrees
+- positive angles are clockwise in screen coordinates (y down) for user-facing helper docs
+- any center-angle helper introduced later must explicitly document conversion to SVG sweep semantics
+
+## 9. Diagnostics List
+
+Recommended v0 diagnostics for `arcTo`:
+
+- error: `arcTo` before `moveTo`
+- error: non-finite numeric fields (`rx`, `ry`, `xAxisRotationDegrees`, endpoint coordinates)
+- error: negative `rx` or `ry`
+- warning: `rx == 0` or `ry == 0` (degenerates toward line behavior)
+- warning: non-uniform scaling applied to arc object under v0 conservative policy
+- warning: conservative bbox in effect for arc path bounds
+
+Consistency requirement:
+
+- diagnostics follow current resolver style and do not block render unless severity is error
+
+## 10. Angle-Mark Strategy And Package Boundaries
+
+Angle-mark strategy:
+
+- do not add first-class `angleMark` drawable object in v0
+- build initial angle marks from ordinary `path` + `text` composition
+- provide helper-level construction patterns after core `arcTo` lands
+
+Package boundaries:
+
+- `@vizx/object-model`: owns new path command type shape (`arcTo`)
+- `@vizx/resolver`: owns command validation, conservative bbox behavior, and diagnostics
+- `@vizx/renderer-svg`: owns `arcTo` -> SVG `A` serialization
+- `@vizx/geometry`: owns optional helper math for angle-mark construction (deferred)
+
+This keeps `ObjectScene` canonical and avoids new drawable categories in first slice.
+
+## 11. Relationship To Existing Geometry Helpers
+
+Current helper slice already supports:
+
+- `point`, `offsetPoint`, `midpoint`, `distance`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`
+
+Arc/angle relevance:
+
+- `angleOf`, `polar`, and `circlePoint` already cover much of angle-label placement setup
+- first angle-mark helpers can be built from these without adding dependencies
+- arc path command is a model/runtime addition; helper additions are a separate, follow-on slice
+
+## 12. Target Examples For Milestone 3
+
+Primary targets:
+
+- `examples/aspirational_gallery/tikz/Diagram for the Bernoulli Principle`
+- `examples/aspirational_gallery/tikz/Flipping a coin`
+- `examples/aspirational_gallery/tikz/projectile_motion`
+- `examples/aspirational_gallery/metapost/pendagon.mp`
+- `examples/aspirational_gallery/asymptote/fig0810.asy`
+
+Expected unlocks:
+
+- explicit partial-circle and ellipse-arc motifs
+- angle sector/angle-label approximation with consistent arc primitives
+- less manual curve approximation in aspirational reproductions
+
+## 13. Recommended First Implementation Slice
+
+Keep first implementation intentionally narrow:
+
+1. Add `arcTo` to object-model path command union.
+2. Extend resolver path validation and `d` serialization for `arcTo`.
+3. Add conservative arc bbox handling and arc diagnostics.
+4. Extend renderer path emission tests for SVG `A` output.
+5. Add one focused example using a single arc path.
+6. Add one focused angle-mark approximation example using `path + text` (no new drawable type).
+
+Non-goals for first slice:
+
+- no parser syntax/AST/JSON Core IR expansion
+- no tight analytic arc bounds
+- no arc-length/point-at-length/intersections
+- no clipping or gradient work
+
+## 14. Deferred Features
+
+Explicitly deferred beyond v0:
+
+- tight arc bbox/extrema analysis
+- center-angle native command in core model (possible Option B layer later)
+- dual-form command support (Option C)
+- path flattening and arc-length operations
+- intersection and boolean geometry operations
+- first-class `angleMark` drawable type
+- parser and JSON Core IR catch-up
+
+## 15. Out Of Scope
+
+Out of scope for this planning pass:
+
+- any runtime code changes
+- dependency additions
+- new source-language translation features
+- style-system expansion unrelated to arcs/angles
+- plotting/data-coordinate model work
+- projection/3D helper work
+
+## Related Documents
+
+- [ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
+- [TECHNICAL_GEOMETRY_HELPER_PLAN.md](./TECHNICAL_GEOMETRY_HELPER_PLAN.md)
+- [PATH_CURVE_CHECKPOINT.md](./PATH_CURVE_CHECKPOINT.md)
+- [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md)
+- [CAPABILITY_MATRIX.md](./CAPABILITY_MATRIX.md)
