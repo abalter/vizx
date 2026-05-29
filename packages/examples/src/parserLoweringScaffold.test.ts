@@ -76,6 +76,13 @@ function summarizeAlignments(scene: ObjectScene) {
   }));
 }
 
+function summarizeDistribution(scene: ObjectScene) {
+  return (scene.distribution ?? []).map((operation) => ({
+    relation: operation.relation,
+    objectIds: [...operation.objectIds],
+  }));
+}
+
 describe("parser lowering scaffold", () => {
   it("lowers a hand-authored AST for relative placement and matches example semantics", () => {
     const ast: VizxAstScene = {
@@ -210,5 +217,97 @@ describe("parser lowering scaffold", () => {
     expect(edgeRight.anchors.east?.x).toBe(reference.anchors.east?.x);
     expect(edgeTop.anchors.north?.y).toBe(reference.anchors.north?.y);
     expect(edgeBottom.anchors.south?.y).toBe(reference.anchors.south?.y);
+  });
+
+  it("lowers a hand-authored AST for distribute-x and matches example semantics", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        createAstLabelBox("A", "First", { kind: "absolute", position: { x: 120, y: 150 } }),
+        createAstLabelBox("B", "Middle", { kind: "below", reference: { objectId: "A", anchor: "south" }, gap: 52 }),
+        createAstLabelBox("C", "Last", { kind: "absolute", position: { x: 420, y: 190 } }),
+      ],
+      connectors: [
+        { kind: "connector", id: "a-b", from: { objectId: "A", anchor: "center" }, to: { objectId: "B", anchor: "center" } },
+        { kind: "connector", id: "b-c", from: { objectId: "B", anchor: "center" }, to: { objectId: "C", anchor: "center" } },
+      ],
+      distribution: [{ relation: "distributeX", objectIds: ["A", "B", "C"] }],
+    };
+
+    const loweredScene = lowerAstToObjectScene(ast);
+    const loweredResolved = resolveScene(loweredScene);
+    const loweredInspection = inspectScene(loweredScene);
+
+    const referenceScene = requireVizxExample("distribute-x").createScene();
+    const referenceResolved = resolveScene(referenceScene);
+    const referenceInspection = inspectScene(referenceScene);
+
+    expect(loweredResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(referenceResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    expect(loweredInspection.objects.map((object) => object.id)).toEqual(referenceInspection.objects.map((object) => object.id));
+    expect(summarizeDistribution(loweredScene)).toEqual(summarizeDistribution(referenceScene));
+    expect(summarizeConnectors(loweredScene)).toEqual(summarizeConnectors(referenceScene));
+
+    const byId = new Map(loweredInspection.objects.map((object) => [object.id, object]));
+    const a = byId.get("A")!;
+    const b = byId.get("B")!;
+    const c = byId.get("C")!;
+    const spacingAB = (b.anchors.center?.x ?? 0) - (a.anchors.center?.x ?? 0);
+    const spacingBC = (c.anchors.center?.x ?? 0) - (b.anchors.center?.x ?? 0);
+
+    expect(spacingAB).toBeCloseTo(spacingBC, 8);
+
+    const baselineResolved = resolveScene({ ...loweredScene, distribution: undefined });
+    const baselineById = new Map(baselineResolved.resolved.objects.map((object) => [object.id, object]));
+    const baselineB = baselineById.get("B")!;
+
+    expect(b.anchors.center?.y).toBe(baselineB.anchors.center?.y);
+  });
+
+  it("lowers a hand-authored AST for distribute-y and matches example semantics", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        createAstLabelBox("Top", "Top", { kind: "absolute", position: { x: 200, y: 90 } }),
+        createAstLabelBox("Middle", "Middle", { kind: "rightOf", reference: { objectId: "Top", anchor: "east" }, gap: 74 }),
+        createAstLabelBox("Bottom", "Bottom", { kind: "absolute", position: { x: 280, y: 360 } }),
+      ],
+      connectors: [
+        { kind: "connector", id: "top-middle", from: { objectId: "Top", anchor: "center" }, to: { objectId: "Middle", anchor: "center" } },
+        { kind: "connector", id: "middle-bottom", from: { objectId: "Middle", anchor: "center" }, to: { objectId: "Bottom", anchor: "center" } },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }],
+    };
+
+    const loweredScene = lowerAstToObjectScene(ast);
+    const loweredResolved = resolveScene(loweredScene);
+    const loweredInspection = inspectScene(loweredScene);
+
+    const referenceScene = requireVizxExample("distribute-y").createScene();
+    const referenceResolved = resolveScene(referenceScene);
+    const referenceInspection = inspectScene(referenceScene);
+
+    expect(loweredResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(referenceResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    expect(loweredInspection.objects.map((object) => object.id)).toEqual(referenceInspection.objects.map((object) => object.id));
+    expect(summarizeDistribution(loweredScene)).toEqual(summarizeDistribution(referenceScene));
+    expect(summarizeConnectors(loweredScene)).toEqual(summarizeConnectors(referenceScene));
+
+    const byId = new Map(loweredInspection.objects.map((object) => [object.id, object]));
+    const top = byId.get("Top")!;
+    const middle = byId.get("Middle")!;
+    const bottom = byId.get("Bottom")!;
+    const spacingTopMiddle = (middle.anchors.center?.y ?? 0) - (top.anchors.center?.y ?? 0);
+    const spacingMiddleBottom = (bottom.anchors.center?.y ?? 0) - (middle.anchors.center?.y ?? 0);
+
+    expect(spacingTopMiddle).toBeCloseTo(spacingMiddleBottom, 8);
+
+    const baselineResolved = resolveScene({ ...loweredScene, distribution: undefined });
+    const baselineById = new Map(baselineResolved.resolved.objects.map((object) => [object.id, object]));
+    const baselineMiddle = baselineById.get("Middle")!;
+
+    expect(middle.anchors.center?.x).toBe(baselineMiddle.anchors.center?.x);
   });
 });

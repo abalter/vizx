@@ -95,8 +95,14 @@ export interface VizxAstConnector {
   readonly to: VizxAstAnchorRef;
 }
 
+export interface VizxAstDistributionOperation {
+  readonly relation: "distributeX" | "distributeY";
+  readonly objectIds: readonly string[];
+}
+
 export interface VizxAstScene {
   readonly kind: "scene";
   readonly objects: readonly VizxAstObject[];
   readonly connectors?: readonly VizxAstConnector[];
+  readonly distribution?: readonly VizxAstDistributionOperation[];
 }

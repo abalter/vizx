@@ -137,4 +137,65 @@ describe("lowerAstToObjectScene", () => {
 
     expect(() => lowerAstToObjectScene(ast)).toThrow("Unsupported AST alignment relation: alignDiagonal");
   });
+
+  it("lowers distributeX into ObjectScene distribution", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        { kind: "group", id: "A", children: [] },
+        { kind: "group", id: "B", children: [] },
+        { kind: "group", id: "C", children: [] },
+      ],
+      distribution: [{ relation: "distributeX", objectIds: ["A", "B", "C"] }],
+    };
+
+    const scene = lowerAstToObjectScene(ast);
+
+    expect(scene.distribution).toEqual([{ relation: "distributeX", objectIds: ["A", "B", "C"] }]);
+  });
+
+  it("lowers distributeY into ObjectScene distribution", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        { kind: "group", id: "Top", children: [] },
+        { kind: "group", id: "Middle", children: [] },
+        { kind: "group", id: "Bottom", children: [] },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }],
+    };
+
+    const scene = lowerAstToObjectScene(ast);
+
+    expect(scene.distribution).toEqual([{ relation: "distributeY", objectIds: ["Top", "Middle", "Bottom"] }]);
+  });
+
+  it("preserves distribution objectIds ordering", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        { kind: "group", id: "Top", children: [] },
+        { kind: "group", id: "Middle", children: [] },
+        { kind: "group", id: "Bottom", children: [] },
+      ],
+      distribution: [{ relation: "distributeY", objectIds: ["Bottom", "Top", "Middle"] }],
+    };
+
+    const scene = lowerAstToObjectScene(ast);
+
+    expect(scene.distribution?.[0]?.objectIds).toEqual(["Bottom", "Top", "Middle"]);
+  });
+
+  it("throws a clear error for unsupported distribution relations", () => {
+    const ast = {
+      kind: "scene",
+      objects: [
+        { kind: "group", id: "A", children: [] },
+        { kind: "group", id: "B", children: [] },
+      ],
+      distribution: [{ relation: "distributeZ", objectIds: ["A", "B"] }],
+    } as unknown as VizxAstScene;
+
+    expect(() => lowerAstToObjectScene(ast)).toThrow("Unsupported AST distribution relation: distributeZ");
+  });
 });

@@ -1,7 +1,14 @@
 import type { CoreCommand, CoreProgram } from "@vizx/core";
-import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement, ObjectScene } from "@vizx/object-model";
+import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement, ObjectScene, SceneDistribution } from "@vizx/object-model";
 import type { AstProgram } from "./ast";
-import type { VizxAstAlignment, VizxAstConnector, VizxAstObject, VizxAstPlacement, VizxAstScene } from "./ast";
+import type {
+  VizxAstAlignment,
+  VizxAstConnector,
+  VizxAstDistributionOperation,
+  VizxAstObject,
+  VizxAstPlacement,
+  VizxAstScene,
+} from "./ast";
 
 export function lowerAstToCore(ast: AstProgram): CoreProgram {
   const commands: CoreCommand[] = [];
@@ -58,6 +65,7 @@ export function lowerAstToObjectScene(ast: VizxAstScene): ObjectScene {
   return {
     objects: ast.objects.map((object) => lowerAstObject(object)),
     connectors: ast.connectors?.map((connector) => lowerAstConnector(connector)),
+    distribution: ast.distribution?.map((operation) => lowerAstDistribution(operation)),
   };
 }
 
@@ -161,4 +169,15 @@ function lowerAstConnector(connector: VizxAstConnector): ConnectorObject {
       anchor: connector.to.anchor,
     },
   };
+}
+
+function lowerAstDistribution(operation: VizxAstDistributionOperation): SceneDistribution {
+  if (operation.relation === "distributeX" || operation.relation === "distributeY") {
+    return {
+      relation: operation.relation,
+      objectIds: [...operation.objectIds],
+    };
+  }
+
+  throw new Error(`Unsupported AST distribution relation: ${(operation as { relation?: unknown }).relation ?? "unknown"}`);
 }
