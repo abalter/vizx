@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import { resolve, relative } from "node:path";
 import Ajv2020 from "ajv/dist/2020";
 
@@ -8,15 +8,17 @@ const FIXTURES_RELATIVE_DIR = "packages/examples/fixtures/json-core-ir-v0";
 async function main(): Promise<void> {
   const repoRoot = process.cwd();
   const schemaPath = resolve(repoRoot, SCHEMA_RELATIVE_PATH);
-  const fixturesDir = resolve(repoRoot, FIXTURES_RELATIVE_DIR);
+  const targetArg = process.argv[2];
+  const defaultFixturesDir = resolve(repoRoot, FIXTURES_RELATIVE_DIR);
+  const validationTargetPath = targetArg ? resolve(repoRoot, targetArg) : defaultFixturesDir;
 
   const schemaText = await readFile(schemaPath, "utf8");
   const schema = JSON.parse(schemaText) as object;
 
-  const fixturePaths = await findJsonFiles(fixturesDir);
+  const fixturePaths = await collectValidationFiles(validationTargetPath);
 
   if (fixturePaths.length === 0) {
-    throw new Error(`No JSON fixture files found in ${FIXTURES_RELATIVE_DIR}.`);
+    throw new Error(`No JSON fixture files found in ${relative(repoRoot, validationTargetPath)}.`);
   }
 
   const ajv = new Ajv2020({ allErrors: true, strict: false });
@@ -48,6 +50,29 @@ async function main(): Promise<void> {
   console.log(
     `Validated ${fixturePaths.length} JSON Core IR fixture files against ${SCHEMA_RELATIVE_PATH}.`,
   );
+}
+
+async function collectValidationFiles(targetPath: string): Promise<string[]> {
+  let targetStats;
+
+  try {
+    targetStats = await stat(targetPath);
+  } catch {
+    throw new Error(`Validation target does not exist: ${targetPath}`);
+  }
+
+  if (targetStats.isDirectory()) {
+    return findJsonFiles(targetPath);
+  }
+
+  if (targetStats.isFile()) {
+    if (!targetPath.endsWith(".json")) {
+      throw new Error(`Validation target file must end with .json: ${targetPath}`);
+    }
+    return [targetPath];
+  }
+
+  throw new Error(`Validation target must be a file or directory: ${targetPath}`);
 }
 
 async function findJsonFiles(dirPath: string): Promise<string[]> {
