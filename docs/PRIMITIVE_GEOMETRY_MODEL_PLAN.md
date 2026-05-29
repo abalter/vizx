@@ -266,6 +266,15 @@ Gallery examples helped:
 
 ### Path
 
+Status:
+
+- deferred for implementation in this pass
+- design captured in `docs/PATH_MODEL_PLAN.md`
+
+Current planning source of truth:
+
+- see `docs/PATH_MODEL_PLAN.md` for the minimal first-class path object, command set, bbox/anchor rules, diagnostics guidance, renderer mapping, and scoped first implementation slice
+
 Likely object-model shape:
 
 ```ts
@@ -300,6 +309,7 @@ Style needs:
 Priority:
 
 - deferred until line/polyline/circle/ellipse/polygon are in place
+- now planned as the next geometry-model milestone after primitive style hardening
 
 Gallery examples helped:
 
@@ -353,6 +363,8 @@ Scope of the first slice:
 - no parser syntax
 
 The same slice is the template for the remaining primitive work, especially `path`.
+
+For the dedicated path implementation design, follow `docs/PATH_MODEL_PLAN.md`.
 
 Implementation detail:
 
