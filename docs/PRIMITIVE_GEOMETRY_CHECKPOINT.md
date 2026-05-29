@@ -239,6 +239,7 @@ This pass is documentation only.
 - [TRANSFORM_LOCAL_COORDINATE_MODEL_PLAN.md](./TRANSFORM_LOCAL_COORDINATE_MODEL_PLAN.md) defines the docs-only transform and local-coordinate design recommended as the next foundation pass.
 - [PATH_MODEL_PLAN.md](./PATH_MODEL_PLAN.md) records the v0 path model and its deferred follow-up work.
 - [BEZIER_PATH_MODEL_PLAN.md](./BEZIER_PATH_MODEL_PLAN.md) defines the next planned path extension for quadratic/cubic Bezier support.
+- [PATH_CURVE_CHECKPOINT.md](./PATH_CURVE_CHECKPOINT.md) records the current path/Bezier checkpoint and next branch options.
 - [MARKER_ARROWHEAD_MODEL_PLAN.md](./MARKER_ARROWHEAD_MODEL_PLAN.md) records the v0 built-in arrow marker model.
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) records the current effective model shape and current boundaries.
 - [ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md](./ASPIRATIONAL_GALLERY_CAPABILITY_AUDIT.md) describes the gallery-driven capability gaps that this primitive foundation partially addresses.

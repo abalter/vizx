@@ -241,3 +241,4 @@ Explicitly deferred in this pass:
 
 - [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md) defines the policy for keeping lightweight geometry helpers in-house and reviewing external dependencies before advanced path geometry (curves/arcs/intersections/clipping).
 - [BEZIER_PATH_MODEL_PLAN.md](./BEZIER_PATH_MODEL_PLAN.md) defines the next path extension design for quadratic/cubic Bezier command support.
+- [PATH_CURVE_CHECKPOINT.md](./PATH_CURVE_CHECKPOINT.md) records the current implemented path/Bezier foundation and the next branch choice options.
