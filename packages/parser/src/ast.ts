@@ -51,9 +51,15 @@ export interface VizxAstRelativePlacement {
 
 export type VizxAstPlacement = VizxAstAbsolutePlacement | VizxAstRelativePlacement;
 
+export interface VizxAstAlignment {
+  readonly relation: "alignX" | "alignY" | "alignLeft" | "alignRight" | "alignTop" | "alignBottom";
+  readonly reference: VizxAstAnchorRef;
+}
+
 export interface VizxAstBaseObject {
   readonly id: string;
   readonly placement?: VizxAstPlacement;
+  readonly align?: VizxAstAlignment;
 }
 
 export interface VizxAstRectFitToText {

@@ -19,7 +19,7 @@ See [PARSER_LOWERING_DISTRIBUTION_TEST_PLAN.md](./PARSER_LOWERING_DISTRIBUTION_T
 
 - Parser syntax is not yet a stable product surface.
 - Parser/lowering implementation is provisional.
-- A direct-AST lowering scaffold now exists for placement-focused scenes (`VizxAstScene` -> `lowerAstToObjectScene` -> `ObjectScene`) without source-text parsing.
+- A direct-AST lowering scaffold now exists for placement/alignment-focused scenes (`VizxAstScene` -> `lowerAstToObjectScene` -> `ObjectScene`) without source-text parsing.
 - This contract defines boundaries and test intent for future parser-readiness work.
 
 ## 1. Parser Output Responsibility

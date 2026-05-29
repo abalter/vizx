@@ -1,18 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { lowerAstToObjectScene, type VizxAstScene } from "@vizx/parser";
 import { inspectScene, resolveScene } from "@vizx/resolver";
-import type { ObjectPlacement, ObjectScene } from "@vizx/object-model";
+import type { ObjectAlignment, ObjectPlacement, ObjectScene } from "@vizx/object-model";
 import { requireVizxExample } from "./index";
 
 function createAstLabelBox(
   id: string,
   label: string,
   placement: Exclude<ObjectPlacement, { kind: "absolute" }> | { kind: "absolute"; position: { x: number; y: number } },
+  align?: ObjectAlignment,
 ) {
   return {
     kind: "group" as const,
     id,
     placement,
+    align,
     children: [
       {
         kind: "text" as const,
@@ -58,6 +60,19 @@ function summarizeConnectors(scene: ObjectScene) {
     id: connector.id,
     from: { objectId: connector.from.objectId, anchor: connector.from.anchor },
     to: { objectId: connector.to.objectId, anchor: connector.to.anchor },
+  }));
+}
+
+function summarizeAlignments(scene: ObjectScene) {
+  return scene.objects.map((object) => ({
+    id: object.id,
+    relation: object.align?.relation,
+    reference: object.align
+      ? {
+        objectId: object.align.reference.objectId,
+        anchor: object.align.reference.anchor,
+      }
+      : undefined,
   }));
 }
 
@@ -111,5 +126,89 @@ describe("parser lowering scaffold", () => {
     expect(left?.anchors.east?.x).toBeLessThan(center!.anchors.west!.x);
     expect(above?.anchors.south?.y).toBeLessThan(center!.anchors.north!.y);
     expect(below?.anchors.north?.y).toBeGreaterThan(center!.anchors.south!.y);
+  });
+
+  it("lowers a hand-authored AST for alignment-family and matches example semantics", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        createAstLabelBox("Reference", "Reference nucleus", { kind: "absolute", position: { x: 260, y: 180 } }),
+        createAstLabelBox(
+          "AxisX",
+          "Axis X target",
+          { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 88 },
+          { relation: "alignX", reference: { objectId: "Reference", anchor: "center" } },
+        ),
+        createAstLabelBox(
+          "AxisY",
+          "Axis Y receiver with wider text",
+          { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 96 },
+          { relation: "alignY", reference: { objectId: "Reference", anchor: "center" } },
+        ),
+        createAstLabelBox(
+          "EdgeLeft",
+          "Left edge",
+          { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 24 },
+          { relation: "alignLeft", reference: { objectId: "Reference", anchor: "west" } },
+        ),
+        createAstLabelBox(
+          "EdgeRight",
+          "Right edge with longer text",
+          { kind: "above", reference: { objectId: "Reference", anchor: "north" }, gap: 24 },
+          { relation: "alignRight", reference: { objectId: "Reference", anchor: "east" } },
+        ),
+        createAstLabelBox(
+          "EdgeTop",
+          "Top edge target",
+          { kind: "rightOf", reference: { objectId: "Reference", anchor: "east" }, gap: 48 },
+          { relation: "alignTop", reference: { objectId: "Reference", anchor: "north" } },
+        ),
+        createAstLabelBox(
+          "EdgeBottom",
+          "Bottom edge",
+          { kind: "leftOf", reference: { objectId: "Reference", anchor: "west" }, gap: 48 },
+          { relation: "alignBottom", reference: { objectId: "Reference", anchor: "south" } },
+        ),
+      ],
+      connectors: [
+        { kind: "connector", id: "reference-axis-x", from: { objectId: "Reference", anchor: "center" }, to: { objectId: "AxisX", anchor: "center" } },
+        { kind: "connector", id: "reference-axis-y", from: { objectId: "Reference", anchor: "center" }, to: { objectId: "AxisY", anchor: "center" } },
+        { kind: "connector", id: "reference-edge-left", from: { objectId: "Reference", anchor: "west" }, to: { objectId: "EdgeLeft", anchor: "west" } },
+        { kind: "connector", id: "reference-edge-right", from: { objectId: "Reference", anchor: "east" }, to: { objectId: "EdgeRight", anchor: "east" } },
+        { kind: "connector", id: "reference-edge-top", from: { objectId: "Reference", anchor: "north" }, to: { objectId: "EdgeTop", anchor: "north" } },
+        { kind: "connector", id: "reference-edge-bottom", from: { objectId: "Reference", anchor: "south" }, to: { objectId: "EdgeBottom", anchor: "south" } },
+      ],
+    };
+
+    const loweredScene = lowerAstToObjectScene(ast);
+    const loweredResolved = resolveScene(loweredScene);
+    const loweredInspection = inspectScene(loweredScene);
+
+    const referenceScene = requireVizxExample("alignment-family").createScene();
+    const referenceResolved = resolveScene(referenceScene);
+    const referenceInspection = inspectScene(referenceScene);
+
+    expect(loweredResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(referenceResolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    expect(loweredInspection.objects.map((object) => object.id)).toEqual(referenceInspection.objects.map((object) => object.id));
+    expect(summarizeAlignments(loweredScene)).toEqual(summarizeAlignments(referenceScene));
+    expect(summarizeConnectors(loweredScene)).toEqual(summarizeConnectors(referenceScene));
+
+    const byId = new Map(loweredInspection.objects.map((object) => [object.id, object]));
+    const reference = byId.get("Reference")!;
+    const axisX = byId.get("AxisX")!;
+    const axisY = byId.get("AxisY")!;
+    const edgeLeft = byId.get("EdgeLeft")!;
+    const edgeRight = byId.get("EdgeRight")!;
+    const edgeTop = byId.get("EdgeTop")!;
+    const edgeBottom = byId.get("EdgeBottom")!;
+
+    expect(axisX.anchors.center?.x).toBe(reference.anchors.center?.x);
+    expect(axisY.anchors.center?.y).toBe(reference.anchors.center?.y);
+    expect(edgeLeft.anchors.west?.x).toBe(reference.anchors.west?.x);
+    expect(edgeRight.anchors.east?.x).toBe(reference.anchors.east?.x);
+    expect(edgeTop.anchors.north?.y).toBe(reference.anchors.north?.y);
+    expect(edgeBottom.anchors.south?.y).toBe(reference.anchors.south?.y);
   });
 });

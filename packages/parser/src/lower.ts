@@ -1,7 +1,7 @@
 import type { CoreCommand, CoreProgram } from "@vizx/core";
-import type { ConnectorObject, DrawableObject, ObjectPlacement, ObjectScene } from "@vizx/object-model";
+import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement, ObjectScene } from "@vizx/object-model";
 import type { AstProgram } from "./ast";
-import type { VizxAstConnector, VizxAstObject, VizxAstPlacement, VizxAstScene } from "./ast";
+import type { VizxAstAlignment, VizxAstConnector, VizxAstObject, VizxAstPlacement, VizxAstScene } from "./ast";
 
 export function lowerAstToCore(ast: AstProgram): CoreProgram {
   const commands: CoreCommand[] = [];
@@ -68,6 +68,7 @@ function lowerAstObject(object: VizxAstObject): DrawableObject {
         kind: "group",
         id: object.id,
         placement: lowerAstPlacement(object.placement),
+        align: lowerAstAlignment(object.align),
         children: object.children.map((child) => lowerAstObject(child)),
       };
     case "text":
@@ -75,6 +76,7 @@ function lowerAstObject(object: VizxAstObject): DrawableObject {
         kind: "text",
         id: object.id,
         placement: lowerAstPlacement(object.placement),
+        align: lowerAstAlignment(object.align),
         center: { x: object.center.x, y: object.center.y },
         text: object.text,
       };
@@ -83,6 +85,7 @@ function lowerAstObject(object: VizxAstObject): DrawableObject {
         kind: "rect",
         id: object.id,
         placement: lowerAstPlacement(object.placement),
+        align: lowerAstAlignment(object.align),
         fitToText: {
           textId: object.fitToText.textId,
           paddingX: object.fitToText.paddingX,
@@ -116,6 +119,29 @@ function lowerAstPlacement(placement: VizxAstPlacement | undefined): ObjectPlace
     },
     gap: placement.gap,
   };
+}
+
+function lowerAstAlignment(alignment: VizxAstAlignment | undefined): ObjectAlignment | undefined {
+  if (!alignment) {
+    return undefined;
+  }
+
+  if (alignment.relation === "alignX"
+    || alignment.relation === "alignY"
+    || alignment.relation === "alignLeft"
+    || alignment.relation === "alignRight"
+    || alignment.relation === "alignTop"
+    || alignment.relation === "alignBottom") {
+    return {
+      relation: alignment.relation,
+      reference: {
+        objectId: alignment.reference.objectId,
+        anchor: alignment.reference.anchor,
+      },
+    };
+  }
+
+  throw new Error(`Unsupported AST alignment relation: ${(alignment as { relation?: unknown }).relation ?? "unknown"}`);
 }
 
 function lowerAstConnector(connector: VizxAstConnector): ConnectorObject {

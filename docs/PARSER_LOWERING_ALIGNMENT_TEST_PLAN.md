@@ -4,9 +4,9 @@ This document defines a concrete planning stub for a future parser-lowering fixt
 
 Status:
 
-- planning only
-- no parser implementation in this pass
-- no parser-lowering tests in this pass
+- direct-AST scaffold coverage is now implemented with hand-authored AST lowering/parity tests for `alignment-family`
+- no source-text parser implementation in this pass
+- no parser-lowering tests from source strings in this pass
 - no runtime behavior changes in this pass
 
 ## 1. Purpose

@@ -57,4 +57,84 @@ describe("lowerAstToObjectScene", () => {
 
     expect(() => lowerAstToObjectScene(ast)).toThrow("Unsupported AST object kind: circle");
   });
+
+  it("lowers alignX on an AST object into ObjectScene align", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: { x: 180, y: 120 } },
+          children: [],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 40 },
+          align: { relation: "alignX", reference: { objectId: "Reference", anchor: "center" } },
+          children: [],
+        },
+      ],
+    };
+
+    const scene = lowerAstToObjectScene(ast);
+    const target = scene.objects.find((object) => object.id === "Target");
+
+    expect(target?.align).toEqual({
+      relation: "alignX",
+      reference: { objectId: "Reference", anchor: "center" },
+    });
+  });
+
+  it("lowers edge alignment relations such as alignLeft", () => {
+    const ast: VizxAstScene = {
+      kind: "scene",
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: { x: 180, y: 120 } },
+          children: [],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          placement: { kind: "below", reference: { objectId: "Reference", anchor: "south" }, gap: 16 },
+          align: { relation: "alignLeft", reference: { objectId: "Reference", anchor: "west" } },
+          children: [],
+        },
+      ],
+    };
+
+    const scene = lowerAstToObjectScene(ast);
+    const target = scene.objects.find((object) => object.id === "Target");
+
+    expect(target?.align).toEqual({
+      relation: "alignLeft",
+      reference: { objectId: "Reference", anchor: "west" },
+    });
+  });
+
+  it("throws a clear error for unsupported alignment relations", () => {
+    const ast = {
+      kind: "scene",
+      objects: [
+        {
+          kind: "group",
+          id: "Reference",
+          placement: { kind: "absolute", position: { x: 180, y: 120 } },
+          children: [],
+        },
+        {
+          kind: "group",
+          id: "Target",
+          align: { relation: "alignDiagonal", reference: { objectId: "Reference", anchor: "center" } },
+          children: [],
+        },
+      ],
+    } as unknown as VizxAstScene;
+
+    expect(() => lowerAstToObjectScene(ast)).toThrow("Unsupported AST alignment relation: alignDiagonal");
+  });
 });
