@@ -52,7 +52,7 @@ export type ObjectAlignment = AlignYRelation | AlignXRelation | AlignLeftRelatio
 export interface BaseObject {
   readonly id: string;
   readonly style?: Style;
-  readonly transform?: Transform;
+  readonly transform?: Transform | readonly Transform[];
   readonly placement?: ObjectPlacement;
   readonly align?: ObjectAlignment;
 }

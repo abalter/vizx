@@ -30,6 +30,7 @@ For parser-readiness planning (not implementation status), see [PARSER_LOWERING_
 | Path primitive (v0: moveTo/lineTo/closePath) | [packages/geometry/src/geometry.test.ts](../packages/geometry/src/geometry.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `path-primitive` | Yes | Path bbox/anchors are bbox-derived from explicit moveTo/lineTo points and render as SVG `<path>` with `M/L/Z` commands. |
 | Primitive style propagation | [packages/renderer-svg/src/renderSvg.test.ts](../packages/renderer-svg/src/renderSvg.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `styled-primitives` | Indirect | Line, polyline, ellipse, and polygon preserve style through resolver and serialize stroke/fill/strokeWidth/opacity to SVG. |
 | Built-in arrow markers (v0) | [packages/renderer-svg/src/renderSvg.test.ts](../packages/renderer-svg/src/renderSvg.test.ts) | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | `arrowheads`, `connectors` | Indirect | Built-in `arrow` markers render for line, polyline, path, and connector nodes via renderer-synthesized SVG marker defs. |
+| Ordered transforms (v0: translate + rotate) | [packages/geometry/src/geometry.test.ts](../packages/geometry/src/geometry.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `rotated-primitives` | Yes | Resolver applies ordered `translate` and `rotate` operations before layout, computes axis-aligned transformed bboxes/anchors, and emits final transformed coordinates. |
 | Straight connector | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/resolver/src/resolveScene.test.ts](../packages/resolver/src/resolveScene.test.ts) | `basic`, `connectors`, `mixed-nested-placement`, `alignment-reference` | Yes | Connectors resolve anchor endpoints and serialize as straight paths. |
 | Inspect output | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | [packages/cli/src/demoScene.test.ts](../packages/cli/src/demoScene.test.ts) | All registered examples | Indirect | Example harness verifies every example can be inspected. |
 | Debug overlay | [packages/resolver/src/debugOverlay.test.ts](../packages/resolver/src/debugOverlay.test.ts) | [packages/examples/src/index.test.ts](../packages/examples/src/index.test.ts) | All registered examples | Yes | Overlay is generated from resolved model data using render nodes. |
@@ -40,6 +41,8 @@ For parser-readiness planning (not implementation status), see [PARSER_LOWERING_
 
 - Parser-driven example sources
 - General graph layout
+- Scale transforms
+- Rotation support for `text` and `ellipse`
 - align (other than `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, and `alignY`)
 - Flowchart semantics
 - Plotting or chart grammars

@@ -7,11 +7,17 @@ import {
   bboxFromRect,
   bboxFromLine,
   bboxFromPoints,
+  bboxFromTransformedCorners,
   bboxTranslate,
   bboxUnion,
+  normalizeTransforms,
   point,
+  rotatePoint,
+  transformPoint,
+  transformPoints,
   type BoundingBox,
   type Point,
+  type TransformOperation,
   type Vector,
 } from "@vizx/geometry";
 import {
@@ -77,7 +83,8 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
 
   for (const object of scene.objects) {
     const localObject = resolveObjectLocal(object, diagnostics);
-    const placedObject = applyPlacement(localObject, object, objectMap, diagnostics);
+    const transformedObject = applyObjectTransforms(localObject, object, diagnostics);
+    const placedObject = applyPlacement(transformedObject, object, objectMap, diagnostics);
     resolvedObjects.push(placedObject);
     objectMap.set(object.id, placedObject);
   }
@@ -524,7 +531,7 @@ function applyPlacement(
   placedObjects: ReadonlyMap<string, ResolvedObject>,
   diagnostics: Diagnostic[],
 ): ResolvedObject {
-  let offset: Vector = { dx: source.transform?.translateX ?? 0, dy: source.transform?.translateY ?? 0 };
+  let offset: Vector = { dx: 0, dy: 0 };
   const placement = source.placement;
 
   if (placement?.kind === "absolute") {
@@ -1038,6 +1045,259 @@ function translateResolvedObject(object: ResolvedObject, offset: Vector): Resolv
     children: object.children?.map((child) => translateResolvedObject(child, offset)),
     renderNode: translateRenderNode(object.renderNode, offset),
   };
+}
+
+function applyObjectTransforms(
+  object: ResolvedObject,
+  source: DrawableObject,
+  diagnostics: Diagnostic[],
+): ResolvedObject {
+  const transforms = normalizeTransforms(source.transform);
+
+  let transformed = object;
+
+  for (const operation of transforms) {
+    if (operation.kind === "translate") {
+      if (!Number.isFinite(operation.x) || !Number.isFinite(operation.y)) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: translate requires finite x/y`,
+        });
+        continue;
+      }
+
+      transformed = translateResolvedObject(transformed, { dx: operation.x, dy: operation.y });
+      continue;
+    }
+
+    if (operation.kind === "rotate") {
+      if (!Number.isFinite(operation.angleDegrees)) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: rotate requires a finite angleDegrees`,
+        });
+        continue;
+      }
+
+      if (operation.around && (!Number.isFinite(operation.around.x) || !Number.isFinite(operation.around.y))) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: rotate around requires finite point coordinates`,
+        });
+        continue;
+      }
+
+      if (!canRotateResolvedObject(transformed)) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply rotate transform for ${source.id}: rotation is not supported for this object kind in v0`,
+        });
+        continue;
+      }
+
+      const around = operation.around ?? transformed.anchors.center ?? point(0, 0);
+      transformed = rotateResolvedObject(transformed, operation.angleDegrees, around);
+      continue;
+    }
+
+    diagnostics.push({
+      severity: "error",
+      message: `Unsupported transform operation for ${source.id}`,
+    });
+  }
+
+  return transformed;
+}
+
+function canRotateResolvedObject(object: ResolvedObject): boolean {
+  return canRotateRenderNode(object.renderNode)
+    && (object.children?.every((child) => canRotateResolvedObject(child)) ?? true);
+}
+
+function canRotateRenderNode(node: RenderNode): boolean {
+  switch (node.kind) {
+    case "text":
+    case "ellipse":
+      return false;
+    case "group":
+      return node.children.every((child) => canRotateRenderNode(child));
+    default:
+      return true;
+  }
+}
+
+function rotateResolvedObject(object: ResolvedObject, angleDegrees: number, around: Point): ResolvedObject {
+  const rotatedRenderNode = rotateRenderNode(object.renderNode, angleDegrees, around);
+
+  if (!rotatedRenderNode) {
+    return object;
+  }
+
+  const rotatedChildren = object.children?.map((child) => rotateResolvedObject(child, angleDegrees, around));
+  const rotatedBounds = getNodeBounds([rotatedRenderNode]);
+  const rotatedBBox = bboxFromRect(
+    rotatedBounds.minX,
+    rotatedBounds.minY,
+    Math.max(0, rotatedBounds.maxX - rotatedBounds.minX),
+    Math.max(0, rotatedBounds.maxY - rotatedBounds.minY),
+  );
+
+  return {
+    ...object,
+    bbox: rotatedBBox,
+    anchors: anchorsForBoundingBox(rotatedBBox),
+    geometry: rotateGeometry(object.geometry, angleDegrees, around),
+    children: rotatedChildren,
+    renderNode: rotatedRenderNode,
+  };
+}
+
+function rotateRenderNode(node: RenderNode, angleDegrees: number, around: Point): RenderNode | undefined {
+  switch (node.kind) {
+    case "group": {
+      const children: RenderNode[] = [];
+
+      for (const child of node.children) {
+        const rotatedChild = rotateRenderNode(child, angleDegrees, around);
+
+        if (!rotatedChild) {
+          return undefined;
+        }
+
+        children.push(rotatedChild);
+      }
+
+      return {
+        ...node,
+        children,
+      };
+    }
+    case "rect": {
+      const transformedCorners = transformPoints([
+        point(node.x, node.y),
+        point(node.x + node.width, node.y),
+        point(node.x + node.width, node.y + node.height),
+        point(node.x, node.y + node.height),
+      ], [{ kind: "rotate", angleDegrees, around }]);
+
+      return {
+        kind: "polygon",
+        id: node.id,
+        points: transformedCorners,
+        style: node.style,
+      };
+    }
+    case "circle": {
+      const center = rotatePoint(point(node.cx, node.cy), angleDegrees, around);
+      return {
+        ...node,
+        cx: center.x,
+        cy: center.y,
+      };
+    }
+    case "ellipse":
+      return undefined;
+    case "line": {
+      const start = rotatePoint(point(node.x1, node.y1), angleDegrees, around);
+      const end = rotatePoint(point(node.x2, node.y2), angleDegrees, around);
+
+      return {
+        ...node,
+        x1: start.x,
+        y1: start.y,
+        x2: end.x,
+        y2: end.y,
+      };
+    }
+    case "polyline":
+      return {
+        ...node,
+        points: transformPoints(node.points, [{ kind: "rotate", angleDegrees, around }]),
+      };
+    case "polygon":
+      return {
+        ...node,
+        points: transformPoints(node.points, [{ kind: "rotate", angleDegrees, around }]),
+      };
+    case "path":
+      return {
+        ...node,
+        d: rotatePath(node.d, angleDegrees, around),
+      };
+    case "text":
+      return undefined;
+  }
+}
+
+function rotatePath(d: string, angleDegrees: number, around: Point): string {
+  const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+
+  if (!numbers) {
+    return d;
+  }
+
+  let index = 0;
+
+  return d.replace(/-?\d+(?:\.\d+)?/g, (match) => {
+    const value = Number(match);
+
+    if (!Number.isFinite(value)) {
+      index += 1;
+      return match;
+    }
+
+    const axisIndex = index % 2;
+    const pairIndex = index - axisIndex;
+    const xSource = Number(numbers[pairIndex]);
+    const ySource = Number(numbers[pairIndex + 1]);
+
+    if (!Number.isFinite(xSource) || !Number.isFinite(ySource)) {
+      index += 1;
+      return match;
+    }
+
+    const rotated = rotatePoint(point(xSource, ySource), angleDegrees, around);
+    index += 1;
+    return String(axisIndex === 0 ? rotated.x : rotated.y);
+  });
+}
+
+function rotateGeometry(
+  geometry: Record<string, number | string | undefined> | undefined,
+  angleDegrees: number,
+  around: Point,
+): Record<string, number | string | undefined> | undefined {
+  if (!geometry) {
+    return undefined;
+  }
+
+  const rotated = { ...geometry };
+
+  rotateGeometryPair(rotated, "x", "y", angleDegrees, around);
+  rotateGeometryPair(rotated, "cx", "cy", angleDegrees, around);
+  rotateGeometryPair(rotated, "x1", "y1", angleDegrees, around);
+  rotateGeometryPair(rotated, "x2", "y2", angleDegrees, around);
+
+  return rotated;
+}
+
+function rotateGeometryPair(
+  geometry: Record<string, number | string | undefined>,
+  xKey: string,
+  yKey: string,
+  angleDegrees: number,
+  around: Point,
+): void {
+  const x = geometry[xKey];
+  const y = geometry[yKey];
+
+  if (typeof x !== "number" || typeof y !== "number") {
+    return;
+  }
+
+  const rotated = rotatePoint(point(x, y), angleDegrees, around);
+  geometry[xKey] = rotated.x;
+  geometry[yKey] = rotated.y;
 }
 
 function translateGeometry(

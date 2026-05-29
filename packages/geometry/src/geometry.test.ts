@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   addPointVector,
+  bboxFromTransformedCorners,
   bboxFromRect,
   bboxFromLine,
   bboxFromEllipse,
@@ -13,8 +14,10 @@ import {
   identityTransform,
   midpoint,
   point,
+  rotatePoint,
   subtractPoints,
   transformPoint,
+  transformPoints,
   vector,
 } from "./geometry";
 
@@ -88,6 +91,55 @@ describe("geometry kernel", () => {
     );
 
     expect(transformPoint(point(4, 7), identityTransform)).toEqual(point(4, 7));
+    expect(transformPoint(point(4, 7), { kind: "translate", x: 3, y: -2 })).toEqual(point(7, 5));
     expect(transformPoint(point(4, 7), { translateX: 3, translateY: -2 })).toEqual(point(7, 5));
+  });
+
+  it("rotates points around origin", () => {
+    const rotated = rotatePoint(point(2, 1), 90, point(0, 0));
+
+    expect(rotated.x).toBeCloseTo(-1, 8);
+    expect(rotated.y).toBeCloseTo(2, 8);
+  });
+
+  it("rotates points around an explicit pivot", () => {
+    const rotated = rotatePoint(point(7, 5), 90, point(5, 5));
+
+    expect(rotated.x).toBeCloseTo(5, 8);
+    expect(rotated.y).toBeCloseTo(7, 8);
+  });
+
+  it("applies ordered transform operations to point sequences", () => {
+    const translatedThenRotated = transformPoints(
+      [point(1, 0)],
+      [
+        { kind: "translate", x: 1, y: 0 },
+        { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+      ],
+    );
+    const rotatedThenTranslated = transformPoints(
+      [point(1, 0)],
+      [
+        { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+        { kind: "translate", x: 1, y: 0 },
+      ],
+    );
+
+    expect(translatedThenRotated[0]?.x).toBeCloseTo(0, 8);
+    expect(translatedThenRotated[0]?.y).toBeCloseTo(2, 8);
+    expect(rotatedThenTranslated[0]?.x).toBeCloseTo(1, 8);
+    expect(rotatedThenTranslated[0]?.y).toBeCloseTo(1, 8);
+  });
+
+  it("computes axis-aligned bbox from transformed corners", () => {
+    const bbox = bboxFromTransformedCorners(
+      bboxFromRect(0, 0, 10, 20),
+      [{ kind: "rotate", angleDegrees: 90, around: point(0, 0) }],
+    );
+
+    expect(bbox.x).toBeCloseTo(-20, 8);
+    expect(bbox.y).toBeCloseTo(0, 8);
+    expect(bbox.width).toBeCloseTo(20, 8);
+    expect(bbox.height).toBeCloseTo(10, 8);
   });
 });

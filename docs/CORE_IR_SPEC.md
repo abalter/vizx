@@ -53,9 +53,26 @@ Common object fields from `BaseObject`:
 
 - `id: string`
 - `style?: Style`
-- `transform?: Transform`
+- `transform?: Transform | readonly Transform[]`
 - `placement?: ObjectPlacement`
 - `align?: ObjectAlignment`
+
+Current transform baseline in `Transform`:
+
+- ordered operation support in code for:
+  - `{ kind: "translate", x, y }`
+  - `{ kind: "rotate", angleDegrees, around? }`
+- compatibility input for previous translate-only shape is still accepted:
+  - `{ translateX, translateY }`
+- operations are applied in listed order
+- resolver applies transform operations before placement/alignment/distribution
+- transformed bboxes remain axis-aligned and anchors remain bbox-derived
+
+Current transform deferrals:
+
+- scale operation support
+- rotation support for `text` and `ellipse` objects (diagnostic + skip in v0)
+- parser/JSON/AST transform surfaces
 
 Current style baseline in `Style`:
 
@@ -97,7 +114,7 @@ Line semantics:
 
 - bbox is derived from the start and end points.
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the line's bounding box.
-- line placement and transforms behave like any other drawable object because the resolver translates the resolved bbox and render node.
+- line transform operations are resolved before placement/alignment/distribution, then layout translation applies against post-transform bbox anchors.
 
 ### 2.2 Polyline
 
@@ -131,6 +148,7 @@ Ellipse semantics:
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the ellipse's bounding box.
 - ellipse participates in placement/alignment/distribution through the same bbox-anchor model as the other primitives.
 - when style is omitted, ellipse uses line-style defaults (stroke-only).
+- rotate transforms on ellipse are currently deferred in v0 (diagnostic + skipped); translate transforms are supported.
 
 ### 2.4 Polygon
 
@@ -216,6 +234,11 @@ interface TextObject extends BaseObject {
   readonly center: Point;
   readonly text: string;
 }
+
+Text transform note:
+
+- translate transforms are supported
+- rotate transforms are currently deferred in v0 (diagnostic + skipped)
 ```
 
 ### 2.9 Group
@@ -365,6 +388,7 @@ Current behavior:
 - Endpoint points are taken from resolved object anchors.
 - Current rendered connector path is straight (`M ... L ...`).
 - connector style defaults preserve arrowheaded output through the built-in `arrow` marker value.
+- connector endpoints reflect final transformed+laid-out object anchors.
 
 ## 8. Resolution Pipeline
 
@@ -373,6 +397,7 @@ Current effective pipeline:
 ```text
 unresolved object graph
   -> intrinsic geometry and text measurement
+  -> ordered object transforms (translate + rotate)
   -> placement
   -> alignment
   -> distribution

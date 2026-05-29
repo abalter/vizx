@@ -72,7 +72,7 @@ The current foundation is intentionally limited. The following remain unimplemen
 - curves
 - arcs
 - the full SVG path command language
-- transforms beyond the current translate-only support
+- transforms beyond the current v0 translate+rotate slice
 - general local coordinate systems or nested coordinate frames
 - clipping
 - gradients
@@ -88,8 +88,9 @@ Related current boundaries worth stating directly:
 - path v0 supports only `moveTo`, `lineTo`, and `closePath`
 - connector rendering is still straight-line only
 - bbox and anchors remain bbox-derived; markers do not expand bbox
-- renderer transform handling is still translate-only
-- there is no general object-space transform/local-frame model yet
+- ordered transform operations now support `translate` and `rotate` in resolver-driven scene coordinates
+- scale and broader affine/local-frame features remain deferred
+- rotate support for `text` and `ellipse` remains deferred in v0
 
 These omissions are deliberate. They keep the primitive foundation legible and testable without conflating it with later geometry, plotting, or language-design work.
 

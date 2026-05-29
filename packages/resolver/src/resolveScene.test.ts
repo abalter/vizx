@@ -236,6 +236,112 @@ describe("resolveScene", () => {
     expect(shape?.anchors.east).toEqual(point(138, 64));
   });
 
+  it("applies ordered translate and rotate transforms before placement", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "line",
+          id: "ordered",
+          start: point(0, 0),
+          end: point(20, 0),
+          transform: [
+            { kind: "translate", x: 10, y: 0 },
+            { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const ordered = result.resolved.objects.find((object) => object.id === "ordered");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(ordered?.bbox.x).toBeCloseTo(0, 8);
+    expect(ordered?.bbox.y).toBeCloseTo(10, 8);
+    expect(ordered?.bbox.width).toBeCloseTo(0, 8);
+    expect(ordered?.bbox.height).toBeCloseTo(20, 8);
+    expect(ordered?.anchors.center?.x).toBeCloseTo(0, 8);
+    expect(ordered?.anchors.center?.y).toBeCloseTo(20, 8);
+    expect(ordered?.renderNode.kind).toBe("line");
+    if (ordered?.renderNode.kind === "line") {
+      expect(ordered.renderNode.x1).toBeCloseTo(0, 8);
+      expect(ordered.renderNode.y1).toBeCloseTo(10, 8);
+      expect(ordered.renderNode.x2).toBeCloseTo(0, 8);
+      expect(ordered.renderNode.y2).toBeCloseTo(30, 8);
+    }
+  });
+
+  it("allows transformed objects to participate in placement and connector anchor resolution", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "line",
+          id: "A",
+          start: point(0, 0),
+          end: point(40, 0),
+          transform: [
+            { kind: "translate", x: 60, y: 80 },
+            { kind: "rotate", angleDegrees: 30, around: point(60, 80) },
+          ],
+        },
+        {
+          kind: "polygon",
+          id: "B",
+          points: [point(0, 16), point(22, 0), point(52, 12), point(40, 36), point(6, 30)],
+          transform: [{ kind: "rotate", angleDegrees: -18, around: point(26, 16) }],
+          placement: { kind: "rightOf", reference: { objectId: "A", anchor: "east" }, gap: 20 },
+        },
+      ],
+      connectors: [
+        {
+          kind: "connector",
+          id: "A-B",
+          from: { objectId: "A", anchor: "east" },
+          to: { objectId: "B", anchor: "west" },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const a = result.resolved.objects.find((object) => object.id === "A");
+    const b = result.resolved.objects.find((object) => object.id === "B");
+    const connector = result.resolved.connectors.find((entry) => entry.id === "A-B");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(a?.anchors.east).toBeDefined();
+    expect(b?.anchors.west).toBeDefined();
+    expect(b?.anchors.west?.x).toBeGreaterThan(a?.anchors.east?.x ?? 0);
+    expect(connector?.start).toEqual(a?.anchors.east);
+    expect(connector?.end).toEqual(b?.anchors.west);
+  });
+
+  it("emits diagnostics for unsupported rotate targets and non-finite transform values", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "text",
+          id: "text",
+          center: point(0, 0),
+          text: "Not rotated",
+          transform: [{ kind: "rotate", angleDegrees: 35 }],
+        },
+        {
+          kind: "line",
+          id: "bad-translate",
+          start: point(0, 0),
+          end: point(20, 0),
+          transform: [{ kind: "translate", x: Number.NaN, y: 10 }],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("rotation is not supported"))).toBe(true);
+    expect(messages.some((message) => message.includes("translate requires finite x/y"))).toBe(true);
+  });
+
   it("reports invalid path diagnostics for empty commands and no explicit points", () => {
     const scene: ObjectScene = {
       objects: [

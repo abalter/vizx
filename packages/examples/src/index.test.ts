@@ -104,6 +104,25 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the rotated-primitives example", () => {
+    const scene = requireVizxExample("rotated-primitives").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "rot.line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "rot.polyline")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "rot.polygon")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "rot.path")).toBe(true);
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<polyline");
+    expect(svg).toContain("<polygon");
+    expect(svg).toContain("<path");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and resolves the polyline primitive example", () => {
     const scene = requireVizxExample("polyline-primitive").createScene();
     const result = resolveScene(scene);

@@ -20,18 +20,32 @@ export interface BoundingBox {
   readonly height: number;
 }
 
-export interface Transform {
+export interface TranslateTransform {
+  readonly kind: "translate";
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface RotateTransform {
+  readonly kind: "rotate";
+  readonly angleDegrees: number;
+  readonly around?: Point;
+}
+
+export type TransformOperation = TranslateTransform | RotateTransform;
+
+// Compatibility path for the previous transform shape.
+export interface LegacyTranslateTransform {
   readonly translateX: number;
   readonly translateY: number;
 }
 
-export const identityTransform: Transform = {
-  translateX: 0,
-  translateY: 0,
-};
+export type Transform = TransformOperation | LegacyTranslateTransform;
 
-export function translation(dx: number, dy: number): Transform {
-  return { translateX: dx, translateY: dy };
+export const identityTransform: readonly TransformOperation[] = [];
+
+export function translation(dx: number, dy: number): TransformOperation {
+  return { kind: "translate", x: dx, y: dy };
 }
 
 export function point(x: number, y: number): Point {
@@ -135,6 +149,60 @@ export function bboxTranslate(box: BoundingBox, offset: Vector): BoundingBox {
   return bboxFromRect(box.x + offset.dx, box.y + offset.dy, box.width, box.height);
 }
 
-export function transformPoint(source: Point, transform: Transform): Point {
-  return point(source.x + transform.translateX, source.y + transform.translateY);
+export function rotatePoint(source: Point, angleDegrees: number, around: Point = point(0, 0)): Point {
+  const radians = (angleDegrees * Math.PI) / 180;
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const relativeX = source.x - around.x;
+  const relativeY = source.y - around.y;
+
+  return point(
+    around.x + relativeX * cos - relativeY * sin,
+    around.y + relativeX * sin + relativeY * cos,
+  );
+}
+
+export function normalizeTransforms(transform: Transform | readonly Transform[] | undefined): readonly TransformOperation[] {
+  if (!transform) {
+    return identityTransform;
+  }
+
+  const operations = Array.isArray(transform) ? transform : [transform];
+
+  return operations.map((operation): TransformOperation => {
+    if ("kind" in operation) {
+      return operation;
+    }
+
+    return {
+      kind: "translate",
+      x: operation.translateX,
+      y: operation.translateY,
+    };
+  });
+}
+
+export function transformPoint(source: Point, transform: Transform | readonly Transform[] | undefined): Point {
+  return normalizeTransforms(transform).reduce((current, operation) => {
+    if (operation.kind === "translate") {
+      return point(current.x + operation.x, current.y + operation.y);
+    }
+
+    return rotatePoint(current, operation.angleDegrees, operation.around);
+  }, source);
+}
+
+export function transformPoints(points: readonly Point[], transform: Transform | readonly Transform[] | undefined): readonly Point[] {
+  return points.map((entry) => transformPoint(entry, transform));
+}
+
+export function bboxFromTransformedCorners(box: BoundingBox, transform: Transform | readonly Transform[] | undefined): BoundingBox {
+  const corners = transformPoints([
+    point(box.x, box.y),
+    point(box.x + box.width, box.y),
+    point(box.x + box.width, box.y + box.height),
+    point(box.x, box.y + box.height),
+  ], transform);
+
+  return bboxFromPoints(corners);
 }

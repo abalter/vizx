@@ -221,6 +221,40 @@ describe("renderSvg", () => {
     expect(svg).toContain('stroke="#0f766e"');
   });
 
+  it("serializes resolver-emitted transformed coordinates for supported primitive nodes", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: -20, minY: -20, width: 240, height: 180 },
+      children: [
+        {
+          kind: "line",
+          x1: 0,
+          y1: 10,
+          x2: 0,
+          y2: 30,
+          style: { stroke: "#1d4ed8", strokeWidth: 2 },
+        },
+        {
+          kind: "polygon",
+          points: [
+            { x: 10.5, y: 40.25 },
+            { x: 42.75, y: 24.5 },
+            { x: 68.25, y: 57.75 },
+            { x: 26, y: 76.5 },
+          ],
+          style: { stroke: "#0f766e", fill: "none", strokeWidth: 1.5 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('<line stroke="#1d4ed8"');
+    expect(svg).toContain('x1="0" y1="10" x2="0" y2="30"');
+    expect(svg).toContain('<polygon stroke="#0f766e"');
+    expect(svg).toContain('points="10.5,40.25 42.75,24.5 68.25,57.75 26,76.5"');
+  });
+
   it("emits built-in marker defs and marker-end for a line using arrow", () => {
     const scene: RenderScene = {
       kind: "scene",

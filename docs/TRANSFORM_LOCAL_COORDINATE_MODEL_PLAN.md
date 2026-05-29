@@ -4,9 +4,9 @@ This document defines the practical v0 design for transforms and local coordinat
 
 Status:
 
-- design only in this pass
-- no runtime changes
-- parser syntax, JSON Core IR, and parser AST transform support stay deferred
+- first implementation slice is now landed for ordered transform operations with `translate` and `rotate`
+- `scale` remains deferred
+- parser syntax, JSON Core IR, and parser AST transform support remain deferred
 
 ## 1. Purpose
 
@@ -62,6 +62,11 @@ Recommended v0 scope:
 - include translate, rotate, and scale in the model
 - keep skew/shear and full affine matrices deferred
 
+Current implemented subset:
+
+- `translate`
+- `rotate`
+
 Reasoning:
 
 - translate already exists and should be normalized into the new transform model
@@ -88,6 +93,9 @@ type TransformOp =
 interface BaseObject {
   readonly transform?: readonly TransformOp[];
 }
+
+// Compatibility path also accepted in code for prior translate-only shape:
+// { translateX: number, translateY: number }
 ```
 
 Semantics:
@@ -290,6 +298,20 @@ Why this is safest:
 - rotate is the largest semantic unlock not already covered by placement translation
 - translate is already represented today and can be migrated into op-list form
 - deferring scale by one slice limits risk while preserving coherent design direction
+
+Implemented in this slice:
+
+- ordered transform operations are now supported in code for `translate` and `rotate`
+- resolver applies transforms before placement/alignment/distribution
+- axis-aligned post-transform bbox/anchors are used for layout and connectors
+- connectors remain straight and anchor-derived
+- `rotated-primitives` example and focused geometry/resolver/renderer/examples tests were added
+
+Still deferred in this implementation slice:
+
+- `scale`
+- rotate support for `text` and `ellipse` objects (resolver emits diagnostics and skips those rotate ops)
+- parser/JSON/AST transform surfaces
 
 ## 13. Future Extensions
 
