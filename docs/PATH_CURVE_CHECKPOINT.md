@@ -4,6 +4,8 @@ This document is a docs-only checkpoint after landing the first path/curve found
 
 It summarizes what is implemented now, clarifies architectural boundaries, records current limitations, and defines the next branch options.
 
+For the later post-arc state, see [ARC_AND_ANGLE_MARK_CHECKPOINT.md](./ARC_AND_ANGLE_MARK_CHECKPOINT.md).
+
 No runtime behavior changes are made in this pass.
 
 ## 1. What Is Now Implemented

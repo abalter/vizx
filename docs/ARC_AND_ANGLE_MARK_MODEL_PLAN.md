@@ -2,6 +2,10 @@
 
 This document records the Milestone 3 arc/angle-mark model decisions and current implemented scope.
 
+Implemented-state checkpoint:
+
+- [ARC_AND_ANGLE_MARK_CHECKPOINT.md](./ARC_AND_ANGLE_MARK_CHECKPOINT.md)
+
 Status:
 
 - circular `arc` path command implemented

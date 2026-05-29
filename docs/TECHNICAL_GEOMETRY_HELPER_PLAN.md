@@ -251,6 +251,7 @@ Recommendation:
 Arc model follow-on design:
 
 - [ARC_AND_ANGLE_MARK_MODEL_PLAN.md](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md)
+- [ARC_AND_ANGLE_MARK_CHECKPOINT.md](./ARC_AND_ANGLE_MARK_CHECKPOINT.md)
 
 Default recommendation:
 

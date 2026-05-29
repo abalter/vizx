@@ -21,3 +21,4 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`ASPIRATIONAL_REPRODUCTION_ROADMAP.md`](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) — milestone-driven, example-first roadmap for reproducing selected aspirational gallery examples.
 - [`TECHNICAL_GEOMETRY_HELPER_PLAN.md`](./TECHNICAL_GEOMETRY_HELPER_PLAN.md) — Milestone 2 docs-only plan for a JS/TS technical geometry helper layer that complements builder-based scene authoring.
 - [`ARC_AND_ANGLE_MARK_MODEL_PLAN.md`](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md) — Milestone 3 docs-only model plan for first-class arc path commands, diagnostics, and angle-mark composition strategy.
+- [`ARC_AND_ANGLE_MARK_CHECKPOINT.md`](./ARC_AND_ANGLE_MARK_CHECKPOINT.md) — post-implementation checkpoint for Milestone 3 circular arc and angle-mark helper support, current limits, and next branch options.

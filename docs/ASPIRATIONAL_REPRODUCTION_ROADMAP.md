@@ -209,6 +209,10 @@ Detailed Milestone 3 plan:
 
 - [ARC_AND_ANGLE_MARK_MODEL_PLAN.md](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md)
 
+Milestone 3 implementation checkpoint:
+
+- [ARC_AND_ANGLE_MARK_CHECKPOINT.md](./ARC_AND_ANGLE_MARK_CHECKPOINT.md)
+
 ## 7. Milestone 4 - Fill, Dash, And Style Expansion
 
 Goal:
