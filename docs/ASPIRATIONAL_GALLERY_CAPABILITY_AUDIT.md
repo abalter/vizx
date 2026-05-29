@@ -109,6 +109,8 @@ The audit suggests a capability order rather than a gallery-by-gallery chase:
 
 That ordering keeps the parser and lowerer architecture syntax-neutral while still making future gallery parity incremental and testable.
 
+For the concrete next-step design, see [Primitive Geometry Model Plan](./PRIMITIVE_GEOMETRY_MODEL_PLAN.md).
+
 ## Future Fixture Recommendations
 
 The next fixture sets should be chosen by capability slice, not by source language.

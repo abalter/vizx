@@ -38,4 +38,6 @@ For parser-readiness planning (not implementation status), see [PARSER_LOWERING_
 - Plotting or chart grammars
 - Nonlinear constraints or a full constraint solver
 
+Planned next primitive work: see [PRIMITIVE_GEOMETRY_MODEL_PLAN.md](./PRIMITIVE_GEOMETRY_MODEL_PLAN.md) for the near-term geometry expansion path.
+
 The `alignment-reference` example remains a reference fixture for ongoing alignment and future distribution work. `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, `alignY`, `distributeX`, and `distributeY` are implemented in the initial center-based distribution family.
