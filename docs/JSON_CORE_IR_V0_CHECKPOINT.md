@@ -25,6 +25,7 @@ JSON Core IR v0 currently includes:
 - schema smoke test coverage (schema JSON parseability and shallow enum structure)
 - positive fixture-vs-schema validation tests (Ajv)
 - negative schema validation tests for malformed shapes (Ajv)
+- developer validation command: `npm run validate:json-core-ir` for fixture directory validation against the draft schema
 
 ## 2. Intentionally Not Implemented
 
