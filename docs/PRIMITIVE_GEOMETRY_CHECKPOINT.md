@@ -235,6 +235,7 @@ This pass is documentation only.
 ## 8. Related Documents
 
 - [PRIMITIVE_GEOMETRY_MODEL_PLAN.md](./PRIMITIVE_GEOMETRY_MODEL_PLAN.md) records the geometry expansion plan that led to the current primitive slices.
+- [TRANSFORM_LOCAL_COORDINATE_MODEL_PLAN.md](./TRANSFORM_LOCAL_COORDINATE_MODEL_PLAN.md) defines the docs-only transform and local-coordinate design recommended as the next foundation pass.
 - [PATH_MODEL_PLAN.md](./PATH_MODEL_PLAN.md) records the v0 path model and its deferred follow-up work.
 - [MARKER_ARROWHEAD_MODEL_PLAN.md](./MARKER_ARROWHEAD_MODEL_PLAN.md) records the v0 built-in arrow marker model.
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) records the current effective model shape and current boundaries.
