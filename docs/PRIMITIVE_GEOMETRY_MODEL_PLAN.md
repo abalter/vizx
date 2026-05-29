@@ -392,6 +392,7 @@ Practical guidance:
 - `polygon` and `ellipse` can start using the existing fill/stroke split once they exist.
 - path-based work should reuse the same style fields rather than inventing a separate style stack.
 - marker and arrowhead behavior should build on the existing `markerStart`/`markerEnd` style fields rather than introducing a second parallel marker surface; see `docs/MARKER_ARROWHEAD_MODEL_PLAN.md`.
+- built-in v0 arrow marker support is now implemented for the line-family and connector render path using the semantic marker value `arrow`; richer marker work remains deferred.
 
 ## 7. Host-language Generation Boundary
 

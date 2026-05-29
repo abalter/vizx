@@ -28,7 +28,7 @@ import {
   type SceneDistribution,
   type TextObject,
 } from "@vizx/object-model";
-import type { RenderDef, RenderNode, RenderScene } from "@vizx/renderer-svg";
+import type { RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { measureTextApprox } from "./textMetrics";
 
 const placementRelationAnchors: Record<PlacementRelation, { referenceAnchor: AnchorName; targetAnchor: AnchorName }> = {
@@ -139,21 +139,6 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
   const bounds = getNodeBounds(sceneNodes);
   const padding = 24;
 
-  const defs: RenderDef[] = resolvedConnectors.length > 0
-    ? [{
-        kind: "marker",
-        id: "arrowhead",
-        viewBox: "0 0 10 10",
-        path: "M 0 0 L 10 5 L 0 10 z",
-        refX: 10,
-        refY: 5,
-        markerWidth: 8,
-        markerHeight: 8,
-        orient: "auto",
-        style: { fill: defaultConnectorStyle.stroke },
-      }]
-    : [];
-
   return {
     resolved: {
       objects: resolvedObjects,
@@ -167,7 +152,6 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
         width: Math.max(1, bounds.maxX - bounds.minX + padding * 2),
         height: Math.max(1, bounds.maxY - bounds.minY + padding * 2),
       },
-      defs,
       children: sceneNodes,
     },
     diagnostics,

@@ -29,5 +29,5 @@ export const defaultConnectorStyle: Style = {
   stroke: "black",
   fill: "none",
   strokeWidth: 1.5,
-  markerEnd: "arrowhead",
+  markerEnd: "arrow",
 };

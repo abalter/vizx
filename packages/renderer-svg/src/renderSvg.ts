@@ -5,18 +5,22 @@ export interface SvgRenderOptions {
   readonly pretty?: boolean;
 }
 
+const builtInArrowMarkerId = "vizx-marker-arrow";
+
 export function renderSvg(scene: RenderScene, options: SvgRenderOptions = {}): string {
   const indent = options.pretty === false ? "" : "  ";
   const newline = options.pretty === false ? "" : "\n";
+  const builtInDefs = createBuiltInMarkerDefs(scene.children);
+  const defs = [...builtInDefs, ...(scene.defs ?? [])];
 
   const parts: string[] = [];
   parts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${scene.viewBox.width}" height="${scene.viewBox.height}" viewBox="${scene.viewBox.minX} ${scene.viewBox.minY} ${scene.viewBox.width} ${scene.viewBox.height}">`,
   );
 
-  if (scene.defs && scene.defs.length > 0) {
+  if (defs.length > 0) {
     parts.push(`${indent}<defs>`);
-    for (const def of scene.defs) {
+    for (const def of defs) {
       parts.push(renderDef(def, indent + indent));
     }
     parts.push(`${indent}</defs>`);
@@ -131,11 +135,69 @@ function styleAttrs(style?: Style): string {
     "text-anchor": style.textAnchor,
     "dominant-baseline": style.dominantBaseline,
     opacity: style.opacity,
-    "marker-start": style.markerStart ? `url(#${style.markerStart})` : undefined,
-    "marker-end": style.markerEnd ? `url(#${style.markerEnd})` : undefined,
+    "marker-start": markerReference(style.markerStart),
+    "marker-end": markerReference(style.markerEnd),
   };
 
   return attrsToString(attrs);
+}
+
+function markerReference(markerName: string | undefined): string | undefined {
+  if (!markerName) {
+    return undefined;
+  }
+
+  return `url(#${resolveMarkerId(markerName)})`;
+}
+
+function resolveMarkerId(markerName: string): string {
+  if (isBuiltInArrowMarker(markerName)) {
+    return builtInArrowMarkerId;
+  }
+
+  return markerName;
+}
+
+function createBuiltInMarkerDefs(nodes: readonly RenderNode[]): RenderDef[] {
+  return collectBuiltInMarkers(nodes).has("arrow")
+    ? [{
+        kind: "marker",
+        id: builtInArrowMarkerId,
+        viewBox: "0 0 10 10",
+        path: "M 0 0 L 10 5 L 0 10 z",
+        refX: 10,
+        refY: 5,
+        markerWidth: 8,
+        markerHeight: 8,
+        orient: "auto",
+        style: { fill: "black" },
+      }]
+    : [];
+}
+
+function collectBuiltInMarkers(nodes: readonly RenderNode[]): Set<string> {
+  const markers = new Set<string>();
+
+  const visit = (node: RenderNode): void => {
+    if (node.style?.markerStart && isBuiltInArrowMarker(node.style.markerStart)) {
+      markers.add("arrow");
+    }
+
+    if (node.style?.markerEnd && isBuiltInArrowMarker(node.style.markerEnd)) {
+      markers.add("arrow");
+    }
+
+    if (node.kind === "group") {
+      node.children.forEach(visit);
+    }
+  };
+
+  nodes.forEach(visit);
+  return markers;
+}
+
+function isBuiltInArrowMarker(markerName: string): boolean {
+  return markerName === "arrow" || markerName === "arrowhead";
 }
 
 function attrsToString(attrs: Record<string, unknown>): string {

@@ -83,7 +83,25 @@ describe("example registry", () => {
       expect(connector.start.y).toBeTypeOf("number");
       expect(connector.end.x).toBeTypeOf("number");
       expect(connector.end.y).toBeTypeOf("number");
+      expect(connector.renderNode.style?.markerEnd).toBe("arrow");
     }
+  });
+
+  it("registers and resolves the arrowheads example", () => {
+    const scene = requireVizxExample("arrowheads").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "arrow.line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "arrow.polyline")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "arrow.path")).toBe(true);
+    expect(result.resolved.connectors.some((connector) => connector.id === "arrow.connector")).toBe(true);
+    expect(svg).toContain('id="vizx-marker-arrow"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
   it("registers and resolves the polyline primitive example", () => {

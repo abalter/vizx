@@ -2,7 +2,12 @@
 
 This document defines the minimal design for introducing first-class arrowhead and marker semantics in VizX.
 
-It is intentionally docs-only in this pass. No runtime code, parser syntax, JSON Core IR shape, or parser AST support changes are made here.
+Status:
+
+- implemented in v0 for built-in `"arrow"` support on `line`, `polyline`, `path`, and connectors
+- `renderer-svg` now owns built-in marker definition synthesis
+- the legacy `"arrowhead"` value remains accepted as a trivial compatibility alias and maps to the same built-in arrow marker
+- parser syntax, JSON Core IR shape, and parser AST support remain out of scope
 
 ## 1. Purpose
 
@@ -51,7 +56,7 @@ Why that distinction matters:
 - serializing `marker-end="url(#...)"` does not by itself ensure the matching SVG `<marker>` definitions exist
 - today, reusable marker definition emission is not generalized across line/polyline/path/connector usage
 
-Current marker-definition behavior:
+Current marker-definition behavior before this slice:
 
 - the render scene supports `<defs>` and `marker` definitions through `RenderDef`
 - resolver currently emits a hard-coded `arrowhead` marker definition when any connectors are present
@@ -68,15 +73,16 @@ Current marker-definition behavior:
 
 That means the current system already has a connector-specific arrow appearance, but not a minimal general-purpose marker model.
 
-## 3. Proposed v0 Arrowhead Model
+## 3. Implemented v0 Arrowhead Model
 
 The smallest useful v0 is:
 
 - keep marker placement in the existing shared style surface
 - support built-in marker names, not arbitrary custom geometry
-- introduce one built-in value:
+- introduce one built-in public value:
   - `"arrow"`
 - map that built-in value to generated SVG `<marker>` definitions during rendering
+- accept `"arrowhead"` as a backwards-compatible alias that maps to the same built-in marker id
 
 Recommended style shape:
 
@@ -134,11 +140,11 @@ Recommended v0 SVG approach:
 - generate `<marker id="...">` definitions for built-in marker names
 - map `markerStart` / `markerEnd` style values to `marker-start="url(#...)"` and `marker-end="url(#...)"`
 
-Recommended ownership:
+Implemented ownership:
 
-- built-in marker synthesis should move to `renderer-svg`, not remain connector-specific resolver behavior
-- renderer already owns SVG serialization and is the natural place to map semantic built-in marker names to SVG defs
-- resolver should keep producing render nodes with styles; it should not need connector-specific marker-definition rules for v0
+- built-in marker synthesis now lives in `renderer-svg`
+- resolver no longer emits connector-only marker defs
+- renderer maps both `"arrow"` and the compatibility alias `"arrowhead"` to the stable internal SVG marker id `vizx-marker-arrow`
 
 Recommended built-in arrow marker shape in v0:
 
@@ -186,10 +192,11 @@ Recommended v0 behavior:
 - examples and tests should opt into `markerStart` / `markerEnd` explicitly first
 - avoid silently broadening the meaning of connectors in the same slice as the first marker model
 
-Practical recommendation:
+Implemented v0 behavior:
 
-- if connector defaults are cleaned up during implementation, do it by mapping the existing visual expectation to the new built-in `"arrow"` value in a controlled way
-- do not simultaneously redesign connector semantics and marker semantics
+- connector defaults now use the semantic built-in marker value `"arrow"`
+- the visual intent of arrowheaded connectors is preserved
+- examples can opt into the same behavior explicitly with `markerStart` and `markerEnd`
 
 This keeps the change legible and makes it obvious whether arrowheads are coming from explicit style or from legacy connector defaults.
 
@@ -231,9 +238,9 @@ Arrowheads alone do not unlock:
 - clipping and fills beyond current styling
 - 3D or projection work
 
-## 9. Recommended First Implementation Slice
+## 9. Implemented First Slice
 
-Recommended next implementation slice after this plan:
+Implemented v0 slice:
 
 1. implement built-in SVG arrow marker support in `renderer-svg`
 2. use the existing `markerStart` and `markerEnd` style fields

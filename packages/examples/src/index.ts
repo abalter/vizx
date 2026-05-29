@@ -1,5 +1,6 @@
 import { alignmentFamilyExample } from "./alignmentFamily";
 import { alignmentReferenceExample } from "./alignmentReference";
+import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
 import { connectorsExample } from "./connectors";
@@ -21,6 +22,7 @@ export * from "./types";
 export const vizxExamples: readonly VizxExample[] = [
   alignmentFamilyExample,
   alignmentReferenceExample,
+  arrowheadsExample,
   basicExample,
   distributeXExample,
   distributeYExample,

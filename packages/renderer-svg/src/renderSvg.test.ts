@@ -3,6 +3,28 @@ import type { RenderScene } from "./scene";
 import { renderSvg } from "./renderSvg";
 
 describe("renderSvg", () => {
+  it("does not emit marker defs when no marker usage is present", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 100, height: 100 },
+      children: [
+        {
+          kind: "line",
+          x1: 10,
+          y1: 20,
+          x2: 80,
+          y2: 70,
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).not.toContain("<defs>");
+    expect(svg).not.toContain("vizx-marker-arrow");
+  });
+
   it("serializes a simple scene with a rectangle and text", () => {
     const scene: RenderScene = {
       kind: "scene",
@@ -197,5 +219,93 @@ describe("renderSvg", () => {
     expect(svg).toContain('stroke="#f97316"');
     expect(svg).toContain('stroke="#0ea5e9"');
     expect(svg).toContain('stroke="#0f766e"');
+  });
+
+  it("emits built-in marker defs and marker-end for a line using arrow", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 100, height: 100 },
+      children: [
+        {
+          kind: "line",
+          x1: 10,
+          y1: 20,
+          x2: 80,
+          y2: 20,
+          style: { stroke: "black", fill: "none", strokeWidth: 1, markerEnd: "arrow" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<defs>");
+    expect(svg).toContain('id="vizx-marker-arrow"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+  });
+
+  it("emits marker-end for a polyline using arrow", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 120, height: 80 },
+      children: [
+        {
+          kind: "polyline",
+          points: [
+            { x: 10, y: 20 },
+            { x: 30, y: 10 },
+            { x: 50, y: 40 },
+            { x: 70, y: 15 },
+          ],
+          style: { stroke: "black", fill: "none", strokeWidth: 1, markerEnd: "arrow" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('id="vizx-marker-arrow"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+  });
+
+  it("emits marker-end for a path using arrow", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 160, height: 120 },
+      children: [
+        {
+          kind: "path",
+          d: "M 20 80 L 60 20 L 120 40",
+          style: { stroke: "black", fill: "none", strokeWidth: 1, markerEnd: "arrow" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('id="vizx-marker-arrow"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+  });
+
+  it("supports the legacy arrowhead alias by mapping it to the built-in arrow marker", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 100, height: 100 },
+      children: [
+        {
+          kind: "line",
+          x1: 10,
+          y1: 50,
+          x2: 80,
+          y2: 50,
+          style: { stroke: "black", fill: "none", strokeWidth: 1, markerEnd: "arrowhead" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('id="vizx-marker-arrow"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
   });
 });

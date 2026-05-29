@@ -74,7 +74,14 @@ Current primitive defaults:
 
 - line/polyline/ellipse/polygon/path use the line default (`stroke: black`, `fill: none`, `strokeWidth: 1`) when style is omitted.
 - rect uses the box default (`stroke: black`, `fill: white`, `strokeWidth: 1`) when style is omitted.
-- connector paths use a connector default (`stroke: black`, `fill: none`, `strokeWidth: 1.5`, `markerEnd: arrowhead`) when style is omitted.
+- connector paths use a connector default (`stroke: black`, `fill: none`, `strokeWidth: 1.5`, `markerEnd: arrow`) when style is omitted.
+
+Current built-in marker baseline:
+
+- `markerStart` and `markerEnd` remain the shared marker placement fields in `Style`
+- built-in v0 marker support recognizes the semantic value `arrow`
+- the legacy value `arrowhead` is accepted as a compatibility alias and maps to the same SVG marker output
+- built-in marker geometry does not expand bbox or alter anchor resolution
 
 ### 2.1 Line
 
@@ -164,6 +171,7 @@ Path v0 semantics:
 - anchors are bbox-derived (`center`, `north`, `south`, `east`, `west`, and corners via existing bbox anchor helpers).
 - renderer output uses SVG `<path>` with `M`, `L`, and `Z` commands.
 - malformed command streams produce resolver diagnostics (for example line/close commands before `moveTo`, no explicit points, or no drawable segment).
+- path style may include `markerStart` and `markerEnd`; built-in `arrow` markers render at SVG output time and do not affect bbox.
 
 Deferred for path follow-up slices:
 
@@ -356,6 +364,7 @@ Current behavior:
 - Connectors resolve after placement/alignment/distribution.
 - Endpoint points are taken from resolved object anchors.
 - Current rendered connector path is straight (`M ... L ...`).
+- connector style defaults preserve arrowheaded output through the built-in `arrow` marker value.
 
 ## 8. Resolution Pipeline
 
