@@ -1,11 +1,11 @@
 # Arc And Angle-Mark Model Plan
 
-This document is a docs-only design plan for Milestone 3 of the aspirational reproduction roadmap.
+This document records the Milestone 3 arc/angle-mark model decisions and current implemented scope.
 
 Status:
 
-- docs-only plan
-- no runtime changes
+- circular `arc` path command implemented
+- minimal helper-layer angle-mark authoring support implemented
 - no parser syntax changes
 - no JSON Core IR changes
 - no parser AST changes
@@ -24,19 +24,21 @@ This plan focuses on representational and behavioral decisions first, then a nar
 
 Current path model and execution behavior:
 
-- `path` supports `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `closePath`
+- `path` supports `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`
 - resolver serializes path commands to SVG `d` segments and validates command ordering
+- circular `arc` commands map to SVG `A` segments in resolver
 - bbox for paths is conservative explicit-point bounds (not tight curve extrema)
+- circular arc bbox handling includes start/end plus swept cardinal points
 - anchors are bbox-derived
 - ordered transforms (`translate`, `rotate`, `scale`) apply to command points in resolver
-- renderer currently emits path data directly and does not interpret geometry semantics
+- renderer emits final path data directly and does not interpret higher-level geometry semantics
 
 Relevant current limitations:
 
-- no arc command in `PathCommand`
-- no dedicated angle-mark object or helper
-- no arc-aware diagnostics
-- no arc bbox semantics
+- no dedicated angle-mark drawable object
+- no elliptical arc surface in `PathCommand`
+- no tight analytic arc bounds
+- no parser syntax or JSON Core IR surface for helpers
 
 ## 3. Arc Representation Options
 
@@ -111,7 +113,7 @@ V0 notes:
 
 - `arc` remains path-relative in sequence (requires active current point via prior `moveTo`)
 - v0 keeps circular radius only (`radius`), with elliptical arcs deferred
-- helper-layer angle-mark conveniences remain optional and deferred to post-v0
+- helper-layer angle-mark conveniences stay thin and remain layered above ordinary `path` + `text`
 
 ## 5. Current-Point Semantics Choice
 
@@ -203,15 +205,17 @@ Consistency requirement:
 Angle-mark strategy:
 
 - do not add first-class `angleMark` drawable object in v0
-- build initial angle marks from ordinary `path` + `text` composition
-- provide helper-level construction patterns after core `arc` lands
+- build angle marks from ordinary `path` + `text` composition
+- keep helper support small:
+  - `@vizx/geometry`: `angleBetweenPoints(...)`, `angleLabelPoint(...)`
+  - `@vizx/object-model`: `angleMarkPath(...)`
 
 Package boundaries:
 
 - `@vizx/object-model`: owns new path command type shape (`arc`)
 - `@vizx/resolver`: owns command validation, conservative bbox behavior, and diagnostics
 - `@vizx/renderer-svg`: owns `arc` -> SVG `A` serialization
-- `@vizx/geometry`: owns optional helper math for angle-mark construction (deferred)
+- `@vizx/geometry`: owns pure helper math for angle-mark construction
 
 This keeps `ObjectScene` canonical and avoids new drawable categories in first slice.
 
@@ -223,9 +227,10 @@ Current helper slice already supports:
 
 Arc/angle relevance:
 
-- `angleOf`, `polar`, and `circlePoint` already cover much of angle-label placement setup
-- first angle-mark helpers can be built from these without adding dependencies
-- arc path command is a model/runtime addition; helper additions are a separate, follow-on slice
+- `angleOf`, `polar`, and `circlePoint` remain the base primitives
+- `angleBetweenPoints(...)` derives author-facing start/end angle metadata from three points
+- `angleLabelPoint(...)` places labels on the chosen sweep bisector at `radius + offset`
+- `angleMarkPath(...)` emits a plain `PathObject` using `moveTo(...)` plus `arc(...)`
 
 ## 12. Target Examples For Milestone 3
 

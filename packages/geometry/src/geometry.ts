@@ -100,6 +100,12 @@ export function angleOf(a: Point, b: Point): number {
   return (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 }
 
+export interface AngleBetweenPointsResult {
+  readonly startAngleDegrees: number;
+  readonly endAngleDegrees: number;
+  readonly clockwise: boolean;
+}
+
 export function polar(origin: Point, radius: number, angleDegrees: number): Point {
   const radians = (angleDegrees * Math.PI) / 180;
 
@@ -138,6 +144,64 @@ export function regularPolygonPoints(
 
 export function bboxFromRect(x: number, y: number, width: number, height: number): BoundingBox {
   return { x, y, width, height };
+}
+
+export function angleBetweenPoints(
+  vertex: Point,
+  fromPoint: Point,
+  toPoint: Point,
+  clockwise = false,
+): AngleBetweenPointsResult {
+  if (!Number.isFinite(vertex.x) || !Number.isFinite(vertex.y)
+    || !Number.isFinite(fromPoint.x) || !Number.isFinite(fromPoint.y)
+    || !Number.isFinite(toPoint.x) || !Number.isFinite(toPoint.y)) {
+    throw new TypeError("angleBetweenPoints expects finite point coordinates");
+  }
+
+  if (distance(vertex, fromPoint) <= 1e-9) {
+    throw new RangeError("angleBetweenPoints expects fromPoint to differ from vertex");
+  }
+
+  if (distance(vertex, toPoint) <= 1e-9) {
+    throw new RangeError("angleBetweenPoints expects toPoint to differ from vertex");
+  }
+
+  return {
+    startAngleDegrees: angleOf(vertex, fromPoint),
+    endAngleDegrees: angleOf(vertex, toPoint),
+    clockwise,
+  };
+}
+
+interface AngleLabelPointOptions {
+  readonly clockwise?: boolean;
+  readonly offset?: number;
+}
+
+export function angleLabelPoint(
+  vertex: Point,
+  fromPoint: Point,
+  toPoint: Point,
+  radius: number,
+  options: AngleLabelPointOptions = {},
+): Point {
+  if (!Number.isFinite(radius)) {
+    throw new TypeError("angleLabelPoint expects a finite radius");
+  }
+
+  const { startAngleDegrees, endAngleDegrees, clockwise } = angleBetweenPoints(
+    vertex,
+    fromPoint,
+    toPoint,
+    options.clockwise ?? false,
+  );
+  const sweep = angleDeltaDegrees(startAngleDegrees, endAngleDegrees, clockwise);
+  const labelAngleDegrees = clockwise
+    ? startAngleDegrees - sweep / 2
+    : startAngleDegrees + sweep / 2;
+  const labelRadius = radius + (options.offset ?? 0);
+
+  return circlePoint(vertex, labelRadius, labelAngleDegrees);
 }
 
 export function bboxFromLine(start: Point, end: Point): BoundingBox {

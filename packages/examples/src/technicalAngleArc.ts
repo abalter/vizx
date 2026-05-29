@@ -1,5 +1,5 @@
-import { circlePoint, point } from "@vizx/geometry";
-import { arc, line, moveTo, path, sceneOf, text } from "@vizx/object-model";
+import { angleLabelPoint, point } from "@vizx/geometry";
+import { angleMarkPath, line, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 export const technicalAngleArcExample: VizxExample = {
@@ -18,9 +18,10 @@ export const technicalAngleArcExample: VizxExample = {
     const firstRayEnd = point(266, 136);
     const secondRayEnd = point(224, 62);
     const arcRadius = 42;
-    const startAngle = 0;
-    const endAngle = -58;
-    const arcStart = circlePoint(vertex, arcRadius, startAngle);
+    const labelCenter = angleLabelPoint(vertex, firstRayEnd, secondRayEnd, arcRadius, {
+      clockwise: true,
+      offset: 14,
+    });
 
     return sceneOf([
       line("angle.ray.1", {
@@ -33,15 +34,16 @@ export const technicalAngleArcExample: VizxExample = {
         end: secondRayEnd,
         style: { stroke: "#0f172a", strokeWidth: 2 },
       }),
-      path("angle.mark", {
-        commands: [
-          moveTo(arcStart),
-          arc(vertex, arcRadius, startAngle, endAngle, { clockwise: true }),
-        ],
+      angleMarkPath("angle.mark", {
+        vertex,
+        fromPoint: firstRayEnd,
+        toPoint: secondRayEnd,
+        radius: arcRadius,
+        clockwise: true,
         style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
       }),
       text("angle.label", {
-        center: point(206, 112),
+        center: labelCenter,
         text: "theta",
         style: { fill: "#0f172a", fontSize: 13 },
       }),

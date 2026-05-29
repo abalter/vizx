@@ -3,6 +3,7 @@ import {
   absolute,
   alignY,
   arc,
+  angleMarkPath,
   anchor,
   arrowEnd,
   circle,
@@ -167,5 +168,33 @@ describe("object-model builder helpers", () => {
     ]);
 
     expect(scene.objects[0]?.placement).toEqual({ kind: "absolute", position: { x: 80, y: 80 } });
+  });
+
+  it("creates a plain path object for an angle mark", () => {
+    const mark = angleMarkPath("angle.mark", {
+      vertex: { x: 10, y: 20 },
+      fromPoint: { x: 50, y: 20 },
+      toPoint: { x: 30, y: 0 },
+      radius: 12,
+      clockwise: true,
+      style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+    });
+
+    expect(mark).toEqual({
+      kind: "path",
+      id: "angle.mark",
+      commands: [
+        { kind: "moveTo", point: { x: 22, y: 20 } },
+        {
+          kind: "arc",
+          center: { x: 10, y: 20 },
+          radius: 12,
+          startAngleDegrees: 0,
+          endAngleDegrees: -45,
+          clockwise: true,
+        },
+      ],
+      style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+    });
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   addPointVector,
+  angleBetweenPoints,
   bboxFromTransformedCorners,
   bboxFromRect,
   bboxFromLine,
@@ -14,6 +15,7 @@ import {
   distance,
   angleOf,
   angleDeltaDegrees,
+  angleLabelPoint,
   identityTransform,
   isAngleWithinSweep,
   midpoint,
@@ -65,6 +67,57 @@ describe("geometry kernel", () => {
     expect(polarPoint.y).toBeCloseTo(20, 8);
     expect(circle.x).toBeCloseTo(10, 8);
     expect(circle.y).toBeCloseTo(25, 8);
+  });
+
+  it("derives directional angle metadata from three points", () => {
+    expect(angleBetweenPoints(
+      point(0, 0),
+      point(1, 0),
+      point(0, 1),
+    )).toEqual({
+      startAngleDegrees: 0,
+      endAngleDegrees: 90,
+      clockwise: false,
+    });
+
+    expect(angleBetweenPoints(
+      point(0, 0),
+      point(1, 0),
+      point(0, 1),
+      true,
+    )).toEqual({
+      startAngleDegrees: 0,
+      endAngleDegrees: 90,
+      clockwise: true,
+    });
+  });
+
+  it("computes angle label points along the chosen sweep bisector", () => {
+    const ccw = angleLabelPoint(
+      point(0, 0),
+      point(1, 0),
+      point(0, 1),
+      10,
+    );
+
+    expect(ccw.x).toBeCloseTo(7.0710678119, 8);
+    expect(ccw.y).toBeCloseTo(7.0710678119, 8);
+
+    const clockwise = angleLabelPoint(
+      point(0, 0),
+      point(1, 0),
+      point(0, 1),
+      10,
+      { clockwise: true, offset: 4 },
+    );
+
+    expect(clockwise.x).toBeCloseTo(-9.8994949366, 8);
+    expect(clockwise.y).toBeCloseTo(-9.8994949366, 8);
+  });
+
+  it("rejects degenerate angle helper inputs", () => {
+    expect(() => angleBetweenPoints(point(0, 0), point(0, 0), point(1, 0))).toThrow("fromPoint");
+    expect(() => angleBetweenPoints(point(0, 0), point(1, 0), point(0, 0))).toThrow("toPoint");
   });
 
   it("builds regular polygon points with the default upright rotation", () => {

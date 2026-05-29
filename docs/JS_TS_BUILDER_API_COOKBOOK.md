@@ -51,6 +51,7 @@ Path command helpers:
 - `lineTo(point)`
 - `quadraticCurveTo(control, point)`
 - `cubicCurveTo(control1, control2, point)`
+- `angleMarkPath(id, options)`
 - `closePath()`
 
 Placement helpers:
@@ -195,7 +196,40 @@ const scene = sceneOf([
 
 Conservative Bezier bounding-box behavior remains a resolver/path-model detail, not a builder concern.
 
-## 6. Transforms Example
+## 6. Angle-Mark Convenience Example
+
+The builder surface also includes a thin helper for the common geometry-diagram pattern "derive arc angles from two rays and emit a path mark".
+
+```ts
+import { angleLabelPoint, point } from "@vizx/geometry";
+import { angleMarkPath, line, sceneOf, text } from "@vizx/object-model";
+
+const vertex = point(168, 136);
+const rayA = point(266, 136);
+const rayB = point(224, 62);
+const radius = 42;
+
+const scene = sceneOf([
+  line("ray.a", { start: vertex, end: rayA }),
+  line("ray.b", { start: vertex, end: rayB }),
+  angleMarkPath("angle.mark", {
+    vertex,
+    fromPoint: rayA,
+    toPoint: rayB,
+    radius,
+    clockwise: true,
+    style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+  }),
+  text("angle.label", {
+    center: angleLabelPoint(vertex, rayA, rayB, radius, { clockwise: true, offset: 14 }),
+    text: "theta",
+  }),
+]);
+```
+
+The helper still returns an ordinary `PathObject`; it does not add a new runtime drawable type.
+
+## 7. Transforms Example
 
 Transforms are ordered operations. The resolver applies them in list order.
 
@@ -212,7 +246,7 @@ const scene = sceneOf([
 ]);
 ```
 
-## 7. Data-Driven Generation Example
+## 8. Data-Driven Generation Example
 
 Use ordinary JS/TS arrays and functions for repetition and parameterization.
 
@@ -233,7 +267,7 @@ const scene = sceneOf(nodes);
 
 If a host app already uses D3 scales, compute coordinates/sizes in host code first, then pass plain numbers into builder helpers.
 
-## 8. Builder Versus ObjectScene Literals
+## 9. Builder Versus ObjectScene Literals
 
 Use builder helpers when:
 
@@ -251,7 +285,7 @@ Use raw ObjectScene literals when:
 
 Both approaches produce ObjectScene-compatible data.
 
-## 9. Builder Versus Parser Syntax
+## 10. Builder Versus Parser Syntax
 
 Current state:
 

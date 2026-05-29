@@ -1,5 +1,5 @@
 import type { Style } from "@vizx/core";
-import type { Point } from "@vizx/geometry";
+import { angleBetweenPoints, circlePoint, type Point } from "@vizx/geometry";
 import type { AnchorName, AnchorRef } from "./anchors";
 import type {
   ArcPathCommand,
@@ -103,6 +103,15 @@ interface ArcCommandOptions {
   readonly clockwise?: boolean;
 }
 
+interface AngleMarkPathOptions {
+  readonly vertex: Point;
+  readonly fromPoint: Point;
+  readonly toPoint: Point;
+  readonly radius: number;
+  readonly clockwise?: boolean;
+  readonly style?: Style;
+}
+
 export function arc(
   center: Point,
   radius: number,
@@ -118,6 +127,30 @@ export function arc(
     endAngleDegrees,
     ...(options.clockwise !== undefined ? { clockwise: options.clockwise } : {}),
   };
+}
+
+export function angleMarkPath(id: string, options: AngleMarkPathOptions): PathObject {
+  const angle = angleBetweenPoints(
+    options.vertex,
+    options.fromPoint,
+    options.toPoint,
+    options.clockwise ?? false,
+  );
+  const startPoint = circlePoint(options.vertex, options.radius, angle.startAngleDegrees);
+
+  return path(id, {
+    commands: [
+      moveTo(startPoint),
+      arc(
+        options.vertex,
+        options.radius,
+        angle.startAngleDegrees,
+        angle.endAngleDegrees,
+        { clockwise: angle.clockwise },
+      ),
+    ],
+    ...(options.style ? { style: options.style } : {}),
+  });
 }
 
 export function anchor(objectId: string, name: AnchorName = "center"): AnchorRef {

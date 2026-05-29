@@ -1,11 +1,11 @@
 # Technical Geometry Helper Plan
 
-This document is a docs-only implementation plan for Milestone 2 of the aspirational reproduction roadmap.
+This document records the Milestone 2 technical geometry helper plan and current implemented scope.
 
 Status:
 
-- docs-only plan
-- no runtime changes
+- pure geometry helper slice implemented
+- minimal angle-mark follow-on helper slice implemented
 - no parser/JSON Core IR/AST changes
 - no dependency additions
 
@@ -21,9 +21,12 @@ Current implementation status:
   - `polar`
   - `circlePoint`
   - `regularPolygonPoints`
+- angle-mark follow-on helpers now implemented:
+  - `angleBetweenPoints`
+  - `angleLabelPoint`
 - helpers remain pure and dependency-free
-- arc/angle-arc helpers remain deferred
-- core path model now includes a circular `arc` command; helper-layer angle-mark convenience APIs remain deferred
+- core path model now includes a circular `arc` command
+- object-model now includes a thin companion builder helper `angleMarkPath(...)` that returns a plain `PathObject`
 
 ## 1. Purpose
 
@@ -137,18 +140,19 @@ Role:
 - convenience composition helpers that map point arrays into existing primitives
 - no new path commands
 
-### 3.6 Future Arc/Angle Helpers (Planned, Not Current)
+### 3.6 Arc/Angle Helpers (Current Narrow Slice)
 
-Future placeholders only:
+Implemented helpers:
 
-- `angleArcPoints(...)`
-- `angleLabelPoint(...)`
-- `arcPathCommands(...)`
-- `markedAngle(...)`
+- `angleBetweenPoints(vertex, fromPoint, toPoint, clockwise?)`
+- `angleLabelPoint(vertex, fromPoint, toPoint, radius, options?)`
+- object-model companion: `angleMarkPath(id, options)`
 
 Boundary:
 
-- these depend on the separate arc-path model decision (first-class arc command vs approximation policy)
+- these remain thin helpers layered over the existing circular `arc` path command
+- they do not introduce a new drawable type or annotation subsystem
+- they do not change resolver or renderer semantics
 
 ## 4. Package Placement
 
@@ -206,15 +210,26 @@ Boundary model:
 - builder helpers generate `ObjectScene` objects and relations
 - author code composes both layers
 
-Proposed API sketch (not implemented):
+Current API sketch:
 
 ```ts
-const c = point(0, 0);
-const pts = regularPolygonPoints(c, 60, 5, -90);
+const vertex = point(168, 136);
+const rayA = point(266, 136);
+const rayB = point(224, 62);
 
 const scene = sceneOf([
-  polygon("pentagon", { points: pts }),
-  ...vertexLabels("v", pts),
+  angleMarkPath("angle.mark", {
+    vertex,
+    fromPoint: rayA,
+    toPoint: rayB,
+    radius: 42,
+    clockwise: true,
+    style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+  }),
+  text("angle.label", {
+    center: angleLabelPoint(vertex, rayA, rayB, 42, { clockwise: true, offset: 14 }),
+    text: "theta",
+  }),
 ]);
 ```
 
@@ -225,13 +240,13 @@ This keeps `ObjectScene` canonical while improving author ergonomics.
 Observed tension from Milestone 1 examples:
 
 - geometry illustrations often need angle arcs and angle labels
-- arc commands are not currently implemented
+- that need is now covered by the circular `arc` command plus a small helper layer
 
 Recommendation:
 
-1. implement point/polygon/label helpers first (Milestone 2)
-2. keep first-class angle-arc helpers deferred until the arc path model is designed
-3. optional polyline angle-arc approximation can be considered later only if clearly documented as approximation behavior
+1. keep current angle helpers narrow and point-driven
+2. avoid expanding into grouped annotation objects unless repeated authoring pressure appears
+3. consider larger angle-annotation APIs only after more examples justify them
 
 Arc model follow-on design:
 
@@ -239,7 +254,7 @@ Arc model follow-on design:
 
 Default recommendation:
 
-- avoid first-class angle-arc helper APIs in the first geometry-helper slice
+- keep first-class angle-arc helper APIs minimal and layered above existing primitives
 
 ## 9. Target Examples Unlocked
 
