@@ -39,7 +39,7 @@ export interface RenderMarkerDef {
   readonly style?: RenderStyle;
 }
 
-export type RenderNode = RenderGroup | RenderRect | RenderCircle | RenderLine | RenderPolyline | RenderPath | RenderText;
+export type RenderNode = RenderGroup | RenderRect | RenderCircle | RenderEllipse | RenderLine | RenderPolyline | RenderPath | RenderText;
 
 export interface BaseRenderNode {
   readonly id?: string;
@@ -67,6 +67,14 @@ export interface RenderCircle extends BaseRenderNode {
   readonly cx: number;
   readonly cy: number;
   readonly r: number;
+}
+
+export interface RenderEllipse extends BaseRenderNode {
+  readonly kind: "ellipse";
+  readonly cx: number;
+  readonly cy: number;
+  readonly rx: number;
+  readonly ry: number;
 }
 
 export interface RenderLine extends BaseRenderNode {

@@ -3,6 +3,7 @@ import {
   addPointVector,
   bboxFromRect,
   bboxFromLine,
+  bboxFromEllipse,
   bboxFromPoints,
   bboxTranslate,
   bboxUnion,
@@ -50,6 +51,10 @@ describe("geometry kernel", () => {
 
   it("computes a bounding box for a polyline path", () => {
     expect(bboxFromPoints([point(10, 20), point(5, 40), point(30, 15), point(20, 50)])).toEqual(bboxFromRect(5, 15, 25, 35));
+  });
+
+  it("computes a bounding box for an ellipse", () => {
+    expect(bboxFromEllipse(point(100, 80), 30, 18)).toEqual(bboxFromRect(70, 62, 60, 36));
   });
 
   it("translates bounding boxes and points", () => {

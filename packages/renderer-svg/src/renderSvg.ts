@@ -79,6 +79,11 @@ function renderNode(node: RenderNode, indent: string): string {
       return `${indent}<line${common} ${attrs} />`;
     }
 
+    case "ellipse": {
+      const attrs = attrsToString({ cx: node.cx, cy: node.cy, rx: node.rx, ry: node.ry });
+      return `${indent}<ellipse${common} ${attrs} />`;
+    }
+
     case "polyline": {
       const attrs = attrsToString({ points: node.points.map((point) => `${point.x},${point.y}`).join(" ") });
       return `${indent}<polyline${common} ${attrs} />`;

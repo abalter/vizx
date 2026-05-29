@@ -102,6 +102,38 @@ describe("resolveScene", () => {
     expect(route?.anchors.east).toEqual(point(177, 50));
   });
 
+  it("resolves an ellipse object through the normal placement and anchor pipeline", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "rect",
+          id: "reference",
+          center: point(60, 50),
+          width: 40,
+          height: 20,
+        },
+        {
+          kind: "ellipse",
+          id: "oval",
+          center: point(0, 0),
+          rx: 25,
+          ry: 10,
+          placement: { kind: "rightOf", reference: { objectId: "reference", anchor: "east" }, gap: 8 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const oval = result.resolved.objects.find((object) => object.id === "oval");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(oval?.kind).toBe("ellipse");
+    expect(oval?.bbox).toEqual({ x: 88, y: 40, width: 50, height: 20 });
+    expect(oval?.anchors.center).toEqual(point(113, 50));
+    expect(oval?.anchors.west).toEqual(point(88, 50));
+    expect(oval?.anchors.east).toEqual(point(138, 50));
+  });
+
   it("places two groups with a connector using anchor references", () => {
     const scene: ObjectScene = {
       objects: [

@@ -87,4 +87,27 @@ describe("renderSvg", () => {
     expect(svg).toContain("<polyline");
     expect(svg).toContain('points="10,20 30,10 50,40 70,15"');
   });
+
+  it("serializes an ellipse node", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 140, height: 80 },
+      children: [
+        {
+          kind: "ellipse",
+          cx: 60,
+          cy: 40,
+          rx: 30,
+          ry: 18,
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<ellipse");
+    expect(svg).toContain('cx="60"');
+    expect(svg).toContain('ry="18"');
+  });
 });

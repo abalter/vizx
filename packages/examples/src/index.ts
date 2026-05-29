@@ -5,6 +5,7 @@ import { basicExample } from "./basic";
 import { connectorsExample } from "./connectors";
 import { distributeXExample } from "./distributeX";
 import { distributeYExample } from "./distributeY";
+import { ellipsePrimitiveExample } from "./ellipsePrimitive";
 import { mixedNestedPlacementExample } from "./mixedNestedPlacement";
 import { nestedGroupsExample } from "./nestedGroups";
 import { polylinePrimitiveExample } from "./polylinePrimitive";
@@ -25,6 +26,7 @@ export const vizxExamples: readonly VizxExample[] = [
   connectorsExample,
   linePrimitiveExample,
   polylinePrimitiveExample,
+  ellipsePrimitiveExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];

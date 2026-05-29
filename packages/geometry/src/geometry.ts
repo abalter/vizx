@@ -97,6 +97,10 @@ export function bboxFromPoints(points: readonly Point[]): BoundingBox {
   return bboxFromRect(minX, minY, maxX - minX, maxY - minY);
 }
 
+export function bboxFromEllipse(center: Point, rx: number, ry: number): BoundingBox {
+  return bboxFromRect(center.x - rx, center.y - ry, rx * 2, ry * 2);
+}
+
 export function bboxUnion(...boxes: readonly BoundingBox[]): BoundingBox {
   if (boxes.length === 0) {
     return bboxFromRect(0, 0, 0, 0);

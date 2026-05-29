@@ -1,6 +1,7 @@
 import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle, defaultLineStyle } from "@vizx/core";
 import {
   addPointVector,
+  bboxFromEllipse,
   bboxFromRect,
   bboxFromLine,
   bboxFromPoints,
@@ -219,6 +220,32 @@ function resolveObjectLocal(
           id: object.id,
           points: object.points.map((pt) => ({ x: pt.x, y: pt.y })),
           style: { ...defaultLineStyle, ...object.style },
+        },
+      };
+    }
+    case "ellipse": {
+      const bbox = bboxFromEllipse(object.center, object.rx, object.ry);
+
+      return {
+        id: object.id,
+        kind: object.kind,
+        bbox,
+        anchors: anchorsForBoundingBox(bbox),
+        style: object.style,
+        geometry: {
+          cx: object.center.x,
+          cy: object.center.y,
+          rx: object.rx,
+          ry: object.ry,
+        },
+        renderNode: {
+          kind: "ellipse",
+          id: object.id,
+          cx: object.center.x,
+          cy: object.center.y,
+          rx: object.rx,
+          ry: object.ry,
+          style: object.style,
         },
       };
     }
@@ -937,6 +964,10 @@ function translateGeometry(
         return [key, value + offset.dy];
       }
 
+      if (key === "rx" || key === "ry") {
+        return [key, value];
+      }
+
       if (key === "y1" || key === "y2") {
         return [key, value + offset.dy];
       }
@@ -990,6 +1021,8 @@ function translateRenderNode(node: RenderNode, offset: Vector): RenderNode {
       return { ...node, x: node.x + offset.dx, y: node.y + offset.dy };
     case "circle":
       return { ...node, cx: node.cx + offset.dx, cy: node.cy + offset.dy };
+    case "ellipse":
+      return { ...node, cx: node.cx + offset.dx, cy: node.cy + offset.dy };
     case "line":
       return {
         ...node,
@@ -1040,6 +1073,9 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
         break;
       case "circle":
         points.push(point(node.cx - node.r, node.cy - node.r), point(node.cx + node.r, node.cy + node.r));
+        break;
+      case "ellipse":
+        points.push(point(node.cx - node.rx, node.cy - node.ry), point(node.cx + node.rx, node.cy + node.ry));
         break;
       case "line":
         points.push(point(node.x1, node.y1), point(node.x2, node.y2));

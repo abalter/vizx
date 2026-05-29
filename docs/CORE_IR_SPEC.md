@@ -41,6 +41,7 @@ Current drawable object kinds:
 
 - `line`
 - `polyline`
+- `ellipse`
 - `rect`
 - `circle`
 - `text`
@@ -85,7 +86,24 @@ Polyline semantics:
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the polyline's bounding box.
 - the current implementation treats polyline like a normal drawable object for placement, alignment, distribution, and inspection.
 
-### 2.3 Rect
+### 2.3 Ellipse
+
+```ts
+interface EllipseObject extends BaseObject {
+  readonly kind: "ellipse";
+  readonly center: Point;
+  readonly rx: number;
+  readonly ry: number;
+}
+```
+
+Ellipse semantics:
+
+- bbox is derived from center and radii: `x = center.x - rx`, `y = center.y - ry`, `width = rx * 2`, `height = ry * 2`.
+- anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the ellipse's bounding box.
+- ellipse participates in placement/alignment/distribution through the same bbox-anchor model as the other primitives.
+
+### 2.4 Rect
 
 ```ts
 interface RectObject extends BaseObject {
@@ -103,7 +121,7 @@ interface RectObject extends BaseObject {
 }
 ```
 
-### 2.4 Circle
+### 2.5 Circle
 
 ```ts
 interface CircleObject extends BaseObject {
@@ -113,7 +131,7 @@ interface CircleObject extends BaseObject {
 }
 ```
 
-### 2.5 Text
+### 2.6 Text
 
 ```ts
 interface TextObject extends BaseObject {
@@ -123,7 +141,7 @@ interface TextObject extends BaseObject {
 }
 ```
 
-### 2.6 Group
+### 2.7 Group
 
 ```ts
 interface GroupObject extends BaseObject {
