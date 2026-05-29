@@ -257,6 +257,8 @@ Default recommendation:
 
 - do API ergonomics design next (builder/fluent JS/TS construction)
 
+See [JS_TS_BUILDER_API_PLAN.md](./JS_TS_BUILDER_API_PLAN.md) for the follow-up builder API design note.
+
 Reasoning:
 
 - likely VizX niche is semantic model + ergonomic host-language construction

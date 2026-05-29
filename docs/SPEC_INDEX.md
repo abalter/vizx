@@ -15,3 +15,4 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`DESIGN.md`](../DESIGN.md) — overall architecture.
 - [`LANGUAGE_SKETCH.md`](./LANGUAGE_SKETCH.md) — provisional syntax ideas.
 - [`JS_GRAPHICS_LIBRARY_LANDSCAPE.md`](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md) — comparative design note across VizX, Two.js, Raphaël, Snap.svg, D3, and Three.js.
+- [`JS_TS_BUILDER_API_PLAN.md`](./JS_TS_BUILDER_API_PLAN.md) — planned ergonomic JS/TS builder API that lowers to ObjectScene.
