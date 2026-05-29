@@ -282,7 +282,7 @@ Simple box-and-arrow diagram:
 ```ts
 const scene = sceneOf([
   rect("A", { center: point(80, 60), width: 90, height: 36 }),
-  rect("B", { center: point(240, 60), width: 90, height: 36, placement: rightOf({ objectId: "A", anchor: "east" }, 40) }),
+  rect("B", { center: point(240, 60), width: 90, height: 36, placement: rightOf("A", "east", 40) }),
   connector("A->B", { objectId: "A", anchor: "east" }, { objectId: "B", anchor: "west" }, {
     style: { markerEnd: "arrow" },
   }),
@@ -393,6 +393,7 @@ Explicitly deferred in this planning pass:
 ## Related Documents
 
 - [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md)
+- [JS_TS_BUILDER_API_COOKBOOK.md](./JS_TS_BUILDER_API_COOKBOOK.md)
 - [PATH_CURVE_CHECKPOINT.md](./PATH_CURVE_CHECKPOINT.md)
 - [PRIMITIVE_GEOMETRY_CHECKPOINT.md](./PRIMITIVE_GEOMETRY_CHECKPOINT.md)
 - [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md)
