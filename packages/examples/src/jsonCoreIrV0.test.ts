@@ -33,6 +33,14 @@ function formatAjvErrors(errors: readonly { instancePath?: string; message?: str
     .join("\n");
 }
 
+function expectSchemaValidationToFail(validate: ReturnType<typeof createJsonCoreIrSchemaValidator>, payload: unknown, testLabel: string) {
+  const isValid = validate(payload);
+
+  expect(isValid, `${testLabel} unexpectedly passed schema validation.`).toBe(false);
+  expect(validate.errors, `${testLabel} did not provide Ajv validation errors.`).toBeTruthy();
+  expect((validate.errors ?? []).length, `${testLabel} did not provide any Ajv validation errors.`).toBeGreaterThan(0);
+}
+
 describe("convertJsonCoreIrV0ToObjectScene", () => {
   it("loads the draft schema file as JSON and exposes the expected top-level metadata", () => {
     const schema = loadJsonCoreIrSchema() as {
@@ -104,6 +112,103 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
         `Fixture ${fixtureName} failed schema validation:\n${formatAjvErrors(validate.errors)}`,
       ).toBe(true);
     }
+  });
+
+  it("rejects an object with an unknown object kind", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "Bad",
+          kind: "ellipse",
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Unknown object kind");
+  });
+
+  it("rejects a placement with an unsupported relation", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "BadPlacement",
+          kind: "group",
+          placement: {
+            kind: "diagonalOf",
+            reference: { objectId: "Anchor", anchor: "center" },
+            gap: 10,
+          },
+          children: [],
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Unsupported placement relation");
+  });
+
+  it("rejects an alignment with an unsupported relation", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "BadAlign",
+          kind: "group",
+          placement: {
+            kind: "absolute",
+            position: { x: 0, y: 0 },
+          },
+          align: {
+            relation: "alignDiagonal",
+            reference: { objectId: "Ref", anchor: "center" },
+          },
+          children: [],
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Unsupported alignment relation");
+  });
+
+  it("rejects scene distribution with an unsupported relation", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [],
+      connectors: [],
+      distribution: [
+        {
+          relation: "distributeZ",
+          objectIds: ["A", "B"],
+        },
+      ],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Unsupported distribution relation");
+  });
+
+  it("rejects a connector endpoint missing required anchor ref fields", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [],
+      connectors: [
+        {
+          kind: "connector",
+          id: "broken-edge",
+          from: {
+            anchor: "east",
+          },
+          to: {
+            objectId: "B",
+          },
+        },
+      ],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Malformed connector endpoint");
   });
 
   it("loads the basic JSON fixture and converts it to an ObjectScene", () => {
