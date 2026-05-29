@@ -1,11 +1,11 @@
 # JS TS Builder API Plan
 
-This document defines a docs-only plan for an ergonomic JavaScript/TypeScript builder API for VizX scene construction.
+This document tracks the first implemented slice of an ergonomic JavaScript/TypeScript builder API for VizX scene construction.
 
 Status:
 
-- design note only
-- no runtime changes
+- first builder helper slice is implemented
+- runtime changes are limited to object-model helper exports and tests/examples using those helpers
 - no dependency additions
 - no parser/JSON Core IR/AST changes
 
@@ -165,7 +165,7 @@ Why this direction:
 
 ## 6. Object Factory Coverage
 
-Proposed initial object factory coverage:
+Implemented initial object factory coverage:
 
 - `scene(...)` / `sceneOf(...)`
 - `group(...)`
@@ -178,7 +178,7 @@ Proposed initial object factory coverage:
 - `polygon(...)`
 - `path(...)`
 
-Proposed path command helpers:
+Implemented path command helpers:
 
 - `moveTo(...)`
 - `lineTo(...)`
@@ -188,7 +188,7 @@ Proposed path command helpers:
 
 ## 7. Relation Helpers
 
-Proposed helper coverage (names illustrative):
+Implemented helper coverage:
 
 Placement:
 
@@ -215,7 +215,8 @@ Distribution:
 Connectors:
 
 - `connector(...)`
-- optional arrow-oriented helper wrappers where useful
+- `anchor(...)`
+- `arrowStart(...)` and `arrowEnd(...)`
 
 Transforms:
 
@@ -227,6 +228,13 @@ Styles:
 
 - style option pass-through for `stroke`, `fill`, `strokeWidth`, `opacity`
 - marker convenience helpers (for example `arrowEnd()`), as pure style sugar
+
+Implementation location:
+
+- `packages/object-model/src/builder.ts`
+- exported via `packages/object-model/src/index.ts`
+- covered by `packages/object-model/src/builder.test.ts`
+- exercised by `builder-basic` in the examples registry
 
 ## 8. TypeScript Ergonomics
 
@@ -267,7 +275,7 @@ VizX should not implement a D3 clone; JS/TS host code remains the generation lay
 
 ## 10. Example Sketches
 
-All examples below are proposed API sketches, not implemented behavior.
+All examples below follow the implemented first-slice helper style.
 
 Simple box-and-arrow diagram:
 
@@ -350,20 +358,20 @@ Clarifications:
 - builder API does not need to emit JSON Core IR in first slice
 - any JSON bridge should be a separate explicit design decision
 
-## 13. Recommended First Implementation Slice
+## 13. Implemented First Slice
 
-Recommended first implementation slice after this note:
+The implemented first builder slice includes:
 
-- add a builder module in the existing package structure (object-model-local first unless a strong reason emerges for a separate package)
-- start with simple factory functions only:
+- a builder module in the existing object-model package
+- simple factory functions only:
   - scene
   - object factories for all implemented kinds
   - path command helpers
   - connector helper
   - transform helpers
-- add tests asserting factory output equals expected ObjectScene snippets
-- add one example using builder helpers and verify resolved semantics match an equivalent object-literal example
-- no fluent API in first slice
+- tests asserting factory output equals expected ObjectScene snippets
+- one example using builder helpers (`builder-basic`) with resolver/example coverage
+- no fluent API in this slice
 - no parser syntax work
 - no JSON Core IR changes
 

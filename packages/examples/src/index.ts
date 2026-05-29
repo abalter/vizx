@@ -4,6 +4,7 @@ import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
 import { bezierPathExample } from "./bezierPath";
+import { builderBasicExample } from "./builderBasic";
 import { connectorsExample } from "./connectors";
 import { distributeXExample } from "./distributeX";
 import { distributeYExample } from "./distributeY";
@@ -27,6 +28,7 @@ export const vizxExamples: readonly VizxExample[] = [
   arrowheadsExample,
   basicExample,
   bezierPathExample,
+  builderBasicExample,
   distributeXExample,
   distributeYExample,
   anchorsExample,

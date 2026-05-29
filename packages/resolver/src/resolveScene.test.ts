@@ -1,9 +1,44 @@
 import { describe, expect, it } from "vitest";
 import { point } from "@vizx/geometry";
 import type { AnchorName, ObjectScene } from "@vizx/object-model";
+import { alignY, anchor, arrowEnd, connector, rect, rightOf, sceneOf } from "@vizx/object-model";
 import { resolveScene } from "./resolveScene";
 
 describe("resolveScene", () => {
+  it("resolves scenes built with object-model builder helpers", () => {
+    const scene = sceneOf(
+      [
+        rect("source", {
+          center: point(80, 80),
+          width: 96,
+          height: 40,
+        }),
+        rect("target", {
+          center: point(80, 80),
+          width: 96,
+          height: 40,
+          placement: rightOf("source", "east", 72),
+          align: alignY("source"),
+        }),
+      ],
+      {
+        connectors: [connector("flow", anchor("source", "east"), anchor("target", "west"), { style: arrowEnd() })],
+      }
+    );
+
+    const result = resolveScene(scene);
+    const errors = result.diagnostics.filter((diagnostic) => diagnostic.severity === "error");
+    const source = result.resolved.objects.find((object) => object.id === "source");
+    const target = result.resolved.objects.find((object) => object.id === "target");
+
+    expect(errors).toEqual([]);
+    expect(source).toBeDefined();
+    expect(target).toBeDefined();
+    expect(target?.anchors.west?.x).toBeGreaterThan(source?.anchors.east?.x ?? 0);
+    expect(result.resolved.connectors).toHaveLength(1);
+    expect(result.resolved.connectors[0]?.renderNode.style?.markerEnd).toBe("arrow");
+  });
+
   it("resolves group anchors for a label box", () => {
     const scene: ObjectScene = {
       objects: [

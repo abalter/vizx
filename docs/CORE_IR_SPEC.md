@@ -10,6 +10,7 @@ Core IR here means the structured drawing model consumed by the resolver, not us
 - Runtime impact: none
 - Source of truth for current shape:
   - `packages/object-model/src/anchors.ts`
+  - `packages/object-model/src/builder.ts` (optional helper constructors that return ObjectScene-compatible plain data)
   - `packages/object-model/src/objects.ts`
   - `packages/object-model/src/scene.ts`
   - `packages/resolver/src/resolveScene.ts`

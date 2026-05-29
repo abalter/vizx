@@ -201,6 +201,21 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the builder-basic example", () => {
+    const scene = requireVizxExample("builder-basic").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "A")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "B")).toBe(true);
+    expect(result.resolved.connectors.some((resolvedConnector) => resolvedConnector.id === "A->B")).toBe(true);
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and resolves the styled primitives example", () => {
     const scene = requireVizxExample("styled-primitives").createScene();
     const result = resolveScene(scene);
