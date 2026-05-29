@@ -5,6 +5,7 @@ import {
   bboxFromLine,
   bboxFromEllipse,
   bboxFromPoints,
+  bboxFromPolygon,
   bboxTranslate,
   bboxUnion,
   distance,
@@ -55,6 +56,12 @@ describe("geometry kernel", () => {
 
   it("computes a bounding box for an ellipse", () => {
     expect(bboxFromEllipse(point(100, 80), 30, 18)).toEqual(bboxFromRect(70, 62, 60, 36));
+  });
+
+  it("computes a bounding box for a polygon", () => {
+    expect(bboxFromPolygon([point(30, 20), point(75, 10), point(90, 55), point(18, 44)])).toEqual(
+      bboxFromRect(18, 10, 72, 45),
+    );
   });
 
   it("translates bounding boxes and points", () => {

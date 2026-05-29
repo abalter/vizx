@@ -2,7 +2,7 @@
 
 This plan bridges the aspirational gallery audit to the next concrete 2D capability expansion in VizX.
 
-The first three slices of that plan, `line`, `polyline`, and `ellipse`, are now implemented; the remaining primitives stay as the forward-looking expansion path.
+The first four slices of that plan, `line`, `polyline`, `ellipse`, and `polygon`, are now implemented; the remaining primitives stay as the forward-looking expansion path.
 
 It is intentionally implementation-oriented, but it does not change runtime behavior beyond the first slice already landed in code.
 
@@ -18,7 +18,7 @@ The current code baseline is narrower than the conceptual roadmap in `DESIGN.md`
 
 What exists today in code:
 
-- object kinds: `line`, `polyline`, `ellipse`, `group`, `rect`, `circle`, `text`
+- object kinds: `line`, `polyline`, `ellipse`, `polygon`, `group`, `rect`, `circle`, `text`
 - connector objects with straight-line SVG output
 - placement relations: `absolute`, `rightOf`, `leftOf`, `above`, `below`
 - alignment relations: `alignX`, `alignY`, `alignLeft`, `alignRight`, `alignTop`, `alignBottom`
@@ -38,7 +38,7 @@ Behavior that is already implemented:
 
 Current limitations that matter for this plan:
 
-- no `polygon` or object-level `path` kind
+- no object-level `path` kind
 - no path primitive in the object model, only path render nodes for connectors
 - no rotation or scale transform support in the render scene
 - no general local-coordinate or frame model
@@ -223,7 +223,11 @@ Gallery examples helped:
 
 ### Polygon
 
-Likely object-model shape:
+Status:
+
+- implemented as the fourth slice in this pass
+
+Object-model shape:
 
 ```ts
 interface PolygonObject extends BaseObject {
@@ -250,7 +254,7 @@ Style needs:
 
 Priority:
 
-- near-term primitive, after line/polyline and before the full path model
+- implemented now; establishes a closed-shape primitive before the full path model
 
 Gallery examples helped:
 
@@ -325,7 +329,7 @@ Reasoning:
 
 ## 5. First Implementation Slice
 
-The first three implementation slices have now landed: `line`, `polyline`, and `ellipse`.
+The first four implementation slices have now landed: `line`, `polyline`, `ellipse`, and `polygon`.
 
 Why `line` first:
 
@@ -347,7 +351,7 @@ Scope of the first slice:
 - capability matrix update
 - no parser syntax
 
-The same slice is the template for the remaining primitive work, especially `polygon`, and then `path`.
+The same slice is the template for the remaining primitive work, especially `path`.
 
 Implementation detail:
 

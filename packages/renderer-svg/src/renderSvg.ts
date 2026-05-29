@@ -89,6 +89,11 @@ function renderNode(node: RenderNode, indent: string): string {
       return `${indent}<polyline${common} ${attrs} />`;
     }
 
+    case "polygon": {
+      const attrs = attrsToString({ points: node.points.map((point) => `${point.x},${point.y}`).join(" ") });
+      return `${indent}<polygon${common} ${attrs} />`;
+    }
+
     case "path": {
       const attrs = attrsToString({ d: node.d });
       return `${indent}<path${common} ${attrs} />`;

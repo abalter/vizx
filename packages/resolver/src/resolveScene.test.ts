@@ -134,6 +134,54 @@ describe("resolveScene", () => {
     expect(oval?.anchors.east).toEqual(point(138, 50));
   });
 
+  it("resolves a polygon object through the normal placement and anchor pipeline", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "rect",
+          id: "reference",
+          center: point(56, 64),
+          width: 32,
+          height: 24,
+        },
+        {
+          kind: "polygon",
+          id: "shape",
+          points: [point(0, 20), point(28, 0), point(56, 18), point(42, 42), point(6, 38)],
+          placement: { kind: "rightOf", reference: { objectId: "reference", anchor: "east" }, gap: 10 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const shape = result.resolved.objects.find((object) => object.id === "shape");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(shape?.kind).toBe("polygon");
+    expect(shape?.bbox).toEqual({ x: 82, y: 43, width: 56, height: 42 });
+    expect(shape?.anchors.center).toEqual(point(110, 64));
+    expect(shape?.anchors.north).toEqual(point(110, 43));
+    expect(shape?.anchors.south).toEqual(point(110, 85));
+    expect(shape?.anchors.west).toEqual(point(82, 64));
+    expect(shape?.anchors.east).toEqual(point(138, 64));
+  });
+
+  it("reports a diagnostic for polygons with fewer than three points", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "polygon",
+          id: "degenerate",
+          points: [point(0, 0), point(10, 5)],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.message.includes("at least 3 points"))).toBe(true);
+  });
+
   it("places two groups with a connector using anchor references", () => {
     const scene: ObjectScene = {
       objects: [

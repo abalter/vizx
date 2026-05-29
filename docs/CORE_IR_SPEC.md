@@ -42,6 +42,7 @@ Current drawable object kinds:
 - `line`
 - `polyline`
 - `ellipse`
+- `polygon`
 - `rect`
 - `circle`
 - `text`
@@ -103,7 +104,23 @@ Ellipse semantics:
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the ellipse's bounding box.
 - ellipse participates in placement/alignment/distribution through the same bbox-anchor model as the other primitives.
 
-### 2.4 Rect
+### 2.4 Polygon
+
+```ts
+interface PolygonObject extends BaseObject {
+  readonly kind: "polygon";
+  readonly points: readonly Point[];
+}
+```
+
+Polygon semantics:
+
+- polygon is treated as a closed shape and rendered as SVG `<polygon>`.
+- bbox is derived from min/max x and y across all points.
+- anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the polygon's bounding box.
+- polygons with fewer than three points are treated as invalid input and produce a resolver diagnostic.
+
+### 2.5 Rect
 
 ```ts
 interface RectObject extends BaseObject {
@@ -121,7 +138,7 @@ interface RectObject extends BaseObject {
 }
 ```
 
-### 2.5 Circle
+### 2.6 Circle
 
 ```ts
 interface CircleObject extends BaseObject {
@@ -131,7 +148,7 @@ interface CircleObject extends BaseObject {
 }
 ```
 
-### 2.6 Text
+### 2.7 Text
 
 ```ts
 interface TextObject extends BaseObject {
@@ -141,7 +158,7 @@ interface TextObject extends BaseObject {
 }
 ```
 
-### 2.7 Group
+### 2.8 Group
 
 ```ts
 interface GroupObject extends BaseObject {

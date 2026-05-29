@@ -2,6 +2,7 @@ import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle, de
 import {
   addPointVector,
   bboxFromEllipse,
+  bboxFromPolygon,
   bboxFromRect,
   bboxFromLine,
   bboxFromPoints,
@@ -220,6 +221,33 @@ function resolveObjectLocal(
           id: object.id,
           points: object.points.map((pt) => ({ x: pt.x, y: pt.y })),
           style: { ...defaultLineStyle, ...object.style },
+        },
+      };
+    }
+    case "polygon": {
+      if (object.points.length < 3) {
+        diagnostics.push({
+          severity: "error",
+          message: `Polygon ${object.id} requires at least 3 points`,
+        });
+      }
+
+      const bbox = bboxFromPolygon(object.points);
+
+      return {
+        id: object.id,
+        kind: object.kind,
+        bbox,
+        anchors: anchorsForBoundingBox(bbox),
+        style: object.style,
+        geometry: {
+          pointCount: object.points.length,
+        },
+        renderNode: {
+          kind: "polygon",
+          id: object.id,
+          points: object.points.map((pt) => ({ x: pt.x, y: pt.y })),
+          style: object.style,
         },
       };
     }
@@ -1036,6 +1064,11 @@ function translateRenderNode(node: RenderNode, offset: Vector): RenderNode {
         ...node,
         points: node.points.map((pt) => ({ x: pt.x + offset.dx, y: pt.y + offset.dy })),
       };
+    case "polygon":
+      return {
+        ...node,
+        points: node.points.map((pt) => ({ x: pt.x + offset.dx, y: pt.y + offset.dy })),
+      };
     case "path":
       return { ...node, d: translatePath(node.d, offset) };
     case "text":
@@ -1081,6 +1114,9 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
         points.push(point(node.x1, node.y1), point(node.x2, node.y2));
         break;
       case "polyline":
+        points.push(...node.points.map((pt) => point(pt.x, pt.y)));
+        break;
+      case "polygon":
         points.push(...node.points.map((pt) => point(pt.x, pt.y)));
         break;
       case "text":

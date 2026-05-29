@@ -110,4 +110,29 @@ describe("renderSvg", () => {
     expect(svg).toContain('cx="60"');
     expect(svg).toContain('ry="18"');
   });
+
+  it("serializes a polygon node", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 160, height: 120 },
+      children: [
+        {
+          kind: "polygon",
+          points: [
+            { x: 20, y: 80 },
+            { x: 60, y: 20 },
+            { x: 120, y: 40 },
+            { x: 132, y: 92 },
+            { x: 48, y: 104 },
+          ],
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<polygon");
+    expect(svg).toContain('points="20,80 60,20 120,40 132,92 48,104"');
+  });
 });

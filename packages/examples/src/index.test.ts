@@ -116,6 +116,21 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the polygon primitive example", () => {
+    const scene = requireVizxExample("polygon-primitive").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.kind === "polygon")).toBe(true);
+    expect(result.resolved.objects.some((object) => object.kind === "polygon")).toBe(true);
+    expect(result.renderScene.children.some((child) => child.kind === "polygon")).toBe(true);
+    expect(svg).toContain("<polygon");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("positions the relative-placement example around its center object", () => {
     const inspection = inspectScene(requireVizxExample("relative-placement").createScene());
     const center = requireInspectionObject(inspection, "Center");
