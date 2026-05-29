@@ -434,3 +434,5 @@ Explicitly deferred for this plan:
 ## 10. Doc Follow-Up
 
 Once the first primitive slice is implemented, `CAPABILITY_MATRIX.md` should gain a corresponding row for the new primitive and the audit should be refreshed with that implementation milestone.
+
+For the post-foundation checkpoint after `line`, `polyline`, `ellipse`, `polygon`, `path` v0, and built-in arrow markers landed, see [PRIMITIVE_GEOMETRY_CHECKPOINT.md](./PRIMITIVE_GEOMETRY_CHECKPOINT.md).

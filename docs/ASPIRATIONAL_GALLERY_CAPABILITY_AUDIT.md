@@ -113,6 +113,7 @@ The first four primitive slices, `line`, `polyline`, `ellipse`, and `polygon`, h
 
 For the concrete next-step design, see [Primitive Geometry Model Plan](./PRIMITIVE_GEOMETRY_MODEL_PLAN.md).
 For the minimal arrowhead and marker design that follows the current line/polyline/path baseline, see [Marker Arrowhead Model Plan](./MARKER_ARROWHEAD_MODEL_PLAN.md).
+For the docs-only checkpoint after the current 2D primitive foundation landed, see [Primitive Geometry Checkpoint](./PRIMITIVE_GEOMETRY_CHECKPOINT.md).
 
 ## Future Fixture Recommendations
 
