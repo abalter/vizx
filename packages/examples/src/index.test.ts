@@ -650,6 +650,76 @@ describe("example registry", () => {
       }
     }
   });
+
+  it("registers and semantically validates aspirational-android-lifecycle", () => {
+    const example = requireVizxExample("aspirational-android-lifecycle");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const connectorRefs = (scene.connectors ?? []).map((connector) => ({
+      id: connector.id,
+      from: connector.from.objectId,
+      to: connector.to.objectId,
+    }));
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "start")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "onResume")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "running")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "onDestroy")).toBe(true);
+
+    expect(connectorRefs).toContainEqual({ id: "lifecycle.start-create", from: "start", to: "onCreate" });
+    expect(connectorRefs).toContainEqual({ id: "lifecycle.pause-stop", from: "onPause", to: "onStop" });
+    expect(connectorRefs).toContainEqual({ id: "lifecycle.stop-restart", from: "onStop", to: "onRestart" });
+    expect(connectorRefs).toContainEqual({ id: "lifecycle.pause-killed", from: "onPause", to: "killed" });
+
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(svg.length).toBeGreaterThan(0);
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
+  it("registers and semantically validates aspirational-labeled-polygon", () => {
+    const example = requireVizxExample("aspirational-labeled-polygon");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const polygon = requireResolvedObject(result, "poly.main");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "poly.main" && object.kind === "polygon")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "vertex.A")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "vertex.C")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "vertex.E")).toBe(true);
+    expect(polygon.bbox.width).toBeGreaterThan(0);
+    expect(polygon.bbox.height).toBeGreaterThan(0);
+    expect(svg).toContain("<polygon");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
+  it("registers and semantically validates aspirational-arrow-label", () => {
+    const example = requireVizxExample("aspirational-arrow-label");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const segment = requireResolvedObject(result, "arrow.segment");
+    const label = requireResolvedObject(result, "arrow.label");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "arrow.segment")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "arrow.label")).toBe(true);
+    expect(svg).toContain('marker-start="url(#vizx-marker-arrow)"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(label.anchors.center?.x).toBeGreaterThanOrEqual(segment.bbox.x - 16);
+    expect(label.anchors.center?.x).toBeLessThanOrEqual(segment.bbox.x + segment.bbox.width + 16);
+    expect(Math.abs((label.anchors.center?.y ?? 0) - segment.bbox.y)).toBeLessThan(36);
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

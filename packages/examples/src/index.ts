@@ -1,5 +1,8 @@
 import { alignmentFamilyExample } from "./alignmentFamily";
 import { alignmentReferenceExample } from "./alignmentReference";
+import { aspirationalAndroidLifecycleExample } from "./aspirationalAndroidLifecycle";
+import { aspirationalArrowLabelExample } from "./aspirationalArrowLabel";
+import { aspirationalLabeledPolygonExample } from "./aspirationalLabeledPolygon";
 import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
@@ -27,6 +30,9 @@ export * from "./types";
 export const vizxExamples: readonly VizxExample[] = [
   alignmentFamilyExample,
   alignmentReferenceExample,
+  aspirationalAndroidLifecycleExample,
+  aspirationalArrowLabelExample,
+  aspirationalLabeledPolygonExample,
   arrowheadsExample,
   basicExample,
   bezierPathExample,

@@ -98,6 +98,16 @@ Suggested VizX registry examples:
 - `aspirational-labeled-polygon`
 - `aspirational-geometry-basic`
 
+Current status:
+
+- first-slice examples now implemented:
+  - `aspirational-android-lifecycle`
+  - `aspirational-labeled-polygon`
+  - `aspirational-arrow-label`
+- implemented as manual builder-authored Level 1-2 reproductions
+- no source-language translation added
+- no parser/JSON Core IR/AST expansion added
+
 Acceptance criteria:
 
 - registry-backed example

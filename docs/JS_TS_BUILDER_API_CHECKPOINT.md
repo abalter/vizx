@@ -32,6 +32,9 @@ Registry-backed builder examples:
 - `builder-basic`
 - `builder-relative-placement`
 - `builder-bezier-path`
+- `aspirational-android-lifecycle`
+- `aspirational-labeled-polygon`
+- `aspirational-arrow-label`
 
 Parity tests now in the examples harness:
 
@@ -45,6 +48,13 @@ Results from the parity example pass:
 - no helper gaps were found for the two parity examples
 - the existing helper surface is sufficient for representative diagram and path scenes
 - semantic parity is tested without brittle full-SVG snapshots
+
+Results from the first aspirational mini-gallery slice:
+
+- three manual Level 1-2 reproductions were added using existing builder helpers
+- no new builder helpers were required
+- no runtime, parser, or JSON Core IR features were added
+- current builder surface was sufficient for lifecycle flow, labeled polygon, and arrow-label approximations
 
 Parity checks focus on:
 
