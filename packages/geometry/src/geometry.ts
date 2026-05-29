@@ -75,6 +75,15 @@ export function bboxFromRect(x: number, y: number, width: number, height: number
   return { x, y, width, height };
 }
 
+export function bboxFromLine(start: Point, end: Point): BoundingBox {
+  const minX = Math.min(start.x, end.x);
+  const minY = Math.min(start.y, end.y);
+  const maxX = Math.max(start.x, end.x);
+  const maxY = Math.max(start.y, end.y);
+
+  return bboxFromRect(minX, minY, maxX - minX, maxY - minY);
+}
+
 export function bboxUnion(...boxes: readonly BoundingBox[]): BoundingBox {
   if (boxes.length === 0) {
     return bboxFromRect(0, 0, 0, 0);

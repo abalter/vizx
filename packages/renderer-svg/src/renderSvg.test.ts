@@ -40,4 +40,27 @@ describe("renderSvg", () => {
     expect(svg).toContain("<rect");
     expect(svg).toContain(">Hello</text>");
   });
+
+  it("serializes a line node", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 100, height: 100 },
+      children: [
+        {
+          kind: "line",
+          x1: 10,
+          y1: 20,
+          x2: 80,
+          y2: 70,
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<line");
+    expect(svg).toContain('x1="10"');
+    expect(svg).toContain('y2="70"');
+  });
 });

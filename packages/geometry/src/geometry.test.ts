@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addPointVector,
   bboxFromRect,
+  bboxFromLine,
   bboxTranslate,
   bboxUnion,
   distance,
@@ -34,6 +35,11 @@ describe("geometry kernel", () => {
     );
 
     expect(union).toEqual(bboxFromRect(0, 5, 30, 30));
+  });
+
+  it("computes a bounding box for a line segment", () => {
+    expect(bboxFromLine(point(12, 20), point(42, 8))).toEqual(bboxFromRect(12, 8, 30, 12));
+    expect(bboxFromLine(point(5, 7), point(5, 31))).toEqual(bboxFromRect(5, 7, 0, 24));
   });
 
   it("translates bounding boxes and points", () => {

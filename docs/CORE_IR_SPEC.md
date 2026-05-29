@@ -39,6 +39,7 @@ Notes:
 
 Current drawable object kinds:
 
+- `line`
 - `rect`
 - `circle`
 - `text`
@@ -52,7 +53,23 @@ Common object fields from `BaseObject`:
 - `placement?: ObjectPlacement`
 - `align?: ObjectAlignment`
 
-### 2.1 Rect
+### 2.1 Line
+
+```ts
+interface LineObject extends BaseObject {
+  readonly kind: "line";
+  readonly start: Point;
+  readonly end: Point;
+}
+```
+
+Line semantics:
+
+- bbox is derived from the start and end points.
+- anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the line's bounding box.
+- line placement and transforms behave like any other drawable object because the resolver translates the resolved bbox and render node.
+
+### 2.2 Rect
 
 ```ts
 interface RectObject extends BaseObject {
@@ -70,7 +87,7 @@ interface RectObject extends BaseObject {
 }
 ```
 
-### 2.2 Circle
+### 2.3 Circle
 
 ```ts
 interface CircleObject extends BaseObject {
@@ -80,7 +97,7 @@ interface CircleObject extends BaseObject {
 }
 ```
 
-### 2.3 Text
+### 2.4 Text
 
 ```ts
 interface TextObject extends BaseObject {
@@ -90,7 +107,7 @@ interface TextObject extends BaseObject {
 }
 ```
 
-### 2.4 Group
+### 2.5 Group
 
 ```ts
 interface GroupObject extends BaseObject {

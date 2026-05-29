@@ -7,6 +7,7 @@ import { distributeXExample } from "./distributeX";
 import { distributeYExample } from "./distributeY";
 import { mixedNestedPlacementExample } from "./mixedNestedPlacement";
 import { nestedGroupsExample } from "./nestedGroups";
+import { linePrimitiveExample } from "./linePrimitive";
 import { relativePlacementExample } from "./relativePlacement";
 import type { VizxExample } from "./types";
 
@@ -21,6 +22,7 @@ export const vizxExamples: readonly VizxExample[] = [
   anchorsExample,
   nestedGroupsExample,
   connectorsExample,
+  linePrimitiveExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];

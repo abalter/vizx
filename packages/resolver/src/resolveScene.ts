@@ -1,7 +1,8 @@
-import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle } from "@vizx/core";
+import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle, defaultLineStyle } from "@vizx/core";
 import {
   addPointVector,
   bboxFromRect,
+  bboxFromLine,
   bboxTranslate,
   bboxUnion,
   point,
@@ -174,6 +175,32 @@ function resolveObjectLocal(
   siblingMap: ReadonlyMap<string, ResolvedObject> = new Map(),
 ): ResolvedObject {
   switch (object.kind) {
+    case "line": {
+      const bbox = bboxFromLine(object.start, object.end);
+
+      return {
+        id: object.id,
+        kind: object.kind,
+        bbox,
+        anchors: anchorsForBoundingBox(bbox),
+        style: { ...defaultLineStyle, ...object.style },
+        geometry: {
+          x1: object.start.x,
+          y1: object.start.y,
+          x2: object.end.x,
+          y2: object.end.y,
+        },
+        renderNode: {
+          kind: "line",
+          id: object.id,
+          x1: object.start.x,
+          y1: object.start.y,
+          x2: object.end.x,
+          y2: object.end.y,
+          style: { ...defaultLineStyle, ...object.style },
+        },
+      };
+    }
     case "rect":
       return resolveRectLocal(object, siblingMap, diagnostics);
     case "circle": {
@@ -881,7 +908,15 @@ function translateGeometry(
         return [key, value + offset.dx];
       }
 
+      if (key === "x1" || key === "x2") {
+        return [key, value + offset.dx];
+      }
+
       if (key === "y" || key === "cy") {
+        return [key, value + offset.dy];
+      }
+
+      if (key === "y1" || key === "y2") {
         return [key, value + offset.dy];
       }
 
@@ -934,6 +969,14 @@ function translateRenderNode(node: RenderNode, offset: Vector): RenderNode {
       return { ...node, x: node.x + offset.dx, y: node.y + offset.dy };
     case "circle":
       return { ...node, cx: node.cx + offset.dx, cy: node.cy + offset.dy };
+    case "line":
+      return {
+        ...node,
+        x1: node.x1 + offset.dx,
+        y1: node.y1 + offset.dy,
+        x2: node.x2 + offset.dx,
+        y2: node.y2 + offset.dy,
+      };
     case "path":
       return { ...node, d: translatePath(node.d, offset) };
     case "text":
@@ -971,6 +1014,9 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
         break;
       case "circle":
         points.push(point(node.cx - node.r, node.cy - node.r), point(node.cx + node.r, node.cy + node.r));
+        break;
+      case "line":
+        points.push(point(node.x1, node.y1), point(node.x2, node.y2));
         break;
       case "text":
         points.push(point(node.x, node.y));

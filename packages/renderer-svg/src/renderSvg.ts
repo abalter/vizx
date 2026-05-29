@@ -74,6 +74,11 @@ function renderNode(node: RenderNode, indent: string): string {
       return `${indent}<text${common} ${attrs}>${escapeText(node.text)}</text>`;
     }
 
+    case "line": {
+      const attrs = attrsToString({ x1: node.x1, y1: node.y1, x2: node.x2, y2: node.y2 });
+      return `${indent}<line${common} ${attrs} />`;
+    }
+
     case "path": {
       const attrs = attrsToString({ d: node.d });
       return `${indent}<path${common} ${attrs} />`;

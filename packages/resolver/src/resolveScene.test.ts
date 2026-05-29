@@ -39,6 +39,39 @@ describe("resolveScene", () => {
     expect(group?.anchors.west?.x).toBeLessThan(100);
   });
 
+  it("resolves a line object through the normal placement and anchor pipeline", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "rect",
+          id: "reference",
+          center: point(40, 40),
+          width: 40,
+          height: 20,
+        },
+        {
+          kind: "line",
+          id: "segment",
+          start: point(0, 0),
+          end: point(60, 0),
+          placement: { kind: "rightOf", reference: { objectId: "reference", anchor: "east" }, gap: 10 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const reference = result.resolved.objects.find((object) => object.id === "reference");
+    const segment = result.resolved.objects.find((object) => object.id === "segment");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(segment?.kind).toBe("line");
+    expect(segment?.bbox).toEqual({ x: 70, y: 40, width: 60, height: 0 });
+    expect(segment?.anchors.center).toEqual(point(100, 40));
+    expect(segment?.anchors.west).toEqual(point(70, 40));
+    expect(segment?.anchors.east).toEqual(point(130, 40));
+    expect(reference?.anchors.east).toEqual(point(60, 40));
+  });
+
   it("places two groups with a connector using anchor references", () => {
     const scene: ObjectScene = {
       objects: [

@@ -19,6 +19,12 @@ export const defaultBoxStyle: Style = {
   fontSize: 14,
 };
 
+export const defaultLineStyle: Style = {
+  stroke: "black",
+  fill: "none",
+  strokeWidth: 1,
+};
+
 export const defaultConnectorStyle: Style = {
   stroke: "black",
   fill: "none",
