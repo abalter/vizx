@@ -259,6 +259,7 @@ Default recommendation:
 
 See [JS_TS_BUILDER_API_PLAN.md](./JS_TS_BUILDER_API_PLAN.md) for the follow-up builder API design note.
 See [JS_TS_BUILDER_API_COOKBOOK.md](./JS_TS_BUILDER_API_COOKBOOK.md) for practical implemented helper usage patterns.
+See [JS_TS_BUILDER_API_CHECKPOINT.md](./JS_TS_BUILDER_API_CHECKPOINT.md) for the post-parity checkpoint summary.
 
 Reasoning:
 

@@ -327,6 +327,7 @@ No builder helper gaps were required for these parity examples.
 
 ## Related Documents
 
+- [JS_TS_BUILDER_API_CHECKPOINT.md](./JS_TS_BUILDER_API_CHECKPOINT.md)
 - [JS_TS_BUILDER_API_PLAN.md](./JS_TS_BUILDER_API_PLAN.md)
 - [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md)
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md)
