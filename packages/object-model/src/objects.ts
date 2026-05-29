@@ -79,6 +79,11 @@ export interface LineObject extends BaseObject {
   readonly end: Point;
 }
 
+export interface PolylineObject extends BaseObject {
+  readonly kind: "polyline";
+  readonly points: readonly Point[];
+}
+
 export interface CircleObject extends BaseObject {
   readonly kind: "circle";
   readonly center: Point;
@@ -104,4 +109,4 @@ export interface ConnectorObject {
   readonly style?: Style;
 }
 
-export type DrawableObject = LineObject | RectObject | CircleObject | TextObject | GroupObject;
+export type DrawableObject = LineObject | PolylineObject | RectObject | CircleObject | TextObject | GroupObject;

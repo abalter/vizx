@@ -3,6 +3,7 @@ import {
   addPointVector,
   bboxFromRect,
   bboxFromLine,
+  bboxFromPoints,
   bboxTranslate,
   bboxUnion,
   distance,
@@ -40,6 +41,15 @@ describe("geometry kernel", () => {
   it("computes a bounding box for a line segment", () => {
     expect(bboxFromLine(point(12, 20), point(42, 8))).toEqual(bboxFromRect(12, 8, 30, 12));
     expect(bboxFromLine(point(5, 7), point(5, 31))).toEqual(bboxFromRect(5, 7, 0, 24));
+  });
+
+  it("computes a bounding box from points", () => {
+    expect(bboxFromPoints([point(10, 20), point(50, 10), point(25, 45)])).toEqual(bboxFromRect(10, 10, 40, 35));
+    expect(bboxFromPoints([point(5, 5), point(5, 5)])).toEqual(bboxFromRect(5, 5, 0, 0));
+  });
+
+  it("computes a bounding box for a polyline path", () => {
+    expect(bboxFromPoints([point(10, 20), point(5, 40), point(30, 15), point(20, 50)])).toEqual(bboxFromRect(5, 15, 25, 35));
   });
 
   it("translates bounding boxes and points", () => {

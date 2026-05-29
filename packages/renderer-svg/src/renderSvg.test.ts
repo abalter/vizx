@@ -63,4 +63,28 @@ describe("renderSvg", () => {
     expect(svg).toContain('x1="10"');
     expect(svg).toContain('y2="70"');
   });
+
+  it("serializes a polyline node", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 120, height: 80 },
+      children: [
+        {
+          kind: "polyline",
+          points: [
+            { x: 10, y: 20 },
+            { x: 30, y: 10 },
+            { x: 50, y: 40 },
+            { x: 70, y: 15 },
+          ],
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<polyline");
+    expect(svg).toContain('points="10,20 30,10 50,40 70,15"');
+  });
 });

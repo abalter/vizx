@@ -72,6 +72,36 @@ describe("resolveScene", () => {
     expect(reference?.anchors.east).toEqual(point(60, 40));
   });
 
+  it("resolves a polyline object through the normal placement and anchor pipeline", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "rect",
+          id: "reference",
+          center: point(50, 50),
+          width: 30,
+          height: 18,
+        },
+        {
+          kind: "polyline",
+          id: "route",
+          points: [point(0, 0), point(30, 20), point(60, 5), point(100, 25)],
+          placement: { kind: "rightOf", reference: { objectId: "reference", anchor: "east" }, gap: 12 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const route = result.resolved.objects.find((object) => object.id === "route");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(route?.kind).toBe("polyline");
+    expect(route?.bbox).toEqual({ x: 77, y: 37.5, width: 100, height: 25 });
+    expect(route?.anchors.center).toEqual(point(127, 50));
+    expect(route?.anchors.west).toEqual(point(77, 50));
+    expect(route?.anchors.east).toEqual(point(177, 50));
+  });
+
   it("places two groups with a connector using anchor references", () => {
     const scene: ObjectScene = {
       objects: [

@@ -40,6 +40,7 @@ Notes:
 Current drawable object kinds:
 
 - `line`
+- `polyline`
 - `rect`
 - `circle`
 - `text`
@@ -69,7 +70,22 @@ Line semantics:
 - anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the line's bounding box.
 - line placement and transforms behave like any other drawable object because the resolver translates the resolved bbox and render node.
 
-### 2.2 Rect
+### 2.2 Polyline
+
+```ts
+interface PolylineObject extends BaseObject {
+  readonly kind: "polyline";
+  readonly points: readonly Point[];
+}
+```
+
+Polyline semantics:
+
+- bbox is derived from the min/max of all points.
+- anchors are currently bbox-derived, so `center`, `north`, `south`, `east`, and `west` come from the polyline's bounding box.
+- the current implementation treats polyline like a normal drawable object for placement, alignment, distribution, and inspection.
+
+### 2.3 Rect
 
 ```ts
 interface RectObject extends BaseObject {
@@ -87,7 +103,7 @@ interface RectObject extends BaseObject {
 }
 ```
 
-### 2.3 Circle
+### 2.4 Circle
 
 ```ts
 interface CircleObject extends BaseObject {
@@ -97,7 +113,7 @@ interface CircleObject extends BaseObject {
 }
 ```
 
-### 2.4 Text
+### 2.5 Text
 
 ```ts
 interface TextObject extends BaseObject {
@@ -107,7 +123,7 @@ interface TextObject extends BaseObject {
 }
 ```
 
-### 2.5 Group
+### 2.6 Group
 
 ```ts
 interface GroupObject extends BaseObject {

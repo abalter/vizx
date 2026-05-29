@@ -86,6 +86,21 @@ describe("example registry", () => {
     }
   });
 
+  it("registers and resolves the polyline primitive example", () => {
+    const scene = requireVizxExample("polyline-primitive").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.kind === "polyline")).toBe(true);
+    expect(result.resolved.objects.some((object) => object.kind === "polyline")).toBe(true);
+    expect(result.renderScene.children.some((child) => child.kind === "polyline")).toBe(true);
+    expect(svg).toContain("<polyline");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("positions the relative-placement example around its center object", () => {
     const inspection = inspectScene(requireVizxExample("relative-placement").createScene());
     const center = requireInspectionObject(inspection, "Center");

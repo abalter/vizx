@@ -3,6 +3,7 @@ import {
   addPointVector,
   bboxFromRect,
   bboxFromLine,
+  bboxFromPoints,
   bboxTranslate,
   bboxUnion,
   point,
@@ -197,6 +198,26 @@ function resolveObjectLocal(
           y1: object.start.y,
           x2: object.end.x,
           y2: object.end.y,
+          style: { ...defaultLineStyle, ...object.style },
+        },
+      };
+    }
+    case "polyline": {
+      const bbox = bboxFromPoints(object.points);
+
+      return {
+        id: object.id,
+        kind: object.kind,
+        bbox,
+        anchors: anchorsForBoundingBox(bbox),
+        style: { ...defaultLineStyle, ...object.style },
+        geometry: {
+          pointCount: object.points.length,
+        },
+        renderNode: {
+          kind: "polyline",
+          id: object.id,
+          points: object.points.map((pt) => ({ x: pt.x, y: pt.y })),
           style: { ...defaultLineStyle, ...object.style },
         },
       };
@@ -977,6 +998,11 @@ function translateRenderNode(node: RenderNode, offset: Vector): RenderNode {
         x2: node.x2 + offset.dx,
         y2: node.y2 + offset.dy,
       };
+    case "polyline":
+      return {
+        ...node,
+        points: node.points.map((pt) => ({ x: pt.x + offset.dx, y: pt.y + offset.dy })),
+      };
     case "path":
       return { ...node, d: translatePath(node.d, offset) };
     case "text":
@@ -1017,6 +1043,9 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
         break;
       case "line":
         points.push(point(node.x1, node.y1), point(node.x2, node.y2));
+        break;
+      case "polyline":
+        points.push(...node.points.map((pt) => point(pt.x, pt.y)));
         break;
       case "text":
         points.push(point(node.x, node.y));
