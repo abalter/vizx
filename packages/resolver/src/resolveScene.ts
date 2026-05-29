@@ -1,5 +1,6 @@
 import { type Diagnostic, type Style, defaultBoxStyle, defaultConnectorStyle, defaultLineStyle } from "@vizx/core";
 import {
+  angleDeltaDegrees,
   addPointVector,
   bboxFromEllipse,
   bboxFromPolygon,
@@ -10,6 +11,8 @@ import {
   bboxFromTransformedCorners,
   bboxTranslate,
   bboxUnion,
+  circlePoint,
+  distance,
   normalizeTransforms,
   point,
   rotatePoint,
@@ -17,6 +20,7 @@ import {
   transformPoint,
   transformPoints,
   type BoundingBox,
+  type PathBoundingCommand,
   type Point,
   type TransformOperation,
   type Vector,
@@ -30,6 +34,7 @@ import {
   type GroupObject,
   type ObjectScene,
   type PathCommand,
+  type PathObject,
   type PlacementRelation,
   type RectObject,
   type SceneDistribution,
@@ -37,6 +42,9 @@ import {
 } from "@vizx/object-model";
 import type { RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { measureTextApprox } from "./textMetrics";
+
+const arcStartPointTolerance = 1e-6;
+const uniformScaleTolerance = 1e-9;
 
 const placementRelationAnchors: Record<PlacementRelation, { referenceAnchor: AnchorName; targetAnchor: AnchorName }> = {
   rightOf: { referenceAnchor: "east", targetAnchor: "west" },
@@ -144,7 +152,7 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
 
   const objectNodes = resolvedObjects.map((object) => object.renderNode);
   const sceneNodes = [...connectorNodes, ...objectNodes];
-  const bounds = getNodeBounds(sceneNodes);
+  const bounds = getResolvedBounds(resolvedObjects, resolvedConnectors);
   const padding = 24;
 
   return {
@@ -163,6 +171,35 @@ export function resolveScene(scene: ObjectScene): ResolveSceneResult {
       children: sceneNodes,
     },
     diagnostics,
+  };
+}
+
+function getResolvedBounds(
+  objects: readonly ResolvedObject[],
+  connectors: readonly ResolvedConnector[],
+): { minX: number; minY: number; maxX: number; maxY: number } {
+  if (objects.length === 0 && connectors.length === 0) {
+    return { minX: 0, minY: 0, maxX: 1, maxY: 1 };
+  }
+
+  const points: Point[] = [];
+
+  for (const object of objects) {
+    points.push(
+      point(object.bbox.x, object.bbox.y),
+      point(object.bbox.x + object.bbox.width, object.bbox.y + object.bbox.height),
+    );
+  }
+
+  for (const connector of connectors) {
+    points.push(connector.start, connector.end);
+  }
+
+  return {
+    minX: Math.min(...points.map((entry) => entry.x)),
+    minY: Math.min(...points.map((entry) => entry.y)),
+    maxX: Math.max(...points.map((entry) => entry.x)),
+    maxY: Math.max(...points.map((entry) => entry.y)),
   };
 }
 
@@ -325,8 +362,11 @@ function resolvePathLocal(
   }
 
   const dParts: string[] = [];
+  const bboxCommands: PathBoundingCommand[] = [];
   let hasSubpath = false;
   let hasDrawableSegment = false;
+  let currentPoint: Point | undefined;
+  let subpathStart: Point | undefined;
 
   const pushNonFinitePathPointDiagnostic = (commandKind: string, pointRole: string): void => {
     diagnostics.push({
@@ -344,10 +384,27 @@ function resolvePathLocal(
     return false;
   };
 
+  const hasFiniteNumber = (candidate: number, commandKind: string, fieldName: string): boolean => {
+    if (Number.isFinite(candidate)) {
+      return true;
+    }
+
+    diagnostics.push({
+      severity: "error",
+      message: `Path ${objectId} requires finite ${fieldName} for ${commandKind}`,
+    });
+    return false;
+  };
+
   for (const command of commands) {
     if (command.kind === "moveTo") {
-      hasFinitePoint(command.point, command.kind, "point");
+      const isFinitePoint = hasFinitePoint(command.point, command.kind, "point");
       hasSubpath = true;
+      currentPoint = command.point;
+      subpathStart = command.point;
+      if (isFinitePoint) {
+        bboxCommands.push(command);
+      }
       dParts.push(`M ${command.point.x} ${command.point.y}`);
       continue;
     }
@@ -361,8 +418,12 @@ function resolvePathLocal(
         continue;
       }
 
-      hasFinitePoint(command.point, command.kind, "point");
+      const isFinitePoint = hasFinitePoint(command.point, command.kind, "point");
       hasDrawableSegment = true;
+      currentPoint = command.point;
+      if (isFinitePoint) {
+        bboxCommands.push(command);
+      }
       dParts.push(`L ${command.point.x} ${command.point.y}`);
       continue;
     }
@@ -376,9 +437,13 @@ function resolvePathLocal(
         continue;
       }
 
-      hasFinitePoint(command.control, command.kind, "control");
-      hasFinitePoint(command.point, command.kind, "point");
+      const hasFiniteControl = hasFinitePoint(command.control, command.kind, "control");
+      const hasFiniteEnd = hasFinitePoint(command.point, command.kind, "point");
       hasDrawableSegment = true;
+      currentPoint = command.point;
+      if (hasFiniteControl && hasFiniteEnd) {
+        bboxCommands.push(command);
+      }
       dParts.push(`Q ${command.control.x} ${command.control.y} ${command.point.x} ${command.point.y}`);
       continue;
     }
@@ -392,11 +457,81 @@ function resolvePathLocal(
         continue;
       }
 
-      hasFinitePoint(command.control1, command.kind, "control1");
-      hasFinitePoint(command.control2, command.kind, "control2");
-      hasFinitePoint(command.point, command.kind, "point");
+      const hasFiniteControl1 = hasFinitePoint(command.control1, command.kind, "control1");
+      const hasFiniteControl2 = hasFinitePoint(command.control2, command.kind, "control2");
+      const hasFiniteEnd = hasFinitePoint(command.point, command.kind, "point");
       hasDrawableSegment = true;
+      currentPoint = command.point;
+      if (hasFiniteControl1 && hasFiniteControl2 && hasFiniteEnd) {
+        bboxCommands.push(command);
+      }
       dParts.push(`C ${command.control1.x} ${command.control1.y} ${command.control2.x} ${command.control2.y} ${command.point.x} ${command.point.y}`);
+      continue;
+    }
+
+    if (command.kind === "arc") {
+      if (!hasSubpath) {
+        diagnostics.push({
+          severity: "error",
+          message: `Path ${objectId} cannot use arc before moveTo`,
+        });
+        continue;
+      }
+
+      const hasFiniteCenter = hasFinitePoint(command.center, command.kind, "center");
+      const hasFiniteRadius = hasFiniteNumber(command.radius, command.kind, "radius");
+      const hasFiniteStart = hasFiniteNumber(command.startAngleDegrees, command.kind, "startAngleDegrees");
+      const hasFiniteEnd = hasFiniteNumber(command.endAngleDegrees, command.kind, "endAngleDegrees");
+
+      if (!hasFiniteCenter || !hasFiniteRadius || !hasFiniteStart || !hasFiniteEnd) {
+        continue;
+      }
+
+      if (command.radius < 0) {
+        diagnostics.push({
+          severity: "error",
+          message: `Path ${objectId} requires radius >= 0 for arc`,
+        });
+        continue;
+      }
+
+      const clockwise = command.clockwise ?? false;
+      const arcStart = circlePoint(command.center, command.radius, command.startAngleDegrees);
+      const arcEnd = circlePoint(command.center, command.radius, command.endAngleDegrees);
+
+      if (currentPoint && distance(currentPoint, arcStart) > arcStartPointTolerance) {
+        diagnostics.push({
+          severity: "warning",
+          message: `Path ${objectId} arc start does not match current point (tolerance ${arcStartPointTolerance})`,
+        });
+      }
+
+      if (command.radius === 0) {
+        diagnostics.push({
+          severity: "warning",
+          message: `Path ${objectId} arc uses radius 0 and degenerates to a line segment`,
+        });
+        dParts.push(`L ${arcEnd.x} ${arcEnd.y}`);
+        currentPoint = arcEnd;
+        hasDrawableSegment = true;
+        continue;
+      }
+
+      const sweepDegrees = angleDeltaDegrees(command.startAngleDegrees, command.endAngleDegrees, clockwise);
+
+      if (sweepDegrees <= uniformScaleTolerance) {
+        diagnostics.push({
+          severity: "warning",
+          message: `Path ${objectId} arc has zero sweep (full-circle arcs are deferred in v0)`,
+        });
+      }
+
+      const largeArcFlag = sweepDegrees > 180 ? 1 : 0;
+      const sweepFlag = clockwise ? 1 : 0;
+      dParts.push(`A ${command.radius} ${command.radius} 0 ${largeArcFlag} ${sweepFlag} ${arcEnd.x} ${arcEnd.y}`);
+      currentPoint = arcEnd;
+      hasDrawableSegment = true;
+      bboxCommands.push(command);
       continue;
     }
 
@@ -409,9 +544,10 @@ function resolvePathLocal(
     }
 
     dParts.push("Z");
+    currentPoint = subpathStart;
   }
 
-  const explicitPointBBox = bboxFromPathCommands(commands);
+  const explicitPointBBox = bboxFromPathCommands(bboxCommands);
   const explicitPointCount = commands.reduce((count, command) => {
     if (command.kind === "moveTo" || command.kind === "lineTo") {
       return count + 1;
@@ -423,6 +559,10 @@ function resolvePathLocal(
 
     if (command.kind === "cubicCurveTo") {
       return count + 3;
+    }
+
+    if (command.kind === "arc") {
+      return count + 2;
     }
 
     return count;
@@ -1118,6 +1258,10 @@ function applyObjectTransforms(
   source: DrawableObject,
   diagnostics: Diagnostic[],
 ): ResolvedObject {
+  if (source.kind === "path") {
+    return applyPathObjectTransforms(object, source, diagnostics);
+  }
+
   const transforms = normalizeTransforms(source.transform);
 
   let transformed = object;
@@ -1202,6 +1346,196 @@ function applyObjectTransforms(
   }
 
   return transformed;
+}
+
+function applyPathObjectTransforms(
+  object: ResolvedObject,
+  source: PathObject,
+  diagnostics: Diagnostic[],
+): ResolvedObject {
+  const transforms = normalizeTransforms(source.transform);
+  let transformed = object;
+  let commands = source.commands;
+
+  for (const operation of transforms) {
+    if (operation.kind === "translate") {
+      if (!Number.isFinite(operation.x) || !Number.isFinite(operation.y)) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: translate requires finite x/y`,
+        });
+        continue;
+      }
+
+      commands = translatePathCommands(commands, { dx: operation.x, dy: operation.y });
+      transformed = resolvePathLocal(source.id, commands, source.style, diagnostics);
+      continue;
+    }
+
+    if (operation.kind === "rotate") {
+      if (!Number.isFinite(operation.angleDegrees)) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: rotate requires a finite angleDegrees`,
+        });
+        continue;
+      }
+
+      if (operation.around && (!Number.isFinite(operation.around.x) || !Number.isFinite(operation.around.y))) {
+        diagnostics.push({
+          severity: "error",
+          message: `Could not apply transform for ${source.id}: rotate around requires finite point coordinates`,
+        });
+        continue;
+      }
+
+      const around = operation.around ?? transformed.anchors.center ?? point(0, 0);
+      commands = rotatePathCommands(commands, operation.angleDegrees, around);
+      transformed = resolvePathLocal(source.id, commands, source.style, diagnostics);
+      continue;
+    }
+
+    if (!Number.isFinite(operation.sx) || (operation.sy !== undefined && !Number.isFinite(operation.sy))) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not apply transform for ${source.id}: scale requires finite sx/sy`,
+      });
+      continue;
+    }
+
+    if (operation.around && (!Number.isFinite(operation.around.x) || !Number.isFinite(operation.around.y))) {
+      diagnostics.push({
+        severity: "error",
+        message: `Could not apply transform for ${source.id}: scale around requires finite point coordinates`,
+      });
+      continue;
+    }
+
+    const sy = operation.sy ?? operation.sx;
+
+    if (pathCommandsIncludeArc(commands) && Math.abs(Math.abs(operation.sx) - Math.abs(sy)) > uniformScaleTolerance) {
+      diagnostics.push({
+        severity: "warning",
+        message: `Could not apply non-uniform scale to arc path ${source.id}: circular arc semantics are preserved in v0`,
+      });
+      continue;
+    }
+
+    const around = operation.around ?? transformed.anchors.center ?? point(0, 0);
+    commands = scalePathCommands(commands, operation.sx, sy, around);
+    transformed = resolvePathLocal(source.id, commands, source.style, diagnostics);
+  }
+
+  return transformed;
+}
+
+function pathCommandsIncludeArc(commands: readonly PathCommand[]): boolean {
+  return commands.some((command) => command.kind === "arc");
+}
+
+function translatePathCommands(commands: readonly PathCommand[], offset: Vector): readonly PathCommand[] {
+  return commands.map((command): PathCommand => {
+    if (command.kind === "moveTo" || command.kind === "lineTo") {
+      return { ...command, point: addPointVector(command.point, offset) };
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      return {
+        ...command,
+        control: addPointVector(command.control, offset),
+        point: addPointVector(command.point, offset),
+      };
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      return {
+        ...command,
+        control1: addPointVector(command.control1, offset),
+        control2: addPointVector(command.control2, offset),
+        point: addPointVector(command.point, offset),
+      };
+    }
+
+    if (command.kind === "arc") {
+      return {
+        ...command,
+        center: addPointVector(command.center, offset),
+      };
+    }
+
+    return command;
+  });
+}
+
+function rotatePathCommands(commands: readonly PathCommand[], angleDegrees: number, around: Point): readonly PathCommand[] {
+  return commands.map((command): PathCommand => {
+    if (command.kind === "moveTo" || command.kind === "lineTo") {
+      return { ...command, point: rotatePoint(command.point, angleDegrees, around) };
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      return {
+        ...command,
+        control: rotatePoint(command.control, angleDegrees, around),
+        point: rotatePoint(command.point, angleDegrees, around),
+      };
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      return {
+        ...command,
+        control1: rotatePoint(command.control1, angleDegrees, around),
+        control2: rotatePoint(command.control2, angleDegrees, around),
+        point: rotatePoint(command.point, angleDegrees, around),
+      };
+    }
+
+    if (command.kind === "arc") {
+      return {
+        ...command,
+        center: rotatePoint(command.center, angleDegrees, around),
+        startAngleDegrees: command.startAngleDegrees + angleDegrees,
+        endAngleDegrees: command.endAngleDegrees + angleDegrees,
+      };
+    }
+
+    return command;
+  });
+}
+
+function scalePathCommands(commands: readonly PathCommand[], sx: number, sy: number, around: Point): readonly PathCommand[] {
+  return commands.map((command): PathCommand => {
+    if (command.kind === "moveTo" || command.kind === "lineTo") {
+      return { ...command, point: scalePoint(command.point, sx, sy, around) };
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      return {
+        ...command,
+        control: scalePoint(command.control, sx, sy, around),
+        point: scalePoint(command.point, sx, sy, around),
+      };
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      return {
+        ...command,
+        control1: scalePoint(command.control1, sx, sy, around),
+        control2: scalePoint(command.control2, sx, sy, around),
+        point: scalePoint(command.point, sx, sy, around),
+      };
+    }
+
+    if (command.kind === "arc") {
+      return {
+        ...command,
+        center: scalePoint(command.center, sx, sy, around),
+        radius: command.radius * Math.abs(sx),
+      };
+    }
+
+    return command;
+  });
 }
 
 function canRotateResolvedObject(object: ResolvedObject): boolean {
@@ -1470,69 +1804,100 @@ function scaleRenderNode(node: RenderNode, sx: number, sy: number, around: Point
 }
 
 function rotatePath(d: string, angleDegrees: number, around: Point): string {
-  const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+  const commands = parsePathData(d);
 
-  if (!numbers) {
+  if (!commands) {
     return d;
   }
 
-  let index = 0;
-
-  return d.replace(/-?\d+(?:\.\d+)?/g, (match) => {
-    const value = Number(match);
-
-    if (!Number.isFinite(value)) {
-      index += 1;
-      return match;
+  return serializePathData(commands.map((command) => {
+    if (command.kind === "M" || command.kind === "L") {
+      const rotated = rotatePoint(point(command.x, command.y), angleDegrees, around);
+      return { ...command, x: rotated.x, y: rotated.y };
     }
 
-    const axisIndex = index % 2;
-    const pairIndex = index - axisIndex;
-    const xSource = Number(numbers[pairIndex]);
-    const ySource = Number(numbers[pairIndex + 1]);
-
-    if (!Number.isFinite(xSource) || !Number.isFinite(ySource)) {
-      index += 1;
-      return match;
+    if (command.kind === "Q") {
+      const control = rotatePoint(point(command.x1, command.y1), angleDegrees, around);
+      const endpoint = rotatePoint(point(command.x, command.y), angleDegrees, around);
+      return { ...command, x1: control.x, y1: control.y, x: endpoint.x, y: endpoint.y };
     }
 
-    const rotated = rotatePoint(point(xSource, ySource), angleDegrees, around);
-    index += 1;
-    return String(axisIndex === 0 ? rotated.x : rotated.y);
-  });
+    if (command.kind === "C") {
+      const control1 = rotatePoint(point(command.x1, command.y1), angleDegrees, around);
+      const control2 = rotatePoint(point(command.x2, command.y2), angleDegrees, around);
+      const endpoint = rotatePoint(point(command.x, command.y), angleDegrees, around);
+      return {
+        ...command,
+        x1: control1.x,
+        y1: control1.y,
+        x2: control2.x,
+        y2: control2.y,
+        x: endpoint.x,
+        y: endpoint.y,
+      };
+    }
+
+    if (command.kind === "A") {
+      const endpoint = rotatePoint(point(command.x, command.y), angleDegrees, around);
+      return {
+        ...command,
+        rotation: command.rotation + angleDegrees,
+        x: endpoint.x,
+        y: endpoint.y,
+      };
+    }
+
+    return command;
+  }));
 }
 
 function scalePath(d: string, sx: number, sy: number, around: Point): string {
-  const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+  const commands = parsePathData(d);
 
-  if (!numbers) {
+  if (!commands) {
     return d;
   }
 
-  let index = 0;
-
-  return d.replace(/-?\d+(?:\.\d+)?/g, (match) => {
-    const value = Number(match);
-
-    if (!Number.isFinite(value)) {
-      index += 1;
-      return match;
+  return serializePathData(commands.map((command) => {
+    if (command.kind === "M" || command.kind === "L") {
+      const scaled = scalePoint(point(command.x, command.y), sx, sy, around);
+      return { ...command, x: scaled.x, y: scaled.y };
     }
 
-    const axisIndex = index % 2;
-    const pairIndex = index - axisIndex;
-    const xSource = Number(numbers[pairIndex]);
-    const ySource = Number(numbers[pairIndex + 1]);
-
-    if (!Number.isFinite(xSource) || !Number.isFinite(ySource)) {
-      index += 1;
-      return match;
+    if (command.kind === "Q") {
+      const control = scalePoint(point(command.x1, command.y1), sx, sy, around);
+      const endpoint = scalePoint(point(command.x, command.y), sx, sy, around);
+      return { ...command, x1: control.x, y1: control.y, x: endpoint.x, y: endpoint.y };
     }
 
-    const scaled = scalePoint(point(xSource, ySource), sx, sy, around);
-    index += 1;
-    return String(axisIndex === 0 ? scaled.x : scaled.y);
-  });
+    if (command.kind === "C") {
+      const control1 = scalePoint(point(command.x1, command.y1), sx, sy, around);
+      const control2 = scalePoint(point(command.x2, command.y2), sx, sy, around);
+      const endpoint = scalePoint(point(command.x, command.y), sx, sy, around);
+      return {
+        ...command,
+        x1: control1.x,
+        y1: control1.y,
+        x2: control2.x,
+        y2: control2.y,
+        x: endpoint.x,
+        y: endpoint.y,
+      };
+    }
+
+    if (command.kind === "A") {
+      const endpoint = scalePoint(point(command.x, command.y), sx, sy, around);
+      return {
+        ...command,
+        rx: command.rx * Math.abs(sx),
+        ry: command.ry * Math.abs(sy),
+        x: endpoint.x,
+        y: endpoint.y,
+      };
+    }
+
+    return command;
+  }));
 }
 
 function rotateGeometry(
@@ -1744,20 +2109,49 @@ function translateRenderNode(node: RenderNode, offset: Vector): RenderNode {
 }
 
 function translatePath(d: string, offset: Vector): string {
-  const numbers = d.match(/-?\d+(?:\.\d+)?/g);
+  const commands = parsePathData(d);
 
-  if (!numbers) {
+  if (!commands) {
     return d;
   }
 
-  let index = 0;
+  return serializePathData(commands.map((command) => {
+    if (command.kind === "M" || command.kind === "L") {
+      return { ...command, x: command.x + offset.dx, y: command.y + offset.dy };
+    }
 
-  return d.replace(/-?\d+(?:\.\d+)?/g, (match) => {
-    const value = Number(match);
-    const translated = index % 2 === 0 ? value + offset.dx : value + offset.dy;
-    index += 1;
-    return String(translated);
-  });
+    if (command.kind === "Q") {
+      return {
+        ...command,
+        x1: command.x1 + offset.dx,
+        y1: command.y1 + offset.dy,
+        x: command.x + offset.dx,
+        y: command.y + offset.dy,
+      };
+    }
+
+    if (command.kind === "C") {
+      return {
+        ...command,
+        x1: command.x1 + offset.dx,
+        y1: command.y1 + offset.dy,
+        x2: command.x2 + offset.dx,
+        y2: command.y2 + offset.dy,
+        x: command.x + offset.dx,
+        y: command.y + offset.dy,
+      };
+    }
+
+    if (command.kind === "A") {
+      return {
+        ...command,
+        x: command.x + offset.dx,
+        y: command.y + offset.dy,
+      };
+    }
+
+    return command;
+  }));
 }
 
 function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: number; maxX: number; maxY: number } {
@@ -1790,12 +2184,39 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
         points.push(point(node.x, node.y));
         break;
       case "path": {
-        const numbers = node.d.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
-        for (let index = 0; index < numbers.length; index += 2) {
-          const x = numbers[index];
-          const y = numbers[index + 1];
-          if (x !== undefined && y !== undefined) {
-            points.push(point(x, y));
+        const commands = parsePathData(node.d);
+
+        if (!commands) {
+          const numbers = node.d.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+          for (let index = 0; index < numbers.length; index += 2) {
+            const x = numbers[index];
+            const y = numbers[index + 1];
+            if (x !== undefined && y !== undefined) {
+              points.push(point(x, y));
+            }
+          }
+
+          break;
+        }
+
+        for (const command of commands) {
+          if (command.kind === "M" || command.kind === "L") {
+            points.push(point(command.x, command.y));
+            continue;
+          }
+
+          if (command.kind === "Q") {
+            points.push(point(command.x1, command.y1), point(command.x, command.y));
+            continue;
+          }
+
+          if (command.kind === "C") {
+            points.push(point(command.x1, command.y1), point(command.x2, command.y2), point(command.x, command.y));
+            continue;
+          }
+
+          if (command.kind === "A") {
+            points.push(point(command.x, command.y));
           }
         }
         break;
@@ -1819,4 +2240,155 @@ function getNodeBounds(nodes: readonly RenderNode[]): { minX: number; minY: numb
 
 function addVectors(a: Vector, b: Vector): Vector {
   return { dx: a.dx + b.dx, dy: a.dy + b.dy };
+}
+
+type ParsedPathDataCommand =
+  | { readonly kind: "M"; readonly x: number; readonly y: number }
+  | { readonly kind: "L"; readonly x: number; readonly y: number }
+  | { readonly kind: "Q"; readonly x1: number; readonly y1: number; readonly x: number; readonly y: number }
+  | { readonly kind: "C"; readonly x1: number; readonly y1: number; readonly x2: number; readonly y2: number; readonly x: number; readonly y: number }
+  | {
+    readonly kind: "A";
+    readonly rx: number;
+    readonly ry: number;
+    readonly rotation: number;
+    readonly largeArcFlag: number;
+    readonly sweepFlag: number;
+    readonly x: number;
+    readonly y: number;
+  }
+  | { readonly kind: "Z" };
+
+function parsePathData(d: string): readonly ParsedPathDataCommand[] | undefined {
+  const tokens = d.trim().split(/\s+/).filter((token) => token.length > 0);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  const commands: ParsedPathDataCommand[] = [];
+  let index = 0;
+
+  const readNumber = (): number | undefined => {
+    const token = tokens[index];
+
+    if (token === undefined) {
+      return undefined;
+    }
+
+    const value = Number(token);
+
+    if (!Number.isFinite(value)) {
+      return undefined;
+    }
+
+    index += 1;
+    return value;
+  };
+
+  while (index < tokens.length) {
+    const command = tokens[index]?.toUpperCase();
+
+    if (!command || !/^[MLQCAZ]$/.test(command)) {
+      return undefined;
+    }
+
+    index += 1;
+
+    if (command === "Z") {
+      commands.push({ kind: "Z" });
+      continue;
+    }
+
+    if (command === "M" || command === "L") {
+      const x = readNumber();
+      const y = readNumber();
+
+      if (x === undefined || y === undefined) {
+        return undefined;
+      }
+
+      commands.push({ kind: command, x, y });
+      continue;
+    }
+
+    if (command === "Q") {
+      const x1 = readNumber();
+      const y1 = readNumber();
+      const x = readNumber();
+      const y = readNumber();
+
+      if (x1 === undefined || y1 === undefined || x === undefined || y === undefined) {
+        return undefined;
+      }
+
+      commands.push({ kind: "Q", x1, y1, x, y });
+      continue;
+    }
+
+    if (command === "C") {
+      const x1 = readNumber();
+      const y1 = readNumber();
+      const x2 = readNumber();
+      const y2 = readNumber();
+      const x = readNumber();
+      const y = readNumber();
+
+      if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined || x === undefined || y === undefined) {
+        return undefined;
+      }
+
+      commands.push({ kind: "C", x1, y1, x2, y2, x, y });
+      continue;
+    }
+
+    const rx = readNumber();
+    const ry = readNumber();
+    const rotation = readNumber();
+    const largeArcFlag = readNumber();
+    const sweepFlag = readNumber();
+    const x = readNumber();
+    const y = readNumber();
+
+    if (rx === undefined || ry === undefined || rotation === undefined
+      || largeArcFlag === undefined || sweepFlag === undefined
+      || x === undefined || y === undefined) {
+      return undefined;
+    }
+
+    commands.push({
+      kind: "A",
+      rx,
+      ry,
+      rotation,
+      largeArcFlag,
+      sweepFlag,
+      x,
+      y,
+    });
+  }
+
+  return commands;
+}
+
+function serializePathData(commands: readonly ParsedPathDataCommand[]): string {
+  return commands.map((command) => {
+    if (command.kind === "Z") {
+      return "Z";
+    }
+
+    if (command.kind === "M" || command.kind === "L") {
+      return `${command.kind} ${command.x} ${command.y}`;
+    }
+
+    if (command.kind === "Q") {
+      return `Q ${command.x1} ${command.y1} ${command.x} ${command.y}`;
+    }
+
+    if (command.kind === "C") {
+      return `C ${command.x1} ${command.y1} ${command.x2} ${command.y2} ${command.x} ${command.y}`;
+    }
+
+    return `A ${command.rx} ${command.ry} ${command.rotation} ${command.largeArcFlag} ${command.sweepFlag} ${command.x} ${command.y}`;
+  }).join(" ");
 }

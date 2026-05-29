@@ -8,6 +8,11 @@ Status:
 - parser syntax remains deferred
 - JSON Core IR and parser AST support for `path` remain deferred
 
+Current update:
+
+- path command surface now includes `arc` with center/radius/start/end-angle semantics for circular arcs
+- resolver maps `arc` to SVG `A` segments and applies v0 arc diagnostics/bbox behavior
+
 ## 1. Purpose
 
 After the implemented primitive sequence

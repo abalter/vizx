@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   absolute,
   alignY,
+  arc,
   anchor,
   arrowEnd,
   circle,
@@ -45,6 +46,7 @@ describe("object-model builder helpers", () => {
         commands: [
           moveTo({ x: 10, y: 20 }),
           lineTo({ x: 40, y: 20 }),
+          arc({ x: 40, y: 40 }, 20, -90, 0),
           cubicCurveTo({ x: 60, y: 40 }, { x: 80, y: 0 }, { x: 100, y: 20 }),
           closePath(),
         ],
@@ -84,6 +86,13 @@ describe("object-model builder helpers", () => {
           commands: [
             { kind: "moveTo", point: { x: 10, y: 20 } },
             { kind: "lineTo", point: { x: 40, y: 20 } },
+            {
+              kind: "arc",
+              center: { x: 40, y: 40 },
+              radius: 20,
+              startAngleDegrees: -90,
+              endAngleDegrees: 0,
+            },
             {
               kind: "cubicCurveTo",
               control1: { x: 60, y: 40 },

@@ -2,6 +2,7 @@ import type { Style } from "@vizx/core";
 import type { Point } from "@vizx/geometry";
 import type { AnchorName, AnchorRef } from "./anchors";
 import type {
+  ArcPathCommand,
   AlignBottomRelation,
   AlignLeftRelation,
   AlignRightRelation,
@@ -96,6 +97,27 @@ export function cubicCurveTo(control1: Point, control2: Point, point: Point): Cu
 
 export function closePath(): { readonly kind: "closePath" } {
   return { kind: "closePath" };
+}
+
+interface ArcCommandOptions {
+  readonly clockwise?: boolean;
+}
+
+export function arc(
+  center: Point,
+  radius: number,
+  startAngleDegrees: number,
+  endAngleDegrees: number,
+  options: ArcCommandOptions = {},
+): ArcPathCommand {
+  return {
+    kind: "arc",
+    center,
+    radius,
+    startAngleDegrees,
+    endAngleDegrees,
+    ...(options.clockwise !== undefined ? { clockwise: options.clockwise } : {}),
+  };
 }
 
 export function anchor(objectId: string, name: AnchorName = "center"): AnchorRef {

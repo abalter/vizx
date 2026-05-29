@@ -720,6 +720,30 @@ describe("example registry", () => {
     expect(Math.abs((label.anchors.center?.y ?? 0) - segment.bbox.y)).toBeLessThan(36);
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
+
+  it("registers and semantically validates technical-angle-arc", () => {
+    const example = requireVizxExample("technical-angle-arc");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const angleMark = scene.objects.find((object) => object.id === "angle.mark");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "angle.mark" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "angle.label")).toBe(true);
+    expect(angleMark?.kind).toBe("path");
+
+    if (!angleMark || angleMark.kind !== "path") {
+      throw new Error("Expected angle.mark path object");
+    }
+
+    expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(svg).toContain(" A ");
+    expect(svg).toContain("<path");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

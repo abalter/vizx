@@ -23,6 +23,7 @@ Current implementation status:
   - `regularPolygonPoints`
 - helpers remain pure and dependency-free
 - arc/angle-arc helpers remain deferred
+- core path model now includes a circular `arc` command; helper-layer angle-mark convenience APIs remain deferred
 
 ## 1. Purpose
 

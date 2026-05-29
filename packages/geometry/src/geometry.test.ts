@@ -13,11 +13,15 @@ import {
   circlePoint,
   distance,
   angleOf,
+  angleDeltaDegrees,
   identityTransform,
+  isAngleWithinSweep,
   midpoint,
+  normalizeAngleDegrees,
   offsetPoint,
   point,
   polar,
+  bboxFromCircularArc,
   regularPolygonPoints,
   rotatePoint,
   scalePoint,
@@ -81,6 +85,47 @@ describe("geometry kernel", () => {
     expect(points).toHaveLength(4);
     expect(points[0]?.x).toBeCloseTo(7.0710678119, 6);
     expect(points[0]?.y).toBeCloseTo(7.0710678119, 6);
+  });
+
+  it("normalizes angles to [0, 360)", () => {
+    expect(normalizeAngleDegrees(0)).toBeCloseTo(0, 8);
+    expect(normalizeAngleDegrees(360)).toBeCloseTo(0, 8);
+    expect(normalizeAngleDegrees(450)).toBeCloseTo(90, 8);
+    expect(normalizeAngleDegrees(-90)).toBeCloseTo(270, 8);
+  });
+
+  it("computes sweep deltas in the chosen direction", () => {
+    expect(angleDeltaDegrees(0, 90, false)).toBeCloseTo(90, 8);
+    expect(angleDeltaDegrees(0, 90, true)).toBeCloseTo(270, 8);
+    expect(angleDeltaDegrees(350, 10, false)).toBeCloseTo(20, 8);
+    expect(angleDeltaDegrees(10, 350, true)).toBeCloseTo(20, 8);
+  });
+
+  it("checks angle inclusion within a directional sweep", () => {
+    expect(isAngleWithinSweep(45, 0, 90, false)).toBe(true);
+    expect(isAngleWithinSweep(180, 0, 90, false)).toBe(false);
+    expect(isAngleWithinSweep(315, 0, 90, true)).toBe(true);
+    expect(isAngleWithinSweep(180, 0, 90, true)).toBe(true);
+  });
+
+  it("computes circular arc bbox with start/end and swept cardinals", () => {
+    const shortArc = bboxFromCircularArc(point(0, 0), 10, 0, 45, false);
+    expect(shortArc.x).toBeCloseTo(7.0710678119, 8);
+    expect(shortArc.y).toBeCloseTo(0, 8);
+    expect(shortArc.width).toBeCloseTo(2.9289321881, 8);
+    expect(shortArc.height).toBeCloseTo(7.0710678119, 8);
+
+    const throughNinety = bboxFromCircularArc(point(0, 0), 10, 0, 120, false);
+    expect(throughNinety.x).toBeCloseTo(-5, 8);
+    expect(throughNinety.y).toBeCloseTo(0, 8);
+    expect(throughNinety.width).toBeCloseTo(15, 8);
+    expect(throughNinety.height).toBeCloseTo(10, 8);
+
+    const excludesCardinal = bboxFromCircularArc(point(0, 0), 10, 10, 80, false);
+    expect(excludesCardinal.x).toBeCloseTo(1.7364817767, 8);
+    expect(excludesCardinal.y).toBeCloseTo(1.7364817767, 8);
+    expect(excludesCardinal.width).toBeCloseTo(8.1115957535, 8);
+    expect(excludesCardinal.height).toBeCloseTo(8.1115957535, 8);
   });
 
   it("throws for invalid regular polygon side count", () => {

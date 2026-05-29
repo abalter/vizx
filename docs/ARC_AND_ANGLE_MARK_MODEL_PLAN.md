@@ -97,28 +97,28 @@ Cons:
 
 Recommendation:
 
-- choose Option A for v0 core model
+- choose Option B for v0 core model
 - add a single new command in `PathCommand`:
-  - `arcTo { rx, ry, xAxisRotationDegrees, largeArc, sweepClockwise, point }`
+  - `arc { center, radius, startAngleDegrees, endAngleDegrees, clockwise? }`
 
 Reasoning:
 
-- minimal extension to current path representation
-- straightforward SVG mapping (`A rx ry rot largeArc sweep x y`)
-- preserves clear layering: object-model stores command data, renderer writes SVG, helpers can later provide center-angle ergonomics outside core path command shape
+- direct geometry authoring ergonomics for technical diagrams
+- keeps public object model circular (no elliptical arc surface in v0)
+- still maps cleanly to SVG `A` with resolver-owned conversion
 
 V0 notes:
 
-- `arcTo` remains path-relative in sequence (requires active current point)
-- `rx` and `ry` are explicit to allow elliptical arcs from day one
-- helper-layer center-angle adapters remain optional and deferred to post-v0
+- `arc` remains path-relative in sequence (requires active current point via prior `moveTo`)
+- v0 keeps circular radius only (`radius`), with elliptical arcs deferred
+- helper-layer angle-mark conveniences remain optional and deferred to post-v0
 
 ## 5. Current-Point Semantics Choice
 
 Choice:
 
-- keep current path semantics: `arcTo` is invalid before `moveTo`
-- current point advances to `arcTo.point` after each command
+- keep current path semantics: `arc` is invalid before `moveTo`
+- current point advances to the computed arc end point after each command
 - `closePath` behavior remains unchanged
 
 Rationale:
@@ -138,9 +138,9 @@ V0 recommendation:
 
 - use conservative arc bbox in resolver for v0, consistent with current non-tight curve policy
 - include at least:
-  - current point at arc start
-  - arc endpoint (`arcTo.point`)
-  - optional axis-extrema candidates when cheaply derivable for common cases
+  - arc start point (computed from center/radius/start angle)
+  - arc end point (computed from center/radius/end angle)
+  - cardinal extrema points (0/90/180/270) only when included in the sweep
 
 Policy statement:
 
@@ -167,9 +167,9 @@ Recommended diagnostic behavior for non-uniform scale:
 
 ## 8. Renderer SVG Mapping And Angle Convention
 
-Renderer mapping for Option A:
+Renderer mapping for Option B:
 
-- `arcTo` serializes to SVG `A` segment:
+- `arc` serializes to SVG `A` segment:
   - `A rx ry xAxisRotation largeArcFlag sweepFlag x y`
 
 Boolean to flag mapping:
@@ -185,12 +185,12 @@ Angle convention policy (for helper-layer and docs):
 
 ## 9. Diagnostics List
 
-Recommended v0 diagnostics for `arcTo`:
+Recommended v0 diagnostics for `arc`:
 
-- error: `arcTo` before `moveTo`
-- error: non-finite numeric fields (`rx`, `ry`, `xAxisRotationDegrees`, endpoint coordinates)
-- error: negative `rx` or `ry`
-- warning: `rx == 0` or `ry == 0` (degenerates toward line behavior)
+- error: `arc` before `moveTo`
+- error: non-finite numeric fields (`center`, `radius`, `startAngleDegrees`, `endAngleDegrees`)
+- error: negative `radius`
+- warning: `radius == 0` (degenerates toward line behavior)
 - warning: non-uniform scaling applied to arc object under v0 conservative policy
 - warning: conservative bbox in effect for arc path bounds
 
@@ -204,13 +204,13 @@ Angle-mark strategy:
 
 - do not add first-class `angleMark` drawable object in v0
 - build initial angle marks from ordinary `path` + `text` composition
-- provide helper-level construction patterns after core `arcTo` lands
+- provide helper-level construction patterns after core `arc` lands
 
 Package boundaries:
 
-- `@vizx/object-model`: owns new path command type shape (`arcTo`)
+- `@vizx/object-model`: owns new path command type shape (`arc`)
 - `@vizx/resolver`: owns command validation, conservative bbox behavior, and diagnostics
-- `@vizx/renderer-svg`: owns `arcTo` -> SVG `A` serialization
+- `@vizx/renderer-svg`: owns `arc` -> SVG `A` serialization
 - `@vizx/geometry`: owns optional helper math for angle-mark construction (deferred)
 
 This keeps `ObjectScene` canonical and avoids new drawable categories in first slice.
@@ -247,8 +247,8 @@ Expected unlocks:
 
 Keep first implementation intentionally narrow:
 
-1. Add `arcTo` to object-model path command union.
-2. Extend resolver path validation and `d` serialization for `arcTo`.
+1. Add `arc` to object-model path command union.
+2. Extend resolver path validation and `d` serialization for `arc`.
 3. Add conservative arc bbox handling and arc diagnostics.
 4. Extend renderer path emission tests for SVG `A` output.
 5. Add one focused example using a single arc path.
@@ -266,7 +266,7 @@ Non-goals for first slice:
 Explicitly deferred beyond v0:
 
 - tight arc bbox/extrema analysis
-- center-angle native command in core model (possible Option B layer later)
+- endpoint-form public command shape in object model
 - dual-form command support (Option C)
 - path flattening and arc-length operations
 - intersection and boolean geometry operations

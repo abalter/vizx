@@ -123,11 +123,21 @@ export interface ClosePathCommand {
   readonly kind: "closePath";
 }
 
+export interface ArcPathCommand {
+  readonly kind: "arc";
+  readonly center: Point;
+  readonly radius: number;
+  readonly startAngleDegrees: number;
+  readonly endAngleDegrees: number;
+  readonly clockwise?: boolean;
+}
+
 export type PathCommand =
   | MoveToPathCommand
   | LineToPathCommand
   | QuadraticCurveToPathCommand
   | CubicCurveToPathCommand
+  | ArcPathCommand
   | ClosePathCommand;
 
 export interface PathObject extends BaseObject {

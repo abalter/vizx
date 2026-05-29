@@ -23,6 +23,7 @@ import { linePrimitiveExample } from "./linePrimitive";
 import { relativePlacementExample } from "./relativePlacement";
 import { rotatedPrimitivesExample } from "./rotatedPrimitives";
 import { styledPrimitivesExample } from "./styledPrimitives";
+import { technicalAngleArcExample } from "./technicalAngleArc";
 import type { VizxExample } from "./types";
 
 export * from "./types";
@@ -51,6 +52,7 @@ export const vizxExamples: readonly VizxExample[] = [
   polygonPrimitiveExample,
   rotatedPrimitivesExample,
   styledPrimitivesExample,
+  technicalAngleArcExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];

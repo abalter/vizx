@@ -171,7 +171,77 @@ export type PathBoundingCommand =
   | { readonly kind: "lineTo"; readonly point: Point }
   | { readonly kind: "quadraticCurveTo"; readonly control: Point; readonly point: Point }
   | { readonly kind: "cubicCurveTo"; readonly control1: Point; readonly control2: Point; readonly point: Point }
+  | {
+    readonly kind: "arc";
+    readonly center: Point;
+    readonly radius: number;
+    readonly startAngleDegrees: number;
+    readonly endAngleDegrees: number;
+    readonly clockwise?: boolean;
+  }
   | { readonly kind: "closePath" };
+
+export function normalizeAngleDegrees(angleDegrees: number): number {
+  const normalized = ((angleDegrees % 360) + 360) % 360;
+
+  return Math.abs(normalized - 360) < 1e-9 ? 0 : normalized;
+}
+
+export function angleDeltaDegrees(startAngleDegrees: number, endAngleDegrees: number, clockwise = false): number {
+  if (clockwise) {
+    return normalizeAngleDegrees(startAngleDegrees - endAngleDegrees);
+  }
+
+  return normalizeAngleDegrees(endAngleDegrees - startAngleDegrees);
+}
+
+export function isAngleWithinSweep(
+  angleDegrees: number,
+  startAngleDegrees: number,
+  endAngleDegrees: number,
+  clockwise = false,
+  tolerance = 1e-9,
+): boolean {
+  const sweep = angleDeltaDegrees(startAngleDegrees, endAngleDegrees, clockwise);
+  const candidateDelta = angleDeltaDegrees(startAngleDegrees, angleDegrees, clockwise);
+
+  if (sweep <= tolerance) {
+    return Math.abs(candidateDelta) <= tolerance;
+  }
+
+  return candidateDelta >= -tolerance && candidateDelta <= sweep + tolerance;
+}
+
+export function bboxFromCircularArc(
+  center: Point,
+  radius: number,
+  startAngleDegrees: number,
+  endAngleDegrees: number,
+  clockwise = false,
+): BoundingBox {
+  if (!Number.isFinite(center.x) || !Number.isFinite(center.y)
+    || !Number.isFinite(radius)
+    || !Number.isFinite(startAngleDegrees)
+    || !Number.isFinite(endAngleDegrees)) {
+    throw new TypeError("bboxFromCircularArc expects finite numeric inputs");
+  }
+
+  if (radius < 0) {
+    throw new RangeError("bboxFromCircularArc expects radius >= 0");
+  }
+
+  const start = circlePoint(center, radius, startAngleDegrees);
+  const end = circlePoint(center, radius, endAngleDegrees);
+  const candidates: Point[] = [start, end];
+
+  for (const cardinal of [0, 90, 180, 270]) {
+    if (isAngleWithinSweep(cardinal, startAngleDegrees, endAngleDegrees, clockwise)) {
+      candidates.push(circlePoint(center, radius, cardinal));
+    }
+  }
+
+  return bboxFromPoints(candidates);
+}
 
 export function bboxFromPathCommands(commands: readonly PathBoundingCommand[]): BoundingBox {
   const explicitPoints = commands.flatMap((command): Point[] => {
@@ -185,6 +255,21 @@ export function bboxFromPathCommands(commands: readonly PathBoundingCommand[]): 
 
     if (command.kind === "cubicCurveTo") {
       return [command.control1, command.control2, command.point];
+    }
+
+    if (command.kind === "arc") {
+      const arcBBox = bboxFromCircularArc(
+        command.center,
+        command.radius,
+        command.startAngleDegrees,
+        command.endAngleDegrees,
+        command.clockwise ?? false,
+      );
+
+      return [
+        point(arcBBox.x, arcBBox.y),
+        point(arcBBox.x + arcBBox.width, arcBBox.y + arcBBox.height),
+      ];
     }
 
     return [];

@@ -16,6 +16,7 @@ Current path/curve foundation:
   - `lineTo`
   - `quadraticCurveTo`
   - `cubicCurveTo`
+  - `arc` (circular center/radius/start/end-angle)
   - `closePath`
 - conservative explicit-point bbox behavior:
   - `moveTo` and `lineTo` contribute explicit points
@@ -25,11 +26,16 @@ Current path/curve foundation:
 - anchors remain bbox-derived
 - ordered transforms (`translate`, `rotate`, `scale`) apply to explicit command points
 - renderer emits SVG path commands `M` / `L` / `Q` / `C` / `Z`
+- renderer emits SVG arc `A` segments for circular `arc` commands
 - existing primitive style behavior applies to paths
 - existing built-in arrow marker behavior applies to paths through `markerStart` / `markerEnd`
 - resolver diagnostics include:
   - curve-before-`moveTo`
   - non-finite curve control/endpoint coordinates
+  - arc-before-`moveTo`
+  - arc radius and angle diagnostics
+  - arc current-point/start-point mismatch diagnostics
+  - non-uniform scale diagnostics for arc paths
   - existing malformed command stream checks
 - registry examples now include:
   - `path-primitive`

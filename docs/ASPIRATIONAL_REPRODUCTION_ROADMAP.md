@@ -50,7 +50,7 @@ Current supported model and pipeline surface:
 
 - `rect`, `circle`, `text`, `group`
 - `line`, `polyline`, `ellipse`, `polygon`
-- `path` with `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `closePath`
+- `path` with `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`
 - built-in arrow markers via `markerStart` / `markerEnd`
 - style baseline: `stroke`, `fill`, `strokeWidth`, `opacity`
 - ordered transforms: `translate`, `rotate`, `scale`
@@ -62,7 +62,7 @@ Current supported model and pipeline surface:
 
 Current limitations and intentional deferrals:
 
-- arcs
+- elliptical arcs
 - tight Bezier bounds
 - path length / point-at-length
 - flattening / sampling

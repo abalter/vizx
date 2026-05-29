@@ -293,6 +293,173 @@ describe("resolveScene", () => {
     }
   });
 
+  it("resolves a circular arc path with bbox-derived anchors and SVG A output", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "arc-shape",
+          commands: [
+            { kind: "moveTo", point: point(10, 0) },
+            { kind: "arc", center: point(0, 0), radius: 10, startAngleDegrees: 0, endAngleDegrees: 120 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const arcShape = result.resolved.objects.find((object) => object.id === "arc-shape");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(arcShape?.bbox.x).toBeCloseTo(-5, 8);
+    expect(arcShape?.bbox.y).toBeCloseTo(0, 8);
+    expect(arcShape?.bbox.width).toBeCloseTo(15, 8);
+    expect(arcShape?.bbox.height).toBeCloseTo(10, 8);
+    expect(arcShape?.renderNode.kind).toBe("path");
+    if (arcShape?.renderNode.kind === "path") {
+      expect(arcShape.renderNode.d).toContain("A 10 10 0 0 0 -4.999999999999998 8.660254037844387");
+    }
+  });
+
+  it("reports a diagnostic for arc commands before moveTo", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "arc-before-move",
+          commands: [
+            { kind: "arc", center: point(0, 0), radius: 10, startAngleDegrees: 0, endAngleDegrees: 90 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("cannot use arc before moveTo"))).toBe(true);
+    expect(messages.some((message) => message.includes("must include at least one drawable segment"))).toBe(true);
+  });
+
+  it("reports diagnostics for non-finite and negative arc values", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "bad-arc-values",
+          commands: [
+            { kind: "moveTo", point: point(10, 0) },
+            {
+              kind: "arc",
+              center: point(Number.NaN, 0),
+              radius: -5,
+              startAngleDegrees: 0,
+              endAngleDegrees: Number.POSITIVE_INFINITY,
+            },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("finite center coordinates for arc"))).toBe(true);
+    expect(messages.some((message) => message.includes("finite endAngleDegrees for arc"))).toBe(true);
+  });
+
+  it("reports negative radius diagnostics for arc commands", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "negative-radius-arc",
+          commands: [
+            { kind: "moveTo", point: point(10, 0) },
+            { kind: "arc", center: point(0, 0), radius: -1, startAngleDegrees: 0, endAngleDegrees: 60 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("requires radius >= 0 for arc"))).toBe(true);
+  });
+
+  it("reports arc current-point mismatch diagnostics", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "arc-mismatch",
+          commands: [
+            { kind: "moveTo", point: point(8, 0) },
+            { kind: "arc", center: point(0, 0), radius: 10, startAngleDegrees: 0, endAngleDegrees: 45 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"
+      && diagnostic.message.includes("arc start does not match current point"))).toBe(true);
+  });
+
+  it("supports translate, rotate, and uniform scale for arc paths", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "arc-transform",
+          commands: [
+            { kind: "moveTo", point: point(10, 0) },
+            { kind: "arc", center: point(0, 0), radius: 10, startAngleDegrees: 0, endAngleDegrees: 90 },
+          ],
+          transform: [
+            { kind: "translate", x: 5, y: 5 },
+            { kind: "rotate", angleDegrees: 90, around: point(0, 0) },
+            { kind: "scale", sx: 2 },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const arcShape = requireResolvedObject(result, "arc-transform");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(arcShape.bbox.width).toBeCloseTo(20, 8);
+    expect(arcShape.bbox.height).toBeCloseTo(20, 8);
+    expect(arcShape.renderNode.kind).toBe("path");
+    if (arcShape.renderNode.kind === "path") {
+      expect(arcShape.renderNode.d).toContain("A 20 20 0 0 0");
+    }
+  });
+
+  it("diagnoses non-uniform scale on arc paths", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "arc-nonuniform-scale",
+          commands: [
+            { kind: "moveTo", point: point(10, 0) },
+            { kind: "arc", center: point(0, 0), radius: 10, startAngleDegrees: 0, endAngleDegrees: 90 },
+          ],
+          transform: [{ kind: "scale", sx: 2, sy: 1 }],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.severity === "warning"
+      && diagnostic.message.includes("non-uniform scale to arc path"))).toBe(true);
+  });
+
   it("resolves a path with rightOf placement using bbox-derived anchors", () => {
     const scene: ObjectScene = {
       objects: [

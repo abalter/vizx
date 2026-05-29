@@ -197,6 +197,25 @@ describe("renderSvg", () => {
     expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
   });
 
+  it("serializes a path node with SVG arc command data", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 180, height: 120 },
+      children: [
+        {
+          kind: "path",
+          d: "M 20 80 A 24 24 0 0 1 44 56",
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('<path');
+    expect(svg).toContain('d="M 20 80 A 24 24 0 0 1 44 56"');
+  });
+
   it("serializes primitive style attributes", () => {
     const scene: RenderScene = {
       kind: "scene",

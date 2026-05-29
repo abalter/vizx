@@ -178,6 +178,14 @@ type PathCommand =
   | { readonly kind: "lineTo"; readonly point: Point }
   | { readonly kind: "quadraticCurveTo"; readonly control: Point; readonly point: Point }
   | { readonly kind: "cubicCurveTo"; readonly control1: Point; readonly control2: Point; readonly point: Point }
+  | {
+      readonly kind: "arc";
+      readonly center: Point;
+      readonly radius: number;
+      readonly startAngleDegrees: number;
+      readonly endAngleDegrees: number;
+      readonly clockwise?: boolean;
+    }
   | { readonly kind: "closePath" };
 
 interface PathObject extends BaseObject {
@@ -186,19 +194,20 @@ interface PathObject extends BaseObject {
 }
 ```
 
-Path v0 semantics:
+Path semantics (current):
 
-- supported commands are `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, and `closePath`.
-- bbox is derived from explicit points used by commands; in the first Bezier slice this conservatively includes control points and endpoints for quadratic/cubic commands.
+- supported commands are `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, and `closePath`.
+- bbox is derived from explicit points used by commands; this conservatively includes control points/endpoints for Bezier commands and arc start/end plus swept cardinals for circular arc commands.
 - `closePath` does not add a new bbox point.
 - anchors are bbox-derived (`center`, `north`, `south`, `east`, `west`, and corners via existing bbox anchor helpers).
 - renderer output uses SVG `<path>` with `M`, `L`, `Q`, `C`, and `Z` commands.
 - malformed command streams produce resolver diagnostics (for example line/curve/close commands before `moveTo`, non-finite curve coordinates, no explicit points, or no drawable segment).
+- arc command diagnostics include non-finite center/radius/angles, negative radius, arc-before-move, and current-point/start-point mismatch warnings.
 - path style may include `markerStart` and `markerEnd`; built-in `arrow` markers render at SVG output time and do not affect bbox.
 
 Deferred for path follow-up slices:
 
-- arc commands
+- elliptical arc commands (public model)
 - tight Bezier bounds
 - path length / point-at-length
 - flattening / sampling helpers
