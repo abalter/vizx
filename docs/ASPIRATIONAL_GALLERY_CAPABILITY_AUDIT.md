@@ -112,6 +112,7 @@ That ordering keeps the parser and lowerer architecture syntax-neutral while sti
 The first four primitive slices, `line`, `polyline`, `ellipse`, and `polygon`, have now been implemented; the remaining ordering still applies for the next geometry primitives.
 
 For the concrete next-step design, see [Primitive Geometry Model Plan](./PRIMITIVE_GEOMETRY_MODEL_PLAN.md).
+For the minimal arrowhead and marker design that follows the current line/polyline/path baseline, see [Marker Arrowhead Model Plan](./MARKER_ARROWHEAD_MODEL_PLAN.md).
 
 ## Future Fixture Recommendations
 

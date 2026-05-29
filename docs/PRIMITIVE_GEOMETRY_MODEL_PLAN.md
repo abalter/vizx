@@ -304,6 +304,7 @@ Style needs:
 
 - fill, stroke, strokeWidth, dash, opacity, and markers all become important here
 - the first slice should avoid overdesigning a CSS-like styling layer
+- for the minimal next-step arrowhead and marker design, see `docs/MARKER_ARROWHEAD_MODEL_PLAN.md`
 
 Priority:
 
@@ -390,6 +391,7 @@ Practical guidance:
 - `line` and `polyline` should default to stroke-only rendering.
 - `polygon` and `ellipse` can start using the existing fill/stroke split once they exist.
 - path-based work should reuse the same style fields rather than inventing a separate style stack.
+- marker and arrowhead behavior should build on the existing `markerStart`/`markerEnd` style fields rather than introducing a second parallel marker surface; see `docs/MARKER_ARROWHEAD_MODEL_PLAN.md`.
 
 ## 7. Host-language Generation Boundary
 
