@@ -43,6 +43,7 @@ Current drawable object kinds:
 - `polyline`
 - `ellipse`
 - `polygon`
+- `path` (v0: `moveTo`, `lineTo`, `closePath`)
 - `rect`
 - `circle`
 - `text`
@@ -71,7 +72,7 @@ Current style baseline in `Style`:
 
 Current primitive defaults:
 
-- line/polyline/ellipse/polygon use the line default (`stroke: black`, `fill: none`, `strokeWidth: 1`) when style is omitted.
+- line/polyline/ellipse/polygon/path use the line default (`stroke: black`, `fill: none`, `strokeWidth: 1`) when style is omitted.
 - rect uses the box default (`stroke: black`, `fill: white`, `strokeWidth: 1`) when style is omitted.
 - connector paths use a connector default (`stroke: black`, `fill: none`, `strokeWidth: 1.5`, `markerEnd: arrowhead`) when style is omitted.
 
@@ -141,7 +142,37 @@ Polygon semantics:
 - polygons with fewer than three points are treated as invalid input and produce a resolver diagnostic.
 - when style is omitted, polygon uses line-style defaults (stroke-only).
 
-### 2.5 Rect
+### 2.5 Path
+
+```ts
+type PathCommand =
+  | { readonly kind: "moveTo"; readonly point: Point }
+  | { readonly kind: "lineTo"; readonly point: Point }
+  | { readonly kind: "closePath" };
+
+interface PathObject extends BaseObject {
+  readonly kind: "path";
+  readonly commands: readonly PathCommand[];
+}
+```
+
+Path v0 semantics:
+
+- supported commands are only `moveTo`, `lineTo`, and `closePath`.
+- bbox is derived from explicit points in `moveTo` and `lineTo` commands.
+- `closePath` does not add a new bbox point.
+- anchors are bbox-derived (`center`, `north`, `south`, `east`, `west`, and corners via existing bbox anchor helpers).
+- renderer output uses SVG `<path>` with `M`, `L`, and `Z` commands.
+- malformed command streams produce resolver diagnostics (for example line/close commands before `moveTo`, no explicit points, or no drawable segment).
+
+Deferred for path follow-up slices:
+
+- curve commands
+- arc commands
+- fill-rule controls
+- clipping and path effects
+
+### 2.6 Rect
 
 ```ts
 interface RectObject extends BaseObject {
@@ -159,7 +190,7 @@ interface RectObject extends BaseObject {
 }
 ```
 
-### 2.6 Circle
+### 2.7 Circle
 
 ```ts
 interface CircleObject extends BaseObject {
@@ -169,7 +200,7 @@ interface CircleObject extends BaseObject {
 }
 ```
 
-### 2.7 Text
+### 2.8 Text
 
 ```ts
 interface TextObject extends BaseObject {
@@ -179,7 +210,7 @@ interface TextObject extends BaseObject {
 }
 ```
 
-### 2.8 Group
+### 2.9 Group
 
 ```ts
 interface GroupObject extends BaseObject {

@@ -3,6 +3,7 @@ import {
   addPointVector,
   bboxFromEllipse,
   bboxFromPolygon,
+  bboxFromPathCommands,
   bboxFromRect,
   bboxFromLine,
   bboxFromPoints,
@@ -21,6 +22,7 @@ import {
   type DrawableObject,
   type GroupObject,
   type ObjectScene,
+  type PathCommand,
   type PlacementRelation,
   type RectObject,
   type SceneDistribution,
@@ -277,6 +279,8 @@ function resolveObjectLocal(
         },
       };
     }
+    case "path":
+      return resolvePathLocal(object.id, object.commands, object.style, diagnostics);
     case "rect":
       return resolveRectLocal(object, siblingMap, diagnostics);
     case "circle": {
@@ -313,6 +317,92 @@ function resolveObjectLocal(
     case "group":
       return resolveGroupLocal(object, diagnostics);
   }
+}
+
+function resolvePathLocal(
+  objectId: string,
+  commands: readonly PathCommand[],
+  style: Style | undefined,
+  diagnostics: Diagnostic[],
+): ResolvedObject {
+  if (commands.length === 0) {
+    diagnostics.push({
+      severity: "error",
+      message: `Path ${objectId} must include at least one command`,
+    });
+  }
+
+  const dParts: string[] = [];
+  let hasSubpath = false;
+  let hasDrawableSegment = false;
+
+  for (const command of commands) {
+    if (command.kind === "moveTo") {
+      hasSubpath = true;
+      dParts.push(`M ${command.point.x} ${command.point.y}`);
+      continue;
+    }
+
+    if (command.kind === "lineTo") {
+      if (!hasSubpath) {
+        diagnostics.push({
+          severity: "error",
+          message: `Path ${objectId} cannot use lineTo before moveTo`,
+        });
+        continue;
+      }
+
+      hasDrawableSegment = true;
+      dParts.push(`L ${command.point.x} ${command.point.y}`);
+      continue;
+    }
+
+    if (!hasSubpath) {
+      diagnostics.push({
+        severity: "error",
+        message: `Path ${objectId} cannot use closePath before moveTo`,
+      });
+      continue;
+    }
+
+    dParts.push("Z");
+  }
+
+  const explicitPointBBox = bboxFromPathCommands(commands);
+  const explicitPointCount = commands.filter((command) => command.kind === "moveTo" || command.kind === "lineTo").length;
+
+  if (explicitPointCount === 0) {
+    diagnostics.push({
+      severity: "error",
+      message: `Path ${objectId} must include at least one explicit point`,
+    });
+  }
+
+  if (!hasDrawableSegment) {
+    diagnostics.push({
+      severity: "error",
+      message: `Path ${objectId} must include at least one drawable segment`,
+    });
+  }
+
+  return {
+    id: objectId,
+    kind: "path",
+    bbox: explicitPointBBox,
+    anchors: anchorsForBoundingBox(explicitPointBBox),
+    style: { ...defaultLineStyle, ...style },
+    geometry: {
+      commandCount: commands.length,
+      explicitPointCount,
+      drawableSegmentCount: hasDrawableSegment ? 1 : 0,
+    },
+    renderNode: {
+      kind: "path",
+      id: objectId,
+      d: dParts.join(" "),
+      style: { ...defaultLineStyle, ...style },
+    },
+  };
 }
 
 function resolveTextLocal(object: TextObject): ResolvedObject {

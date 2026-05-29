@@ -136,6 +136,25 @@ describe("renderSvg", () => {
     expect(svg).toContain('points="20,80 60,20 120,40 132,92 48,104"');
   });
 
+  it("serializes a path node with move, line, and close commands", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 160, height: 120 },
+      children: [
+        {
+          kind: "path",
+          d: "M 20 80 L 60 20 L 120 40 L 132 92 L 48 104 Z",
+          style: { stroke: "black", fill: "none", strokeWidth: 1 },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain("<path");
+    expect(svg).toContain('d="M 20 80 L 60 20 L 120 40 L 132 92 L 48 104 Z"');
+  });
+
   it("serializes primitive style attributes", () => {
     const scene: RenderScene = {
       kind: "scene",

@@ -131,6 +131,24 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the path primitive example", () => {
+    const scene = requireVizxExample("path-primitive").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.kind === "path")).toBe(true);
+    expect(result.resolved.objects.some((object) => object.kind === "path")).toBe(true);
+    expect(result.renderScene.children.some((child) => child.kind === "path")).toBe(true);
+    expect(svg).toContain("<path");
+    expect(svg).toContain(' d="M ');
+    expect(svg).toContain(" L ");
+    expect(svg).toContain(" Z\"");
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and resolves the styled primitives example", () => {
     const scene = requireVizxExample("styled-primitives").createScene();
     const result = resolveScene(scene);

@@ -96,6 +96,27 @@ export interface PolygonObject extends BaseObject {
   readonly points: readonly Point[];
 }
 
+export interface MoveToPathCommand {
+  readonly kind: "moveTo";
+  readonly point: Point;
+}
+
+export interface LineToPathCommand {
+  readonly kind: "lineTo";
+  readonly point: Point;
+}
+
+export interface ClosePathCommand {
+  readonly kind: "closePath";
+}
+
+export type PathCommand = MoveToPathCommand | LineToPathCommand | ClosePathCommand;
+
+export interface PathObject extends BaseObject {
+  readonly kind: "path";
+  readonly commands: readonly PathCommand[];
+}
+
 export interface CircleObject extends BaseObject {
   readonly kind: "circle";
   readonly center: Point;
@@ -121,4 +142,13 @@ export interface ConnectorObject {
   readonly style?: Style;
 }
 
-export type DrawableObject = LineObject | PolylineObject | EllipseObject | PolygonObject | RectObject | CircleObject | TextObject | GroupObject;
+export type DrawableObject =
+  | LineObject
+  | PolylineObject
+  | EllipseObject
+  | PolygonObject
+  | PathObject
+  | RectObject
+  | CircleObject
+  | TextObject
+  | GroupObject;

@@ -2,7 +2,11 @@
 
 This document defines the minimal design for introducing a first-class 2D `path` object in VizX.
 
-It is intentionally docs-only in this pass. No code, parser syntax, JSON Core IR shape, or AST lowering behavior changes are made here.
+Status:
+
+- implemented in v0 for object model, resolver, renderer, inspect/debug flows, and examples
+- parser syntax remains deferred
+- JSON Core IR and parser AST support for `path` remain deferred
 
 ## 1. Purpose
 
@@ -178,9 +182,9 @@ Still not unlocked in v0:
 - advanced fill-rule examples
 - 3D/projection examples
 
-## 10. Recommended First Implementation Slice
+## 10. Implemented First Slice
 
-Recommended next implementation slice after this plan:
+Implemented v0 slice:
 
 1. add first-class `path` object type to object model
 2. support `moveTo` / `lineTo` / `closePath` only
@@ -191,7 +195,7 @@ Recommended next implementation slice after this plan:
 7. add one registry-backed `path-primitive` example
 8. add geometry/resolver/renderer/examples tests
 9. update capability/spec/plan docs
-10. keep parser syntax and JSON Core IR/AST support out of scope for that slice
+10. kept parser syntax and JSON Core IR/AST support out of scope for this slice
 
 ## 11. Future Extensions
 

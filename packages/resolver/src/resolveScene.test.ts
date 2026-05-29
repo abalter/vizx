@@ -166,6 +166,125 @@ describe("resolveScene", () => {
     expect(shape?.anchors.east).toEqual(point(138, 64));
   });
 
+  it("resolves a path object with bbox-derived anchors and SVG path commands", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "shape",
+          commands: [
+            { kind: "moveTo", point: point(0, 20) },
+            { kind: "lineTo", point: point(28, 0) },
+            { kind: "lineTo", point: point(56, 18) },
+            { kind: "lineTo", point: point(42, 42) },
+            { kind: "lineTo", point: point(6, 38) },
+            { kind: "closePath" },
+          ],
+          placement: { kind: "absolute", position: point(82, 43) },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const shape = result.resolved.objects.find((object) => object.id === "shape");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(shape?.kind).toBe("path");
+    expect(shape?.bbox).toEqual({ x: 82, y: 43, width: 56, height: 42 });
+    expect(shape?.anchors.center).toEqual(point(110, 64));
+    expect(shape?.anchors.north).toEqual(point(110, 43));
+    expect(shape?.anchors.south).toEqual(point(110, 85));
+    expect(shape?.anchors.west).toEqual(point(82, 64));
+    expect(shape?.anchors.east).toEqual(point(138, 64));
+    expect(shape?.renderNode.kind).toBe("path");
+    expect(shape?.renderNode.kind === "path" ? shape.renderNode.d : "").toContain("M 82 63");
+    expect(shape?.renderNode.kind === "path" ? shape.renderNode.d : "").toContain("L 138 61");
+    expect(shape?.renderNode.kind === "path" ? shape.renderNode.d : "").toContain("Z");
+  });
+
+  it("resolves a path with rightOf placement using bbox-derived anchors", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "rect",
+          id: "reference",
+          center: point(56, 64),
+          width: 32,
+          height: 24,
+        },
+        {
+          kind: "path",
+          id: "shape",
+          commands: [
+            { kind: "moveTo", point: point(0, 20) },
+            { kind: "lineTo", point: point(28, 0) },
+            { kind: "lineTo", point: point(56, 18) },
+            { kind: "lineTo", point: point(42, 42) },
+            { kind: "lineTo", point: point(6, 38) },
+            { kind: "closePath" },
+          ],
+          placement: { kind: "rightOf", reference: { objectId: "reference", anchor: "east" }, gap: 10 },
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const shape = result.resolved.objects.find((object) => object.id === "shape");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(shape?.anchors.west).toEqual(point(82, 64));
+    expect(shape?.anchors.east).toEqual(point(138, 64));
+  });
+
+  it("reports invalid path diagnostics for empty commands and no explicit points", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "empty",
+          commands: [],
+        },
+        {
+          kind: "path",
+          id: "close-only",
+          commands: [{ kind: "closePath" }],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("Path empty must include at least one command"))).toBe(true);
+    expect(messages.some((message) => message.includes("Path empty must include at least one explicit point"))).toBe(true);
+    expect(messages.some((message) => message.includes("Path close-only must include at least one explicit point"))).toBe(true);
+    expect(messages.some((message) => message.includes("Path close-only cannot use closePath before moveTo"))).toBe(true);
+  });
+
+  it("reports invalid path diagnostics for no drawable segment and bad command ordering", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "move-only",
+          commands: [{ kind: "moveTo", point: point(10, 10) }],
+        },
+        {
+          kind: "path",
+          id: "line-before-move",
+          commands: [{ kind: "lineTo", point: point(20, 20) }],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("Path move-only must include at least one drawable segment"))).toBe(true);
+    expect(messages.some((message) => message.includes("Path line-before-move cannot use lineTo before moveTo"))).toBe(true);
+    expect(messages.some((message) => message.includes("Path line-before-move must include at least one drawable segment"))).toBe(true);
+  });
+
   it("reports a diagnostic for polygons with fewer than three points", () => {
     const scene: ObjectScene = {
       objects: [

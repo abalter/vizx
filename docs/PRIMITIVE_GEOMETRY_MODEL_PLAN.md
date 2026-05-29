@@ -268,8 +268,8 @@ Gallery examples helped:
 
 Status:
 
-- deferred for implementation in this pass
-- design captured in `docs/PATH_MODEL_PLAN.md`
+- implemented as the sixth slice in this pass (v0)
+- command set intentionally limited to move/line/close
 
 Current planning source of truth:
 
@@ -281,7 +281,6 @@ Likely object-model shape:
 type PathCommand =
   | { kind: "moveTo"; point: Point }
   | { kind: "lineTo"; point: Point }
-  | { kind: "curveTo"; control1: Point; control2: Point; point: Point }
   | { kind: "closePath" };
 
 interface PathObject extends BaseObject {
@@ -308,8 +307,8 @@ Style needs:
 
 Priority:
 
-- deferred until line/polyline/circle/ellipse/polygon are in place
-- now planned as the next geometry-model milestone after primitive style hardening
+- implemented now as the next geometry-model milestone after primitive style hardening
+- curves/arcs and broader path language remain deferred
 
 Gallery examples helped:
 
@@ -329,6 +328,11 @@ Recommended order for the next primitive expansion:
 4. `polygon`
 5. minimal style hardening for primitives
 6. general `path`
+
+Status update:
+
+- all six items above are now implemented in v0 form
+- path currently supports only moveTo/lineTo/closePath
 
 Reasoning:
 

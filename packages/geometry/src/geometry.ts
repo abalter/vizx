@@ -101,6 +101,19 @@ export function bboxFromPolygon(points: readonly Point[]): BoundingBox {
   return bboxFromPoints(points);
 }
 
+export type PathBoundingCommand =
+  | { readonly kind: "moveTo"; readonly point: Point }
+  | { readonly kind: "lineTo"; readonly point: Point }
+  | { readonly kind: "closePath" };
+
+export function bboxFromPathCommands(commands: readonly PathBoundingCommand[]): BoundingBox {
+  const explicitPoints = commands
+    .filter((command): command is Extract<PathBoundingCommand, { readonly point: Point }> => "point" in command)
+    .map((command) => command.point);
+
+  return bboxFromPoints(explicitPoints);
+}
+
 export function bboxFromEllipse(center: Point, rx: number, ry: number): BoundingBox {
   return bboxFromRect(center.x - rx, center.y - ry, rx * 2, ry * 2);
 }

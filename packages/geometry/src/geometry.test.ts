@@ -4,6 +4,7 @@ import {
   bboxFromRect,
   bboxFromLine,
   bboxFromEllipse,
+  bboxFromPathCommands,
   bboxFromPoints,
   bboxFromPolygon,
   bboxTranslate,
@@ -62,6 +63,23 @@ describe("geometry kernel", () => {
     expect(bboxFromPolygon([point(30, 20), point(75, 10), point(90, 55), point(18, 44)])).toEqual(
       bboxFromRect(18, 10, 72, 45),
     );
+  });
+
+  it("computes a bounding box for path commands using explicit moveTo/lineTo points", () => {
+    expect(bboxFromPathCommands([
+      { kind: "moveTo", point: point(10, 20) },
+      { kind: "lineTo", point: point(70, 15) },
+      { kind: "lineTo", point: point(42, 68) },
+    ])).toEqual(bboxFromRect(10, 15, 60, 53));
+  });
+
+  it("does not expand path bbox for closePath", () => {
+    expect(bboxFromPathCommands([
+      { kind: "moveTo", point: point(20, 30) },
+      { kind: "lineTo", point: point(50, 10) },
+      { kind: "lineTo", point: point(80, 46) },
+      { kind: "closePath" },
+    ])).toEqual(bboxFromRect(20, 10, 60, 36));
   });
 
   it("translates bounding boxes and points", () => {
