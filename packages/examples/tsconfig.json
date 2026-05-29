@@ -9,6 +9,7 @@
   "references": [
     { "path": "../geometry" },
     { "path": "../object-model" },
+    { "path": "../parser" },
     { "path": "../resolver" },
     { "path": "../renderer-svg" }
   ],
