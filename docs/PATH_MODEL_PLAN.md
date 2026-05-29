@@ -230,3 +230,7 @@ Explicitly deferred in this pass:
 - 3D/projection
 - graph layout
 - constraint solver behavior
+
+## Related Documents
+
+- [GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md](./GEOMETRY_MATH_DEPENDENCY_BOUNDARY.md) defines the policy for keeping lightweight geometry helpers in-house and reviewing external dependencies before advanced path geometry (curves/arcs/intersections/clipping).
