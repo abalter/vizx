@@ -175,6 +175,8 @@ Polygon semantics:
 type PathCommand =
   | { readonly kind: "moveTo"; readonly point: Point }
   | { readonly kind: "lineTo"; readonly point: Point }
+  | { readonly kind: "quadraticCurveTo"; readonly control: Point; readonly point: Point }
+  | { readonly kind: "cubicCurveTo"; readonly control1: Point; readonly control2: Point; readonly point: Point }
   | { readonly kind: "closePath" };
 
 interface PathObject extends BaseObject {
@@ -185,18 +187,22 @@ interface PathObject extends BaseObject {
 
 Path v0 semantics:
 
-- supported commands are only `moveTo`, `lineTo`, and `closePath`.
-- bbox is derived from explicit points in `moveTo` and `lineTo` commands.
+- supported commands are `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, and `closePath`.
+- bbox is derived from explicit points used by commands; in the first Bezier slice this conservatively includes control points and endpoints for quadratic/cubic commands.
 - `closePath` does not add a new bbox point.
 - anchors are bbox-derived (`center`, `north`, `south`, `east`, `west`, and corners via existing bbox anchor helpers).
-- renderer output uses SVG `<path>` with `M`, `L`, and `Z` commands.
-- malformed command streams produce resolver diagnostics (for example line/close commands before `moveTo`, no explicit points, or no drawable segment).
+- renderer output uses SVG `<path>` with `M`, `L`, `Q`, `C`, and `Z` commands.
+- malformed command streams produce resolver diagnostics (for example line/curve/close commands before `moveTo`, non-finite curve coordinates, no explicit points, or no drawable segment).
 - path style may include `markerStart` and `markerEnd`; built-in `arrow` markers render at SVG output time and do not affect bbox.
 
 Deferred for path follow-up slices:
 
-- curve commands
 - arc commands
+- tight Bezier bounds
+- path length / point-at-length
+- flattening / sampling helpers
+- path intersections
+- smooth shorthand curve commands
 - fill-rule controls
 - clipping and path effects
 

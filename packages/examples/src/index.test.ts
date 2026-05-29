@@ -186,6 +186,21 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the bezier-path example", () => {
+    const scene = requireVizxExample("bezier-path").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "bezier.demo")).toBe(true);
+    expect(svg).toContain(" Q ");
+    expect(svg).toContain(" C ");
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and resolves the styled primitives example", () => {
     const scene = requireVizxExample("styled-primitives").createScene();
     const result = resolveScene(scene);

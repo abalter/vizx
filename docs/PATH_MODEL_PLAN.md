@@ -199,10 +199,8 @@ Implemented v0 slice:
 
 ## 11. Future Extensions
 
-Deferred features after v0 path:
+Deferred features after current path slice:
 
-- quadratic Bezier commands
-- cubic Bezier commands
 - arc commands
 - explicit multi-subpath semantics and utilities
 - fill rules and winding controls
@@ -213,6 +211,14 @@ Deferred features after v0 path:
 - path boolean operations
 - conversion helpers from polyline/polygon to path
 - source-language import/transpilation layers (TikZ/Asymptote/MetaPost)
+
+Implemented after v0 path:
+
+- `quadraticCurveTo`
+- `cubicCurveTo`
+- conservative bbox from explicit Bezier control/end points
+- SVG `Q` / `C` renderer serialization
+- Bezier path diagnostics for curve-before-move and non-finite curve coordinates
 
 ## 12. Out Of Scope
 

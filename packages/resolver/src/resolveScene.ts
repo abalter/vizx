@@ -328,8 +328,25 @@ function resolvePathLocal(
   let hasSubpath = false;
   let hasDrawableSegment = false;
 
+  const pushNonFinitePathPointDiagnostic = (commandKind: string, pointRole: string): void => {
+    diagnostics.push({
+      severity: "error",
+      message: `Path ${objectId} requires finite ${pointRole} coordinates for ${commandKind}`,
+    });
+  };
+
+  const hasFinitePoint = (candidate: Point, commandKind: string, pointRole: string): boolean => {
+    if (Number.isFinite(candidate.x) && Number.isFinite(candidate.y)) {
+      return true;
+    }
+
+    pushNonFinitePathPointDiagnostic(commandKind, pointRole);
+    return false;
+  };
+
   for (const command of commands) {
     if (command.kind === "moveTo") {
+      hasFinitePoint(command.point, command.kind, "point");
       hasSubpath = true;
       dParts.push(`M ${command.point.x} ${command.point.y}`);
       continue;
@@ -344,8 +361,42 @@ function resolvePathLocal(
         continue;
       }
 
+      hasFinitePoint(command.point, command.kind, "point");
       hasDrawableSegment = true;
       dParts.push(`L ${command.point.x} ${command.point.y}`);
+      continue;
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      if (!hasSubpath) {
+        diagnostics.push({
+          severity: "error",
+          message: `Path ${objectId} cannot use quadraticCurveTo before moveTo`,
+        });
+        continue;
+      }
+
+      hasFinitePoint(command.control, command.kind, "control");
+      hasFinitePoint(command.point, command.kind, "point");
+      hasDrawableSegment = true;
+      dParts.push(`Q ${command.control.x} ${command.control.y} ${command.point.x} ${command.point.y}`);
+      continue;
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      if (!hasSubpath) {
+        diagnostics.push({
+          severity: "error",
+          message: `Path ${objectId} cannot use cubicCurveTo before moveTo`,
+        });
+        continue;
+      }
+
+      hasFinitePoint(command.control1, command.kind, "control1");
+      hasFinitePoint(command.control2, command.kind, "control2");
+      hasFinitePoint(command.point, command.kind, "point");
+      hasDrawableSegment = true;
+      dParts.push(`C ${command.control1.x} ${command.control1.y} ${command.control2.x} ${command.control2.y} ${command.point.x} ${command.point.y}`);
       continue;
     }
 
@@ -361,7 +412,21 @@ function resolvePathLocal(
   }
 
   const explicitPointBBox = bboxFromPathCommands(commands);
-  const explicitPointCount = commands.filter((command) => command.kind === "moveTo" || command.kind === "lineTo").length;
+  const explicitPointCount = commands.reduce((count, command) => {
+    if (command.kind === "moveTo" || command.kind === "lineTo") {
+      return count + 1;
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      return count + 2;
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      return count + 3;
+    }
+
+    return count;
+  }, 0);
 
   if (explicitPointCount === 0) {
     diagnostics.push({

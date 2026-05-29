@@ -3,6 +3,7 @@ import { alignmentReferenceExample } from "./alignmentReference";
 import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
+import { bezierPathExample } from "./bezierPath";
 import { connectorsExample } from "./connectors";
 import { distributeXExample } from "./distributeX";
 import { distributeYExample } from "./distributeY";
@@ -25,6 +26,7 @@ export const vizxExamples: readonly VizxExample[] = [
   alignmentReferenceExample,
   arrowheadsExample,
   basicExample,
+  bezierPathExample,
   distributeXExample,
   distributeYExample,
   anchorsExample,

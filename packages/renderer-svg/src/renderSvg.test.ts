@@ -177,6 +177,26 @@ describe("renderSvg", () => {
     expect(svg).toContain('d="M 20 80 L 60 20 L 120 40 L 132 92 L 48 104 Z"');
   });
 
+  it("serializes a path node with quadratic and cubic Bezier commands", () => {
+    const scene: RenderScene = {
+      kind: "scene",
+      viewBox: { minX: 0, minY: 0, width: 180, height: 120 },
+      children: [
+        {
+          kind: "path",
+          d: "M 10 30 Q 40 0 70 20 C 90 40 120 10 140 30",
+          style: { stroke: "black", fill: "none", strokeWidth: 1, markerEnd: "arrow" },
+        },
+      ],
+    };
+
+    const svg = renderSvg(scene, { pretty: true });
+
+    expect(svg).toContain('<path');
+    expect(svg).toContain('d="M 10 30 Q 40 0 70 20 C 90 40 120 10 140 30"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+  });
+
   it("serializes primitive style attributes", () => {
     const scene: RenderScene = {
       kind: "scene",

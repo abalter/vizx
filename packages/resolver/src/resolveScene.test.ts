@@ -202,6 +202,62 @@ describe("resolveScene", () => {
     expect(shape?.renderNode.kind === "path" ? shape.renderNode.d : "").toContain("Z");
   });
 
+  it("resolves a Bezier path with conservative bbox anchors and Q/C SVG commands", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "bezier",
+          commands: [
+            { kind: "moveTo", point: point(10, 30) },
+            { kind: "quadraticCurveTo", control: point(40, 0), point: point(70, 20) },
+            { kind: "cubicCurveTo", control1: point(90, 40), control2: point(120, 10), point: point(140, 30) },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const bezier = result.resolved.objects.find((object) => object.id === "bezier");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(bezier?.bbox).toEqual({ x: 10, y: 0, width: 130, height: 40 });
+    expect(bezier?.anchors.center).toEqual(point(75, 20));
+    expect(bezier?.renderNode.kind).toBe("path");
+    if (bezier?.renderNode.kind === "path") {
+      expect(bezier.renderNode.d).toContain("Q 40 0 70 20");
+      expect(bezier.renderNode.d).toContain("C 90 40 120 10 140 30");
+    }
+  });
+
+  it("applies transforms to quadratic and cubic Bezier control and end points", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "bezier-transformed",
+          commands: [
+            { kind: "moveTo", point: point(0, 0) },
+            { kind: "quadraticCurveTo", control: point(10, 20), point: point(20, 0) },
+            { kind: "cubicCurveTo", control1: point(30, -10), control2: point(40, 10), point: point(50, 0) },
+          ],
+          transform: [{ kind: "translate", x: 5, y: 10 }],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const bezier = result.resolved.objects.find((object) => object.id === "bezier-transformed");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(bezier?.bbox).toEqual({ x: 5, y: 0, width: 50, height: 30 });
+    if (bezier?.renderNode.kind === "path") {
+      expect(bezier.renderNode.d).toContain("M 5 10");
+      expect(bezier.renderNode.d).toContain("Q 15 30 25 10");
+      expect(bezier.renderNode.d).toContain("C 35 0 45 20 55 10");
+    }
+  });
+
   it("resolves a path with rightOf placement using bbox-derived anchors", () => {
     const scene: ObjectScene = {
       objects: [
@@ -465,6 +521,74 @@ describe("resolveScene", () => {
     expect(messages.some((message) => message.includes("Path move-only must include at least one drawable segment"))).toBe(true);
     expect(messages.some((message) => message.includes("Path line-before-move cannot use lineTo before moveTo"))).toBe(true);
     expect(messages.some((message) => message.includes("Path line-before-move must include at least one drawable segment"))).toBe(true);
+  });
+
+  it("treats quadratic and cubic commands as drawable segments and reports curve-before-move diagnostics", () => {
+    const validScene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "curved",
+          commands: [
+            { kind: "moveTo", point: point(0, 0) },
+            { kind: "quadraticCurveTo", control: point(20, 10), point: point(40, 0) },
+            { kind: "cubicCurveTo", control1: point(50, -10), control2: point(70, 10), point: point(90, 0) },
+          ],
+        },
+      ],
+    };
+    const invalidScene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "quad-before-move",
+          commands: [{ kind: "quadraticCurveTo", control: point(20, 10), point: point(40, 0) }],
+        },
+        {
+          kind: "path",
+          id: "cubic-before-move",
+          commands: [{ kind: "cubicCurveTo", control1: point(10, 10), control2: point(20, -10), point: point(30, 0) }],
+        },
+      ],
+    };
+
+    const validResult = resolveScene(validScene);
+    const invalidResult = resolveScene(invalidScene);
+    const invalidMessages = invalidResult.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(validResult.diagnostics).toEqual([]);
+    expect(invalidMessages.some((message) => message.includes("quadraticCurveTo before moveTo"))).toBe(true);
+    expect(invalidMessages.some((message) => message.includes("cubicCurveTo before moveTo"))).toBe(true);
+    expect(invalidMessages.some((message) => message.includes("must include at least one drawable segment"))).toBe(true);
+  });
+
+  it("reports non-finite quadratic and cubic control/endpoint diagnostics", () => {
+    const scene: ObjectScene = {
+      objects: [
+        {
+          kind: "path",
+          id: "bad-quad",
+          commands: [
+            { kind: "moveTo", point: point(0, 0) },
+            { kind: "quadraticCurveTo", control: point(Number.NaN, 10), point: point(20, 0) },
+          ],
+        },
+        {
+          kind: "path",
+          id: "bad-cubic",
+          commands: [
+            { kind: "moveTo", point: point(0, 0) },
+            { kind: "cubicCurveTo", control1: point(10, 10), control2: point(20, Number.POSITIVE_INFINITY), point: point(30, 0) },
+          ],
+        },
+      ],
+    };
+
+    const result = resolveScene(scene);
+    const messages = result.diagnostics.map((diagnostic) => diagnostic.message);
+
+    expect(messages.some((message) => message.includes("finite control coordinates for quadraticCurveTo"))).toBe(true);
+    expect(messages.some((message) => message.includes("finite control2 coordinates for cubicCurveTo"))).toBe(true);
   });
 
   it("reports a diagnostic for polygons with fewer than three points", () => {

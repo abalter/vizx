@@ -86,6 +86,20 @@ describe("geometry kernel", () => {
     ])).toEqual(bboxFromRect(20, 10, 60, 36));
   });
 
+  it("includes quadratic Bezier control and endpoint in conservative path bbox", () => {
+    expect(bboxFromPathCommands([
+      { kind: "moveTo", point: point(10, 20) },
+      { kind: "quadraticCurveTo", control: point(50, 5), point: point(40, 60) },
+    ])).toEqual(bboxFromRect(10, 5, 40, 55));
+  });
+
+  it("includes cubic Bezier controls and endpoint in conservative path bbox", () => {
+    expect(bboxFromPathCommands([
+      { kind: "moveTo", point: point(10, 20) },
+      { kind: "cubicCurveTo", control1: point(30, 0), control2: point(70, 80), point: point(50, 40) },
+    ])).toEqual(bboxFromRect(10, 0, 60, 80));
+  });
+
   it("translates bounding boxes and points", () => {
     expect(bboxTranslate(bboxFromRect(1, 2, 3, 4), vector(5, 6))).toEqual(
       bboxFromRect(6, 8, 3, 4),

@@ -106,11 +106,29 @@ export interface LineToPathCommand {
   readonly point: Point;
 }
 
+export interface QuadraticCurveToPathCommand {
+  readonly kind: "quadraticCurveTo";
+  readonly control: Point;
+  readonly point: Point;
+}
+
+export interface CubicCurveToPathCommand {
+  readonly kind: "cubicCurveTo";
+  readonly control1: Point;
+  readonly control2: Point;
+  readonly point: Point;
+}
+
 export interface ClosePathCommand {
   readonly kind: "closePath";
 }
 
-export type PathCommand = MoveToPathCommand | LineToPathCommand | ClosePathCommand;
+export type PathCommand =
+  | MoveToPathCommand
+  | LineToPathCommand
+  | QuadraticCurveToPathCommand
+  | CubicCurveToPathCommand
+  | ClosePathCommand;
 
 export interface PathObject extends BaseObject {
   readonly kind: "path";

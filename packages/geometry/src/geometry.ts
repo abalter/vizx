@@ -125,12 +125,26 @@ export function bboxFromPolygon(points: readonly Point[]): BoundingBox {
 export type PathBoundingCommand =
   | { readonly kind: "moveTo"; readonly point: Point }
   | { readonly kind: "lineTo"; readonly point: Point }
+  | { readonly kind: "quadraticCurveTo"; readonly control: Point; readonly point: Point }
+  | { readonly kind: "cubicCurveTo"; readonly control1: Point; readonly control2: Point; readonly point: Point }
   | { readonly kind: "closePath" };
 
 export function bboxFromPathCommands(commands: readonly PathBoundingCommand[]): BoundingBox {
-  const explicitPoints = commands
-    .filter((command): command is Extract<PathBoundingCommand, { readonly point: Point }> => "point" in command)
-    .map((command) => command.point);
+  const explicitPoints = commands.flatMap((command): Point[] => {
+    if (command.kind === "moveTo" || command.kind === "lineTo") {
+      return [command.point];
+    }
+
+    if (command.kind === "quadraticCurveTo") {
+      return [command.control, command.point];
+    }
+
+    if (command.kind === "cubicCurveTo") {
+      return [command.control1, command.control2, command.point];
+    }
+
+    return [];
+  });
 
   return bboxFromPoints(explicitPoints);
 }

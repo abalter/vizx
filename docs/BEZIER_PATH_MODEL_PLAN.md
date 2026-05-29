@@ -4,9 +4,8 @@ This document defines the next path-model extension for Bezier curves after the 
 
 Status:
 
-- docs-only design note
-- no runtime behavior changes
-- no dependency additions in this pass
+- first implementation slice is now landed for quadratic and cubic Bezier path commands with conservative control-point bbox behavior
+- no dependency additions in this slice
 
 ## 1. Purpose
 
@@ -26,10 +25,10 @@ Bezier support remains a geometry-model extension, not parser-language work.
 Current implementation baseline across object model, resolver, renderer, and docs:
 
 - path object kind exists in object model
-- path commands currently support only `moveTo`, `lineTo`, `closePath`
-- path bbox is based on explicit command points (straight-segment points)
+- path commands now support `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `closePath`
+- path bbox is based on explicit command points, including Bezier controls and endpoints
 - anchors remain bbox-derived
-- renderer emits SVG path commands `M`, `L`, `Z`
+- renderer emits SVG path commands `M`, `L`, `Q`, `C`, `Z`
 - transforms apply through point transforms and resolver path coordinate transformation
 - no external geometry/math dependency is used
 - geometry dependency policy recommends explicit review before advanced Bezier/path math
@@ -66,7 +65,7 @@ Rationale:
 
 ## 4. Recommended First Bezier Scope
 
-Recommended scope for the first Bezier implementation slice after this plan:
+Implemented scope in the first Bezier slice:
 
 - add both `quadraticCurveTo` and `cubicCurveTo` command types to object model path commands
 - update resolver path command handling and diagnostics for those commands
@@ -75,7 +74,7 @@ Recommended scope for the first Bezier implementation slice after this plan:
 - keep anchors bbox-derived
 - keep transform behavior point-based for all explicit command points
 
-Explicitly defer mathematically tight Bezier bounds in this first slice.
+Mathematically tight Bezier bounds remain deferred.
 
 ## 5. Bbox Strategy
 
@@ -120,7 +119,7 @@ Cons:
 - higher test/maintenance overhead
 - should be deliberate relative to dependency-boundary policy
 
-Recommendation for first slice:
+Implemented first-slice choice:
 
 - use Option A (conservative control-point bbox)
 - defer Option B (tight bounds) to a follow-up geometry review
@@ -204,7 +203,7 @@ Still out of scope after first Bezier slice:
 
 ## 11. Recommended First Implementation Slice
 
-Recommended next code slice after this plan:
+Implemented first code slice:
 
 1. add `quadraticCurveTo` and `cubicCurveTo` path command types
 2. transform all command explicit points
@@ -254,12 +253,10 @@ Any future dependency should stay wrapped behind `packages/geometry` and must no
 
 Explicitly deferred in this docs pass:
 
-- implementation code changes
 - parser syntax changes
 - JSON Core IR changes
 - parser AST changes
 - dependency installation/selection
-- runtime behavior changes
 
 ## Related Documents
 
