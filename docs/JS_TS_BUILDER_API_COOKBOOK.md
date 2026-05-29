@@ -307,6 +307,24 @@ Default recommendation:
 
 - add builder parity examples for relative-placement and Bezier/path scenes before changing API shape further.
 
+## 14. Builder Parity Examples
+
+Current registry-backed parity examples:
+
+- `builder-basic`
+- `builder-relative-placement` (parity with `relative-placement`)
+- `builder-bezier-path` (parity with `bezier-path`)
+
+Parity tests validate:
+
+- object ids and connector reference ids
+- placement relation semantics for relative layout
+- clean resolver diagnostics
+- path command kind sequence (`moveTo`, `quadraticCurveTo`, `cubicCurveTo`)
+- non-brittle SVG command presence (`Q` and `C`) for Bezier scenes
+
+No builder helper gaps were required for these parity examples.
+
 ## Related Documents
 
 - [JS_TS_BUILDER_API_PLAN.md](./JS_TS_BUILDER_API_PLAN.md)

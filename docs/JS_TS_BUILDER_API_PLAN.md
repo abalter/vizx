@@ -234,7 +234,7 @@ Implementation location:
 - `packages/object-model/src/builder.ts`
 - exported via `packages/object-model/src/index.ts`
 - covered by `packages/object-model/src/builder.test.ts`
-- exercised by `builder-basic` in the examples registry
+- exercised by `builder-basic`, `builder-relative-placement`, and `builder-bezier-path` in the examples registry
 
 ## 8. TypeScript Ergonomics
 

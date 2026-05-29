@@ -201,6 +201,21 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and resolves the builder-bezier-path example", () => {
+    const scene = requireVizxExample("builder-bezier-path").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "bezier.demo")).toBe(true);
+    expect(svg).toContain(" Q ");
+    expect(svg).toContain(" C ");
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and resolves the builder-basic example", () => {
     const scene = requireVizxExample("builder-basic").createScene();
     const result = resolveScene(scene);
@@ -213,6 +228,21 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "B")).toBe(true);
     expect(result.resolved.connectors.some((resolvedConnector) => resolvedConnector.id === "A->B")).toBe(true);
     expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
+  it("registers and resolves the builder-relative-placement example", () => {
+    const scene = requireVizxExample("builder-relative-placement").createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(inspection.objects.some((object) => object.id === "Center")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "Right")).toBe(true);
+    expect(result.resolved.connectors.some((resolvedConnector) => resolvedConnector.id === "center-right")).toBe(true);
+    expect(svg).toContain("<path");
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
@@ -244,6 +274,82 @@ describe("example registry", () => {
     expect(left.anchors.east?.x).toBeLessThan(center.anchors.west!.x);
     expect(above.anchors.south?.y).toBeLessThan(center.anchors.north!.y);
     expect(below.anchors.north?.y).toBeGreaterThan(center.anchors.south!.y);
+  });
+
+  it("keeps builder-relative-placement semantically aligned with relative-placement", () => {
+    const literalScene = requireVizxExample("relative-placement").createScene();
+    const builderScene = requireVizxExample("builder-relative-placement").createScene();
+    const literalResult = resolveScene(literalScene);
+    const builderResult = resolveScene(builderScene);
+
+    expect(literalResult.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(builderResult.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    const literalObjectIds = literalScene.objects.map((object) => object.id);
+    const builderObjectIds = builderScene.objects.map((object) => object.id);
+    expect(builderObjectIds).toEqual(literalObjectIds);
+
+    const literalConnectorRefs = (literalScene.connectors ?? [])
+      .map((connector) => ({ id: connector.id, from: connector.from, to: connector.to }))
+      .sort((a, b) => a.id.localeCompare(b.id));
+    const builderConnectorRefs = (builderScene.connectors ?? [])
+      .map((connector) => ({ id: connector.id, from: connector.from, to: connector.to }))
+      .sort((a, b) => a.id.localeCompare(b.id));
+    expect(builderConnectorRefs).toEqual(literalConnectorRefs);
+
+    const literalPlacements = literalScene.objects.map((object) => ({ id: object.id, placement: object.placement }));
+    const builderPlacements = builderScene.objects.map((object) => ({ id: object.id, placement: object.placement }));
+    expect(builderPlacements).toEqual(literalPlacements);
+
+    const builderCenter = requireResolvedObject(builderResult, "Center");
+    const builderRight = requireResolvedObject(builderResult, "Right");
+    const builderLeft = requireResolvedObject(builderResult, "Left");
+    const builderAbove = requireResolvedObject(builderResult, "Above");
+    const builderBelow = requireResolvedObject(builderResult, "Below");
+
+    expect(builderRight.anchors.west?.x).toBeGreaterThan(builderCenter.anchors.east!.x);
+    expect(builderLeft.anchors.east?.x).toBeLessThan(builderCenter.anchors.west!.x);
+    expect(builderAbove.anchors.south?.y).toBeLessThan(builderCenter.anchors.north!.y);
+    expect(builderBelow.anchors.north?.y).toBeGreaterThan(builderCenter.anchors.south!.y);
+  });
+
+  it("keeps builder-bezier-path semantically aligned with bezier-path", () => {
+    const literalScene = requireVizxExample("bezier-path").createScene();
+    const builderScene = requireVizxExample("builder-bezier-path").createScene();
+    const literalResult = resolveScene(literalScene);
+    const builderResult = resolveScene(builderScene);
+    const literalSvg = renderSvg(literalResult.renderScene, { pretty: true });
+    const builderSvg = renderSvg(builderResult.renderScene, { pretty: true });
+
+    expect(literalResult.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(builderResult.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    const literalObjectIds = literalScene.objects.map((object) => object.id);
+    const builderObjectIds = builderScene.objects.map((object) => object.id);
+    expect(builderObjectIds).toEqual(literalObjectIds);
+
+    const literalPath = literalScene.objects.find((object) => object.id === "bezier.demo");
+    const builderPath = builderScene.objects.find((object) => object.id === "bezier.demo");
+    expect(literalPath?.kind).toBe("path");
+    expect(builderPath?.kind).toBe("path");
+
+    if (!literalPath || literalPath.kind !== "path" || !builderPath || builderPath.kind !== "path") {
+      throw new Error("Expected bezier.demo to be path objects in both scenes");
+    }
+
+    const literalCommandKinds = literalPath.commands.map((command) => command.kind);
+    const builderCommandKinds = builderPath.commands.map((command) => command.kind);
+    expect(builderCommandKinds).toEqual(literalCommandKinds);
+
+    const literalResolved = requireResolvedObject(literalResult, "bezier.demo");
+    const builderResolved = requireResolvedObject(builderResult, "bezier.demo");
+    expect(builderResolved.bbox).toEqual(literalResolved.bbox);
+
+    expect(literalSvg).toContain(" Q ");
+    expect(literalSvg).toContain(" C ");
+    expect(builderSvg).toContain(" Q ");
+    expect(builderSvg).toContain(" C ");
+    expect(builderSvg).toContain('marker-end="url(#vizx-marker-arrow)"');
   });
 
   it("resolves mixed nested placement with nested children, side placements, and concrete connector points", () => {
