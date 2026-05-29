@@ -120,6 +120,8 @@ The builder layer reinforces that niche:
 
 6. More technical-illustration examples.
 - geometry diagrams, physics diagrams, and generated diagrams using builder helpers.
+7. Technical geometry helper layer.
+- docs-first plan for point and polygon helper ergonomics in Milestone 2 without changing ObjectScene boundaries.
 
 ## 7. Recommendation
 
@@ -152,3 +154,4 @@ Explicitly deferred in this checkpoint pass:
 - [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md)
 - [CAPABILITY_MATRIX.md](./CAPABILITY_MATRIX.md)
 - [CORE_IR_SPEC.md](./CORE_IR_SPEC.md)
+- [TECHNICAL_GEOMETRY_HELPER_PLAN.md](./TECHNICAL_GEOMETRY_HELPER_PLAN.md)

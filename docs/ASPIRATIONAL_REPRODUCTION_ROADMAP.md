@@ -166,6 +166,10 @@ Acceptance criteria:
 - examples demonstrate point-based construction
 - docs clearly separate helper authoring from renderer features
 
+Detailed Milestone 2 plan:
+
+- [TECHNICAL_GEOMETRY_HELPER_PLAN.md](./TECHNICAL_GEOMETRY_HELPER_PLAN.md)
+
 ## 6. Milestone 3 - Arc And Angle-Mark Support
 
 Goal:
