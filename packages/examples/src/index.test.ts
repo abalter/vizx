@@ -26,6 +26,19 @@ describe("example registry", () => {
     }
   });
 
+  it("provides standardized metadata for aspirational examples", () => {
+    const aspirationalExamples = vizxExamples.filter((example) => example.id.startsWith("aspirational-"));
+
+    expect(aspirationalExamples.length).toBeGreaterThan(0);
+
+    for (const example of aspirationalExamples) {
+      expect(example.sourcePath).toBeTruthy();
+      expect(example.reproductionLevel).toBeTruthy();
+      expect(example.helperFamilies?.length ?? 0).toBeGreaterThan(0);
+      expect(example.compromises?.length ?? 0).toBeGreaterThan(0);
+    }
+  });
+
   it("lets every example resolve, inspect, render, and debug-render", () => {
     for (const example of vizxExamples) {
       const scene = example.createScene();

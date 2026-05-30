@@ -4,16 +4,35 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/tikz/projectile_motion
-  - Target level: Level 1 to Level 2
-  - Compromises: manual coordinates; no plot/data-coordinate model; no source translation;
-    no physics simulation; no automatic scale/axis system
+  - Original source: examples/aspirational_gallery/tikz/projectile_motion
+  - Reproduction level: Level 1-2
+  - Helper families: primitives, paths/Bezier, circular arcs / angle marks, style fields
+  - Compromises: manual coordinates, no source translation, no solver,
+    no mechanics/physics simulation, no full visual fidelity, no clipping/gradients,
+    no parser/JSON/AST support
 */
 export const aspirationalProjectileMotionLiteExample: VizxExample = {
   id: "aspirational-projectile-motion-lite",
   title: "Aspirational projectile motion lite",
   description:
     "Manual Level 1-2 approximation of TikZ projectile_motion using current VizX geometry, arcs, paths, arrows, labels, and v0 style fields.",
+  sourcePath: "examples/aspirational_gallery/tikz/projectile_motion",
+  reproductionLevel: "Level 1-2",
+  helperFamilies: [
+    "primitives",
+    "paths/Bezier",
+    "circular arcs / angle marks",
+    "style fields",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",

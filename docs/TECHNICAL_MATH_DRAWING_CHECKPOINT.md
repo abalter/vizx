@@ -18,6 +18,7 @@ Current state:
 - VizX can now author manual helper-driven technical construction diagrams in TypeScript.
 - Authoring remains explicit and host-driven, not source-language translation.
 - No construction solver or automatic geometric inference has been introduced.
+- Current aspirational examples are now also indexed in [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md) so source targets, helper families, and compromises are easier to compare.
 
 Boundary reminder:
 
@@ -135,6 +136,12 @@ Current technical/math-relevant examples and coverage:
   - demonstrates the v0 technical style surface used by geometry examples
 
 All remain manual TypeScript builder-authored Level 1-2 approximations.
+
+Current maintainability note:
+
+- aspirational examples now use a standardized source/level/helper/compromise note format
+- optional aspirational metadata fields on `VizxExample` mirror that information for lightweight registry-level inspection
+- this is documentation/metadata consolidation only, not a new rendering or geometry capability
 
 ## 4. What Is Now Feasible
 

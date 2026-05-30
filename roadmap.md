@@ -9,6 +9,7 @@ See also:
 - [README.md](./README.md)
 - [DESIGN.md](./DESIGN.md)
 - [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
+- [docs/ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./docs/ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md)
 - [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
 - [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md)
 - [docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
@@ -191,6 +192,7 @@ Current note:
 - one additional current-capability geometry example (`aspirational-geometry-1-lite`) now exists and emphasizes technical/math construction drawing.
 - one additional intersection-heavy geometry example (`aspirational-pendagon-lite`) now exists and applies explicit helper-called construction points without solver behavior.
 - one additional richer mechanism-flavored geometry example (`aspirational-pullys-lite`) now exists and validates the current belt/tangent/annotation stack on a static pulley arrangement without mechanics simulation.
+- aspirational examples now have a dedicated gallery index and standardized source/level/helper/compromise metadata to make future target selection and scope comparison easier.
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.

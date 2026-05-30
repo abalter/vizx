@@ -11,17 +11,34 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/metapost/pendagon.mp
-  - Target level: Level 1 to Level 2
-  - Compromises: manual coordinates and simplified styling; explicit helper-called construction points only,
-    including clipped ray-circle construction for L/T on OU;
-    no source translation; no construction solver; no automatic label placement; no full visual fidelity
+  - Original source: examples/aspirational_gallery/metapost/pendagon.mp
+  - Reproduction level: Level 1-2
+  - Helper families: primitives, intersections, segment/ray clipping, annotation helpers, style fields
+  - Compromises: manual coordinates, no source translation, no solver,
+    no full visual fidelity, no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalPendagonLiteExample: VizxExample = {
   id: "aspirational-pendagon-lite",
   title: "Aspirational pendagon lite",
   description:
     "Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.",
+  sourcePath: "examples/aspirational_gallery/metapost/pendagon.mp",
+  reproductionLevel: "Level 1-2",
+  helperFamilies: [
+    "primitives",
+    "intersections",
+    "segment/ray clipping",
+    "annotation helpers",
+    "style fields",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",

@@ -13,6 +13,7 @@ Top-level navigation:
 
 - [README.md](../README.md) for current status and entry points
 - [roadmap.md](../roadmap.md) for root milestone sequencing and deferred work
+- [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md) for the current aspirational example comparison index by source, helper families, and compromises
 - [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md) for technical/mathematical drawing priority guidance
 - [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md) for consolidated post-intersection/tangent/application checkpoint status and next-branch recommendation
 
@@ -167,6 +168,7 @@ Recommended first slice scope:
 Current extension note:
 
 - a bounded current-capability extension example (`aspirational-projectile-motion-lite`) now exists without introducing a plot/data-coordinate model
+- aspirational examples now also expose standardized source/level/helper/compromise metadata, and the comparison view is documented in [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md)
 
 ## 5. Milestone 2 - Geometry Helper Layer For Math Diagrams
 

@@ -4,16 +4,35 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/asymptote/geometry_1
-  - Target level: Level 1 to Level 2
-  - Compromises: manual coordinates and manual frame vectors; explicit helper-called intersections only;
-    no source translation; no construction solver; no automatic label placement; no full visual fidelity
+  - Original source: examples/aspirational_gallery/asymptote/geometry_1
+  - Reproduction level: Level 1-2
+  - Helper families: primitives, intersections, annotation helpers,
+    circular arcs / angle marks, style fields
+  - Compromises: manual coordinates, no source translation, no solver,
+    no full visual fidelity, no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalGeometry1LiteExample: VizxExample = {
   id: "aspirational-geometry-1-lite",
   title: "Aspirational geometry 1 lite",
   description:
     "Manual Level 1-2 approximation of Asymptote geometry_1 using current VizX geometry, paths, arcs, labels, and style fields.",
+  sourcePath: "examples/aspirational_gallery/asymptote/geometry_1",
+  reproductionLevel: "Level 1-2",
+  helperFamilies: [
+    "primitives",
+    "intersections",
+    "annotation helpers",
+    "circular arcs / angle marks",
+    "style fields",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",

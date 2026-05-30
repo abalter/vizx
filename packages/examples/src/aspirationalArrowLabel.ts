@@ -3,16 +3,30 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/metapost/arrow_label.mp
-  - Target level: Level 2
-  - Compromises: cutbefore/cutafter is approximated by manually shortening the arrow segment
-  - Missing features: no native cutbefore/cutafter path operations
+  - Original source: examples/aspirational_gallery/metapost/arrow_label.mp
+  - Reproduction level: Level 2
+  - Helper families: primitives
+  - Compromises: manual coordinates, no source translation, no solver,
+    no full visual fidelity, no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalArrowLabelExample: VizxExample = {
   id: "aspirational-arrow-label",
   title: "Aspirational: Arrow with label",
   description:
     "Manual builder-authored approximation of MetaPost arrow_label with a shortened double-arrow segment and centered label.",
+  sourcePath: "examples/aspirational_gallery/metapost/arrow_label.mp",
+  reproductionLevel: "Level 2",
+  helperFamilies: [
+    "primitives",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "line primitive",

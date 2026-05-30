@@ -4,16 +4,32 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/asymptote/labeled_polygon
-  - Target level: Level 1 to Level 2
-  - Compromises: some label placement and styling remain simplified relative to the original
-  - Missing features: no full annotation subsystem, and no multi-style or right-angle mark helpers
+  - Original source: examples/aspirational_gallery/asymptote/labeled_polygon
+  - Reproduction level: Level 1-2
+  - Helper families: primitives, circular arcs / angle marks, style fields
+  - Compromises: manual coordinates, no source translation, no solver,
+    no full visual fidelity, no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalLabeledPolygonExample: VizxExample = {
   id: "aspirational-labeled-polygon",
   title: "Aspirational: Labeled polygon",
   description:
     "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.",
+  sourcePath: "examples/aspirational_gallery/asymptote/labeled_polygon",
+  reproductionLevel: "Level 1-2",
+  helperFamilies: [
+    "primitives",
+    "circular arcs / angle marks",
+    "style fields",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",

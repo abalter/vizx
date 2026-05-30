@@ -35,16 +35,31 @@ function lifecycleNode(id: string, label: string, placement: ObjectPlacement, fi
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/tikz/Diagram of Android activity life cycle
-  - Target level: Level 2 (visual resemblance)
-  - Compromises: connector routing is straight-line only (no orthogonal elbow paths)
-  - Missing features: no routed connectors, no path cut operations, no source translation
+  - Original source: examples/aspirational_gallery/tikz/Diagram of Android activity life cycle
+  - Reproduction level: Level 2
+  - Helper families: primitives, connectors/placement
+  - Compromises: no source translation, no solver, no automatic layout,
+    no full visual fidelity, no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalAndroidLifecycleExample: VizxExample = {
   id: "aspirational-android-lifecycle",
   title: "Aspirational: Android activity lifecycle",
   description:
     "Manual builder-authored Level 2 approximation of the TikZ Android activity lifecycle with rounded lifecycle nodes and arrowed flow connectors.",
+  sourcePath: "examples/aspirational_gallery/tikz/Diagram of Android activity life cycle",
+  reproductionLevel: "Level 2",
+  helperFamilies: [
+    "primitives",
+    "connectors/placement",
+  ],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no automatic layout",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "group bbox",

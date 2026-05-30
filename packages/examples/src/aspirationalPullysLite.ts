@@ -14,20 +14,39 @@ import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
-  - Original: examples/aspirational_gallery/metapost/pullys.mp
-  - Target level: Level 1 to Level 2
-  - Why selected: the source is the closest richer mechanism-style target to the current belt/tangent helper stack,
-    so it can be approximated as a static pulley arrangement using existing helpers and semantic tests
-  - Helper families used: openBeltPath, circleCircleTangents, tangentPointsFromPointToCircle,
-    labelAlongSegment, segmentTickMarks, circular arc path commands via angleMarkPath
-  - Compromises: manual coordinates; no source translation; no solver/physics/kinematics/mechanics;
-    no automatic construction inference; no full visual fidelity
+  - Original source: examples/aspirational_gallery/metapost/pullys.mp
+  - Reproduction level: Level 1-2
+  - Helper families: primitives, tangents, common tangents, annotation helpers,
+    circular arcs / angle marks, belt/pulley path, style fields
+  - Compromises: manual coordinates, no source translation, no solver,
+    no mechanics/physics simulation, no full visual fidelity, no clipping/gradients,
+    no parser/JSON/AST support
 */
 export const aspirationalPullysLiteExample: VizxExample = {
   id: "aspirational-pullys-lite",
   title: "Aspirational pullys lite",
   description:
     "Manual Level 1-2 approximation of MetaPost pullys using the current belt, tangent, annotation, and style helper stack.",
+  sourcePath: "examples/aspirational_gallery/metapost/pullys.mp",
+  reproductionLevel: "Level 1-2",
+  helperFamilies: [
+    "primitives",
+    "tangents",
+    "common tangents",
+    "annotation helpers",
+    "circular arcs / angle marks",
+    "belt/pulley path",
+    "style fields",
+  ],
+  compromises: [
+    "manual coordinates",
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",
