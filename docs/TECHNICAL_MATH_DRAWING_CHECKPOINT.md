@@ -75,8 +75,9 @@ Current explicit tangent helpers include:
 
 - `tangentLineAtCirclePoint`
 - `tangentPointsFromPointToCircle`
+- `circleCircleTangents`
 
-These currently cover circle-point tangent direction and external-point-to-circle tangent points only.
+These now cover circle-point tangent direction, external-point-to-circle tangent points, and circle-circle common tangents.
 
 ### 2.5 Shared helper identity
 
@@ -108,6 +109,8 @@ Current technical/math-relevant examples and coverage:
   - demonstrates circular arc/angle-mark composition (`angleMarkPath`, `angleLabelPoint`)
 - `technical-tangents`
   - demonstrates explicit tangent construction with circle-point tangent line and external tangent points
+- `technical-common-tangents`
+  - demonstrates explicit external/internal common tangents between two circles with tangent-point markers and dashed guide radii
 - `aspirational-labeled-polygon`
   - demonstrates angle marks plus v0 technical style fields (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`)
 - `aspirational-geometry-1-lite`
@@ -142,7 +145,6 @@ Still missing for higher-fidelity technical/math construction work:
 
 - no construction solver
 - no automatic dependency graph/inference for geometric constructions
-- no common tangents between two circles
 - no tangent-to-path or tangent-to-arc helpers
 - no automatic annotation collision avoidance
 - no dimension-line annotation system
@@ -161,6 +163,8 @@ Current status update:
 
 - Option A (segment/ray clipped helpers) is now implemented in a narrow v0 slice.
 - See `docs/GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md`.
+- Option B (common tangents between two circles) is now implemented in a narrow v0 slice.
+- See `docs/GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md`.
 - Option C (annotation helpers) is now implemented in a narrow v0 slice.
 - See `docs/TECHNICAL_ANNOTATION_HELPER_PLAN.md`.
 

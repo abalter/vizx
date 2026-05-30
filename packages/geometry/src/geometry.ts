@@ -139,6 +139,12 @@ export interface TangentLineAtCirclePoint {
   readonly direction: Vector;
 }
 
+export interface CircleCircleTangent {
+  readonly kind: "external" | "internal";
+  readonly pointA: Point;
+  readonly pointB: Point;
+}
+
 export type NumericInterval = readonly [number, number];
 
 export interface LinearScale {
@@ -533,6 +539,102 @@ export function tangentPointsFromPointToCircle(
       center.y + radius * Math.sin(angleB),
     ),
   ];
+}
+
+function dedupeCircleCircleTangents(entries: readonly CircleCircleTangent[]): readonly CircleCircleTangent[] {
+  const deduped: CircleCircleTangent[] = [];
+
+  for (const entry of entries) {
+    const duplicate = deduped.some((candidate) =>
+      candidate.kind === entry.kind
+      && distance(candidate.pointA, entry.pointA) <= GEOMETRY_EPSILON
+      && distance(candidate.pointB, entry.pointB) <= GEOMETRY_EPSILON);
+
+    if (!duplicate) {
+      deduped.push(entry);
+    }
+  }
+
+  return deduped;
+}
+
+export function circleCircleTangents(
+  centerA: Point,
+  radiusA: number,
+  centerB: Point,
+  radiusB: number,
+): readonly CircleCircleTangent[] {
+  assertFinitePoint(centerA, "centerA");
+  assertFinitePoint(centerB, "centerB");
+  assertFiniteNumber(radiusA, "radiusA");
+  assertFiniteNumber(radiusB, "radiusB");
+
+  if (radiusA <= 0) {
+    throw new RangeError("radiusA must be > 0");
+  }
+
+  if (radiusB <= 0) {
+    throw new RangeError("radiusB must be > 0");
+  }
+
+  const delta = subtractPoints(centerB, centerA);
+  const distanceSquared = dot2D(delta, delta);
+
+  if (distanceSquared <= GEOMETRY_EPSILON * GEOMETRY_EPSILON) {
+    // v0 behavior: coincident centers return no common tangents.
+    return [];
+  }
+
+  const baseDirectionLength = Math.sqrt(distanceSquared);
+  const sideValue = (entry: CircleCircleTangent): number => {
+    const contact = subtractPoints(entry.pointA, centerA);
+    return cross2D(delta, contact) / baseDirectionLength;
+  };
+
+  const result: CircleCircleTangent[] = [];
+
+  for (const kind of ["external", "internal"] as const) {
+    const orientation = kind === "external" ? 1 : -1;
+    const adjustedRadius = radiusA - orientation * radiusB;
+    const hSquared = distanceSquared - adjustedRadius * adjustedRadius;
+
+    if (hSquared < -GEOMETRY_EPSILON) {
+      continue;
+    }
+
+    const h = Math.sqrt(Math.max(0, hSquared));
+    const sides = h <= GEOMETRY_EPSILON ? [1] : [1, -1];
+
+    for (const side of sides) {
+      const normal = {
+        dx: (delta.dx * adjustedRadius - delta.dy * h * side) / distanceSquared,
+        dy: (delta.dy * adjustedRadius + delta.dx * h * side) / distanceSquared,
+      };
+
+      result.push({
+        kind,
+        pointA: point(
+          centerA.x + normal.dx * radiusA,
+          centerA.y + normal.dy * radiusA,
+        ),
+        pointB: point(
+          centerB.x + normal.dx * radiusB * orientation,
+          centerB.y + normal.dy * radiusB * orientation,
+        ),
+      });
+    }
+  }
+
+  const deduped = dedupeCircleCircleTangents(result);
+
+  const externals = deduped
+    .filter((entry) => entry.kind === "external")
+    .sort((a, b) => sideValue(b) - sideValue(a));
+  const internals = deduped
+    .filter((entry) => entry.kind === "internal")
+    .sort((a, b) => sideValue(b) - sideValue(a));
+
+  return [...externals, ...internals];
 }
 
 export function polar(origin: Point, radius: number, angleDegrees: number): Point {

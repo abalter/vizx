@@ -31,6 +31,7 @@ Current implementation status:
 - tangent helper slice now implemented:
   - `tangentLineAtCirclePoint`
   - `tangentPointsFromPointToCircle`
+  - `circleCircleTangents`
 - segment/ray clipped helper slice now implemented:
   - `pointOnSegment`
   - `pointOnRay`

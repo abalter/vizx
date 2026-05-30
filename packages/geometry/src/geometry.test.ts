@@ -12,6 +12,7 @@ import {
   bboxTranslate,
   bboxUnion,
   circlePoint,
+  circleCircleTangents,
   distance,
   angleOf,
   angleDeltaDegrees,
@@ -55,6 +56,24 @@ function expectContainsPoint(points: readonly { x: number; y: number }[], expect
   expect(
     points.some((entry) => Math.abs(entry.x - expected.x) <= 1e-8 && Math.abs(entry.y - expected.y) <= 1e-8),
   ).toBe(true);
+}
+
+function expectCircleCircleTangentGeometry(
+  tangent: { pointA: { x: number; y: number }; pointB: { x: number; y: number } },
+  centerA: { x: number; y: number },
+  radiusA: number,
+  centerB: { x: number; y: number },
+  radiusB: number,
+): void {
+  expect(distance(centerA, tangent.pointA)).toBeCloseTo(radiusA, 8);
+  expect(distance(centerB, tangent.pointB)).toBeCloseTo(radiusB, 8);
+
+  const radiusVectorA = subtractPoints(tangent.pointA, centerA);
+  const radiusVectorB = subtractPoints(tangent.pointB, centerB);
+  const tangentVector = subtractPoints(tangent.pointB, tangent.pointA);
+
+  expect(radiusVectorA.dx * tangentVector.dx + radiusVectorA.dy * tangentVector.dy).toBeCloseTo(0, 8);
+  expect(radiusVectorB.dx * tangentVector.dx + radiusVectorB.dy * tangentVector.dy).toBeCloseTo(0, 8);
 }
 
 describe("geometry kernel", () => {
@@ -796,5 +815,72 @@ describe("geometry kernel", () => {
   it("rejects invalid tangent-point radius values", () => {
     expect(() => tangentPointsFromPointToCircle(point(10, 0), point(0, 0), -1)).toThrow("radius");
     expect(() => tangentPointsFromPointToCircle(point(10, 0), point(0, 0), 0)).toThrow("radius");
+  });
+
+  it("computes four circle-circle tangents for separated equal-radius circles", () => {
+    const centerA = point(0, 0);
+    const centerB = point(14, 0);
+    const radius = 3;
+    const tangents = circleCircleTangents(centerA, radius, centerB, radius);
+
+    expect(tangents).toHaveLength(4);
+    expect(tangents[0]?.kind).toBe("external");
+    expect(tangents[1]?.kind).toBe("external");
+    expect(tangents[2]?.kind).toBe("internal");
+    expect(tangents[3]?.kind).toBe("internal");
+
+    for (const tangent of tangents) {
+      expectCircleCircleTangentGeometry(tangent, centerA, radius, centerB, radius);
+    }
+  });
+
+  it("returns no circle-circle tangents for contained circles", () => {
+    expect(circleCircleTangents(
+      point(0, 0),
+      5,
+      point(1, 0),
+      2,
+    )).toEqual([]);
+  });
+
+  it("returns no circle-circle tangents for coincident centers", () => {
+    expect(circleCircleTangents(
+      point(3, 4),
+      5,
+      point(3, 4),
+      2,
+    )).toEqual([]);
+  });
+
+  it("returns only external tangents for overlapping circles", () => {
+    const centerA = point(0, 0);
+    const centerB = point(6, 0);
+    const tangents = circleCircleTangents(centerA, 5, centerB, 5);
+
+    expect(tangents).toHaveLength(2);
+    expect(tangents.every((entry) => entry.kind === "external")).toBe(true);
+
+    for (const tangent of tangents) {
+      expectCircleCircleTangentGeometry(tangent, centerA, 5, centerB, 5);
+    }
+  });
+
+  it("dedupes degenerate internal tangents for externally tangent circles", () => {
+    const tangents = circleCircleTangents(
+      point(0, 0),
+      5,
+      point(10, 0),
+      5,
+    );
+
+    expect(tangents).toHaveLength(3);
+    expect(tangents[0]?.kind).toBe("external");
+    expect(tangents[1]?.kind).toBe("external");
+    expect(tangents[2]?.kind).toBe("internal");
+  });
+
+  it("rejects invalid circle-circle tangent radius values", () => {
+    expect(() => circleCircleTangents(point(0, 0), -1, point(10, 0), 2)).toThrow("radiusA");
+    expect(() => circleCircleTangents(point(0, 0), 1, point(10, 0), 0)).toThrow("radiusB");
   });
 });

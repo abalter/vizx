@@ -7,6 +7,7 @@ The plot/data branch remains documented and useful, but immediate priority shoul
 Latest checkpoint:
 
 - [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
+- [GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md](./GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md)
 - [GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md](./GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md)
 - [TECHNICAL_ANNOTATION_HELPER_PLAN.md](./TECHNICAL_ANNOTATION_HELPER_PLAN.md)
 
@@ -33,6 +34,7 @@ Current VizX capabilities that already support this track:
 - intersection helpers (`lineLineIntersection`, `lineCircleIntersections`, `circleCircleIntersections`)
 - segment/ray clipped helpers (`segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`, `pointOnSegment`, `pointOnRay`)
 - tangent helpers (`tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`)
+- common tangent helpers (`circleCircleTangents`)
 - annotation helpers (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`)
 - primitive geometry (`line`, `polyline`, `polygon`, `ellipse`, `circle`, `path`, `rect`, `text`, `group`)
 - Bezier and circular-arc path commands (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
@@ -51,7 +53,6 @@ Current blockers for higher-fidelity technical/math diagrams:
 - no construction solver behavior
 - no broad segment/ray intersection family coverage (for example ray-ray and segment-ray variants)
 - no polygon/path/Bezier/arc intersection helpers
-- no common tangent helpers (for example circle-circle common tangents)
 - no annotation collision avoidance or dimension-line annotation system
 - no cutbefore/cutafter behavior
 - no path length or point-at-length helpers

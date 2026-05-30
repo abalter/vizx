@@ -11,10 +11,11 @@ Status:
 
 ## 1. Purpose
 
-Add two pure helper capabilities in `@vizx/geometry` for explicit author-called constructions:
+Add pure helper capabilities in `@vizx/geometry` for explicit author-called constructions:
 
 - tangent line at a point on a circle
 - tangent points from an external point to a circle
+- common tangents between two circles
 
 This slice is intentionally narrow. It reduces repeated manual math in examples while preserving the current no-solver architecture.
 
@@ -24,6 +25,7 @@ Helpers implemented in `packages/geometry/src/geometry.ts`:
 
 - `tangentLineAtCirclePoint(center, pointOnCircle)`
 - `tangentPointsFromPointToCircle(externalPoint, center, radius)`
+- `circleCircleTangents(centerA, radiusA, centerB, radiusB)`
 
 ### 2.1 `tangentLineAtCirclePoint`
 
@@ -78,7 +80,7 @@ Explicit non-goals for this slice:
 - no new drawable/runtime object kinds
 - no parser syntax or lowering changes
 - no segment/ray tangent clipping families
-- no circle-circle common tangent families
+- no tangent-to-path or tangent-to-arc families
 
 ## 4. Verification
 

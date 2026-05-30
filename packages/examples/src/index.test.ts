@@ -927,6 +927,32 @@ describe("example registry", () => {
     expect(svg).toContain('stroke-dasharray="4 4"');
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
+
+  it("registers and semantically validates technical-common-tangents", () => {
+    const example = requireVizxExample("technical-common-tangents");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "tct.circle.a" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.circle.b" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.tangent.external.0" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.tangent.external.1" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.tangent.internal.0" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.point.external.a.0" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.label.external.a.0" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tct.radius.external.a.0" && object.kind === "line")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<text");
+    expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {
