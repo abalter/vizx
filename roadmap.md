@@ -191,6 +191,7 @@ Current note:
 - one additional current-capability geometry example (`aspirational-geometry-1-lite`) now exists and emphasizes technical/math construction drawing.
 - one additional intersection-heavy geometry example (`aspirational-pendagon-lite`) now exists and applies explicit helper-called construction points without solver behavior.
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
+- first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 
 ## D. Deferred Work
 

@@ -95,6 +95,7 @@ Current note:
 
 - first segment/ray clipped construction helpers now exist in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`)
 - these helpers remain pure, explicit, and solver-free
+- first technical annotation helpers now exist across `@vizx/geometry`/`@vizx/object-model` (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remain explicit path/point conveniences, not runtime semantics
 
 ## 4. Milestone 1 - Current-Capability Aspirational Mini-Gallery
 

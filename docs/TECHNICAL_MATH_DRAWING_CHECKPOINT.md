@@ -89,6 +89,17 @@ Across the above families, the design remains:
 - no resolver inference
 - no new runtime object kinds
 
+### 2.6 Annotation helpers
+
+Current explicit annotation helpers include:
+
+- `labelAlongSegment`
+- `rightAngleMarkPath`
+- `segmentTickMarkPath`
+- `segmentTickMarks`
+
+These are explicit authoring conveniences that return existing points/path objects only.
+
 ## 3. Example Coverage
 
 Current technical/math-relevant examples and coverage:
@@ -133,6 +144,8 @@ Still missing for higher-fidelity technical/math construction work:
 - no automatic dependency graph/inference for geometric constructions
 - no common tangents between two circles
 - no tangent-to-path or tangent-to-arc helpers
+- no automatic annotation collision avoidance
+- no dimension-line annotation system
 - no `cutbefore`/`cutafter`
 - no path length or point-at-length
 - no curve flattening
@@ -148,6 +161,8 @@ Current status update:
 
 - Option A (segment/ray clipped helpers) is now implemented in a narrow v0 slice.
 - See `docs/GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md`.
+- Option C (annotation helpers) is now implemented in a narrow v0 slice.
+- See `docs/TECHNICAL_ANNOTATION_HELPER_PLAN.md`.
 
 ### Option A: Segment/ray variants and clipped constructions
 

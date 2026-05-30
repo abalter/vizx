@@ -2,6 +2,7 @@ import type { Style } from "@vizx/core";
 import {
   angleBetweenPoints,
   circlePoint,
+  labelAlongSegment,
   linearScale,
   mapDataPoint,
   type PlotFrame,
@@ -119,6 +120,32 @@ interface AngleMarkPathOptions {
   readonly style?: Style;
 }
 
+interface RightAngleMarkPathOptions {
+  readonly vertex: Point;
+  readonly from: Point;
+  readonly to: Point;
+  readonly size: number;
+  readonly style?: Style;
+}
+
+interface SegmentTickMarkPathOptions {
+  readonly a: Point;
+  readonly b: Point;
+  readonly t: number;
+  readonly size: number;
+  readonly style?: Style;
+}
+
+interface SegmentTickMarksOptions {
+  readonly a: Point;
+  readonly b: Point;
+  readonly count: number;
+  readonly size: number;
+  readonly centerT?: number;
+  readonly spacingT?: number;
+  readonly style?: Style;
+}
+
 interface AxisOptions {
   readonly axisValue?: number;
   readonly tickValues?: readonly number[];
@@ -173,6 +200,132 @@ export function angleMarkPath(id: string, options: AngleMarkPathOptions): PathOb
     ],
     ...(options.style ? { style: options.style } : {}),
   });
+}
+
+function assertFinitePointValue(value: Point, label: string): void {
+  if (!Number.isFinite(value.x) || !Number.isFinite(value.y)) {
+    throw new TypeError(`${label} must use finite coordinates`);
+  }
+}
+
+function normalizeDirection(from: Point, to: Point, label: string): Point {
+  assertFinitePointValue(from, `${label}.from`);
+  assertFinitePointValue(to, `${label}.to`);
+
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy);
+
+  if (length <= 1e-9) {
+    throw new RangeError(`${label} must use distinct points`);
+  }
+
+  return {
+    x: dx / length,
+    y: dy / length,
+  };
+}
+
+function assertPositiveFinite(value: number, label: string): void {
+  if (!Number.isFinite(value)) {
+    throw new TypeError(`${label} must be finite`);
+  }
+
+  if (value <= 0) {
+    throw new RangeError(`${label} must be > 0`);
+  }
+}
+
+export function rightAngleMarkPath(id: string, options: RightAngleMarkPathOptions): PathObject {
+  assertFinitePointValue(options.vertex, "vertex");
+  assertFinitePointValue(options.from, "from");
+  assertFinitePointValue(options.to, "to");
+  assertPositiveFinite(options.size, "size");
+
+  const fromDirection = normalizeDirection(options.vertex, options.from, "from ray");
+  const toDirection = normalizeDirection(options.vertex, options.to, "to ray");
+  const legA = {
+    x: options.vertex.x + fromDirection.x * options.size,
+    y: options.vertex.y + fromDirection.y * options.size,
+  };
+  const corner = {
+    x: options.vertex.x + (fromDirection.x + toDirection.x) * options.size,
+    y: options.vertex.y + (fromDirection.y + toDirection.y) * options.size,
+  };
+  const legB = {
+    x: options.vertex.x + toDirection.x * options.size,
+    y: options.vertex.y + toDirection.y * options.size,
+  };
+
+  return path(id, {
+    commands: [
+      moveTo(legA),
+      lineTo(corner),
+      lineTo(legB),
+    ],
+    ...(options.style ? { style: options.style } : {}),
+  });
+}
+
+export function segmentTickMarkPath(id: string, options: SegmentTickMarkPathOptions): PathObject {
+  assertFinitePointValue(options.a, "a");
+  assertFinitePointValue(options.b, "b");
+  assertPositiveFinite(options.size, "size");
+
+  const direction = normalizeDirection(options.a, options.b, "segment");
+  const center = labelAlongSegment(options.a, options.b, options.t);
+  const perpendicular = {
+    x: -direction.y,
+    y: direction.x,
+  };
+  const half = options.size / 2;
+  const start = {
+    x: center.x - perpendicular.x * half,
+    y: center.y - perpendicular.y * half,
+  };
+  const end = {
+    x: center.x + perpendicular.x * half,
+    y: center.y + perpendicular.y * half,
+  };
+
+  return path(id, {
+    commands: [
+      moveTo(start),
+      lineTo(end),
+    ],
+    ...(options.style ? { style: options.style } : {}),
+  });
+}
+
+export function segmentTickMarks(idPrefix: string, options: SegmentTickMarksOptions): readonly PathObject[] {
+  assertFinitePointValue(options.a, "a");
+  assertFinitePointValue(options.b, "b");
+  assertPositiveFinite(options.size, "size");
+
+  if (!Number.isInteger(options.count) || options.count <= 0) {
+    throw new RangeError("count must be a positive integer");
+  }
+
+  const centerT = options.centerT ?? 0.5;
+  const spacingT = options.spacingT ?? 0.06;
+
+  if (!Number.isFinite(centerT)) {
+    throw new TypeError("centerT must be finite");
+  }
+
+  if (!Number.isFinite(spacingT)) {
+    throw new TypeError("spacingT must be finite");
+  }
+
+  const startT = centerT - ((options.count - 1) * spacingT) / 2;
+
+  return Array.from({ length: options.count }, (_, index) => segmentTickMarkPath(`${idPrefix}.${index}`, {
+    a: options.a,
+    b: options.b,
+    t: startT + index * spacingT,
+    size: options.size,
+    style: options.style,
+  }));
 }
 
 export function xAxis(idPrefix: string, frame: PlotFrame, options: AxisOptions = {}): readonly AxisObject[] {

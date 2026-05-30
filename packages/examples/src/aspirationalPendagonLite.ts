@@ -1,11 +1,12 @@
 import {
   circleCircleIntersections,
   distance,
+  labelAlongSegment,
   midpoint,
   point,
   rayCircleIntersections,
 } from "@vizx/geometry";
-import { circle, line, polygon, sceneOf, text } from "@vizx/object-model";
+import { circle, line, polygon, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
@@ -24,6 +25,7 @@ export const aspirationalPendagonLiteExample: VizxExample = {
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",
+    "technical annotation helpers",
     "circle primitive",
     "line primitive",
     "polygon primitive",
@@ -104,6 +106,16 @@ export const aspirationalPendagonLiteExample: VizxExample = {
       throw new Error("Expected pentagon vertices B, C, D, and E");
     }
 
+    const apTicks = segmentTickMarks("pend.tick.ap", {
+      a: pointA,
+      b: pointT,
+      count: 2,
+      size: 10,
+      spacingT: 0.055,
+      style: { stroke: "#64748b", strokeWidth: 1.2, strokeLineCap: "round" },
+    });
+    const ouLabelPoint = labelAlongSegment(centerO, pointU, 0.48, -10);
+
     return sceneOf([
       circle("pend.main.circle", {
         center: centerO,
@@ -155,6 +167,7 @@ export const aspirationalPendagonLiteExample: VizxExample = {
         end: pointP2,
         style: { stroke: "#64748b", strokeWidth: 1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
+      ...apTicks,
       polygon("pend.pentagon", {
         points: [pointA, pointB, pointC, pointD, pointE],
         style: { stroke: "#0f766e", strokeWidth: 2, fill: "none", strokeLineJoin: "round" },
@@ -173,6 +186,7 @@ export const aspirationalPendagonLiteExample: VizxExample = {
       text("pend.label.p2", { center: point(pointP2.x - 14, pointP2.y + 12), text: "P2", style: { fill: "#2563eb", fontSize: 10 } }),
       text("pend.label.l", { center: point(pointL.x - 10, pointL.y + 12), text: "L", style: { fill: "#7c3aed", fontSize: 10 } }),
       text("pend.label.t", { center: point(pointT.x + 10, pointT.y + 12), text: "T", style: { fill: "#7c3aed", fontSize: 10 } }),
+      text("pend.label.ou", { center: ouLabelPoint, text: "OU", style: { fill: "#64748b", fontSize: 10 } }),
       text("pend.caption", {
         center: point(206, 34),
         text: "Pendagon lite (manual intersection construction)",

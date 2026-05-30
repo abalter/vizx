@@ -19,6 +19,9 @@ import {
   rotate,
   scale,
   sceneOf,
+  segmentTickMarkPath,
+  segmentTickMarks,
+  rightAngleMarkPath,
   text,
   translate,
   xAxis,
@@ -198,6 +201,78 @@ describe("object-model builder helpers", () => {
       ],
       style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
     });
+  });
+
+  it("creates a plain path object for a right-angle mark", () => {
+    const mark = rightAngleMarkPath("angle.right", {
+      vertex: { x: 10, y: 20 },
+      from: { x: 40, y: 20 },
+      to: { x: 10, y: 50 },
+      size: 8,
+      style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+    });
+
+    expect(mark.kind).toBe("path");
+    expect(mark.id).toBe("angle.right");
+    expect(mark.style).toEqual({ stroke: "#0f766e", strokeWidth: 2, fill: "none" });
+    expect(mark.commands).toEqual([
+      { kind: "moveTo", point: { x: 18, y: 20 } },
+      { kind: "lineTo", point: { x: 18, y: 28 } },
+      { kind: "lineTo", point: { x: 10, y: 28 } },
+    ]);
+  });
+
+  it("rejects degenerate rays for right-angle marks", () => {
+    expect(() => rightAngleMarkPath("angle.bad", {
+      vertex: { x: 10, y: 20 },
+      from: { x: 10, y: 20 },
+      to: { x: 10, y: 50 },
+      size: 8,
+    })).toThrow("from ray");
+  });
+
+  it("creates a plain path object for a segment tick mark", () => {
+    const tick = segmentTickMarkPath("seg.tick", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      t: 0.5,
+      size: 6,
+      style: { stroke: "#334155", strokeWidth: 1.4 },
+    });
+
+    expect(tick.kind).toBe("path");
+    expect(tick.id).toBe("seg.tick");
+    expect(tick.style).toEqual({ stroke: "#334155", strokeWidth: 1.4 });
+    expect(tick.commands).toEqual([
+      { kind: "moveTo", point: { x: 5, y: -3 } },
+      { kind: "lineTo", point: { x: 5, y: 3 } },
+    ]);
+  });
+
+  it("rejects degenerate segments for tick marks", () => {
+    expect(() => segmentTickMarkPath("seg.bad", {
+      a: { x: 2, y: 2 },
+      b: { x: 2, y: 2 },
+      t: 0.5,
+      size: 6,
+    })).toThrow("segment");
+  });
+
+  it("creates deterministic repeated segment tick marks", () => {
+    const ticks = segmentTickMarks("seg.tick", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      count: 3,
+      size: 4,
+      centerT: 0.5,
+      spacingT: 0.1,
+    });
+
+    expect(ticks).toHaveLength(3);
+    expect(ticks[0]?.id).toBe("seg.tick.0");
+    expect(ticks[1]?.id).toBe("seg.tick.1");
+    expect(ticks[2]?.id).toBe("seg.tick.2");
+    expect(ticks.every((entry) => entry.kind === "path")).toBe(true);
   });
 
   it("creates x-axis and y-axis helper output as plain line/text objects", () => {

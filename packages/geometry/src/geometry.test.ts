@@ -21,6 +21,7 @@ import {
   isAngleWithinSweep,
   lineCircleIntersections,
   lineLineIntersection,
+  labelAlongSegment,
   linearScale,
   mapDataPoint,
   midpoint,
@@ -80,6 +81,36 @@ describe("geometry kernel", () => {
     expect(angleOf(point(0, 0), point(0, 1))).toBeCloseTo(90, 8);
     expect(angleOf(point(0, 0), point(-1, 0))).toBeCloseTo(180, 8);
     expect(angleOf(point(0, 0), point(0, -1))).toBeCloseTo(-90, 8);
+  });
+
+  it("computes label points along a segment without offset", () => {
+    expectPointClose(
+      labelAlongSegment(point(0, 0), point(10, 0), 0.5),
+      point(5, 0),
+    );
+
+    expectPointClose(
+      labelAlongSegment(point(0, 0), point(8, 4), 0.25),
+      point(2, 1),
+    );
+  });
+
+  it("computes label points with perpendicular offsets", () => {
+    expectPointClose(
+      labelAlongSegment(point(0, 0), point(10, 0), 0.5, 2),
+      point(5, 2),
+    );
+
+    expectPointClose(
+      labelAlongSegment(point(0, 0), point(0, 10), 0.5, 2),
+      point(-2, 5),
+    );
+  });
+
+  it("rejects invalid labelAlongSegment inputs", () => {
+    expect(() => labelAlongSegment(point(1, 1), point(1, 1), 0.5, 1)).toThrow("segment");
+    expect(() => labelAlongSegment(point(0, 0), point(1, 1), Number.NaN)).toThrow("t");
+    expect(() => labelAlongSegment(point(0, 0), point(1, 1), 0.5, Number.POSITIVE_INFINITY)).toThrow("offset");
   });
 
   it("computes polar and circle points", () => {

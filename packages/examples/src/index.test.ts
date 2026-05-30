@@ -781,13 +781,22 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "geo1.label.p")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "geo1.label.pp")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "geo1.label.ppp")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.label.map")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.right.angle" && object.kind === "path")).toBe(true);
     expect(angleMark?.kind).toBe("path");
+
+    const rightAngleMark = scene.objects.find((object) => object.id === "geo1.right.angle");
 
     if (!angleMark || angleMark.kind !== "path") {
       throw new Error("Expected geo1.angle.frame path object");
     }
 
     expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(rightAngleMark?.kind).toBe("path");
+    if (!rightAngleMark || rightAngleMark.kind !== "path") {
+      throw new Error("Expected geo1.right.angle path object");
+    }
+    expect(rightAngleMark.commands.filter((command) => command.kind === "lineTo").length).toBeGreaterThanOrEqual(2);
     expect(svg).toContain("<circle");
     expect(svg).toContain("<line");
     expect(svg).toContain(" A ");
@@ -813,10 +822,14 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "pend.point.t" && object.kind === "circle")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "pend.label.p1" && object.kind === "text")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "pend.label.t" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.label.ou" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.tick.ap.0" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.tick.ap.1" && object.kind === "path")).toBe(true);
     expect(svg).toContain("<circle");
     expect(svg).toContain("<line");
     expect(svg).toContain("<polygon");
     expect(svg).toContain("<text");
+    expect(svg).toContain("<path");
     expect(svg).toContain('stroke-dasharray="4 4"');
     expect(svg).toContain('stroke-linecap="round"');
     expect(svg).toContain('stroke-linejoin="round"');

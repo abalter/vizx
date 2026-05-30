@@ -100,6 +100,34 @@ export function angleOf(a: Point, b: Point): number {
   return (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
 }
 
+export function labelAlongSegment(a: Point, b: Point, t: number, offset = 0): Point {
+  assertFinitePoint(a, "a");
+  assertFinitePoint(b, "b");
+  assertFiniteNumber(t, "t");
+  assertFiniteNumber(offset, "offset");
+
+  const base = point(
+    a.x + (b.x - a.x) * t,
+    a.y + (b.y - a.y) * t,
+  );
+
+  if (Math.abs(offset) <= GEOMETRY_EPSILON) {
+    return base;
+  }
+
+  const segmentLength = distance(a, b);
+  if (segmentLength <= GEOMETRY_EPSILON) {
+    throw new RangeError("segment must use distinct points when offset is non-zero");
+  }
+
+  const perpendicular = vector(-(b.y - a.y) / segmentLength, (b.x - a.x) / segmentLength);
+
+  return point(
+    base.x + perpendicular.dx * offset,
+    base.y + perpendicular.dy * offset,
+  );
+}
+
 export interface AngleBetweenPointsResult {
   readonly startAngleDegrees: number;
   readonly endAngleDegrees: number;

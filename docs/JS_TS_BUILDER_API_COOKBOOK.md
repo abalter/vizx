@@ -52,6 +52,9 @@ Path command helpers:
 - `quadraticCurveTo(control, point)`
 - `cubicCurveTo(control1, control2, point)`
 - `angleMarkPath(id, options)`
+- `rightAngleMarkPath(id, options)`
+- `segmentTickMarkPath(id, options)`
+- `segmentTickMarks(idPrefix, options)`
 - `closePath()`
 
 Placement helpers:
@@ -250,6 +253,49 @@ const scene = sceneOf([
   }),
 ]);
 ```
+
+## 7.1 Technical Annotation Helpers Example
+
+The first technical annotation helper slice adds explicit right-angle and segment-tick path helpers in the builder layer, with point placement support from geometry `labelAlongSegment(...)`.
+
+```ts
+import { labelAlongSegment, point } from "@vizx/geometry";
+import { line, rightAngleMarkPath, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
+
+const a = point(80, 160);
+const b = point(220, 160);
+const c = point(80, 80);
+
+const scene = sceneOf([
+  line("ab", { start: a, end: b }),
+  line("ac", { start: a, end: c }),
+  rightAngleMarkPath("angle.A", {
+    vertex: a,
+    from: b,
+    to: c,
+    size: 12,
+    style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+  }),
+  ...segmentTickMarks("ab.tick", {
+    a,
+    b,
+    count: 2,
+    size: 10,
+    spacingT: 0.06,
+    style: { stroke: "#334155", strokeWidth: 1.4 },
+  }),
+  text("ab.label", {
+    center: labelAlongSegment(a, b, 0.5, -12),
+    text: "AB",
+  }),
+]);
+```
+
+Notes:
+
+- helpers emit ordinary `path` objects and points
+- no new runtime annotation type is introduced
+- no collision avoidance or automatic side selection is included in v0
 
 ## 8. Data-Driven Generation Example
 

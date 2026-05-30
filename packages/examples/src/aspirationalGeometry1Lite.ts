@@ -1,5 +1,5 @@
-import { angleLabelPoint, lineLineIntersection, point } from "@vizx/geometry";
-import { angleMarkPath, arrowEnd, circle, line, sceneOf, text } from "@vizx/object-model";
+import { angleLabelPoint, labelAlongSegment, lineLineIntersection, point } from "@vizx/geometry";
+import { angleMarkPath, arrowEnd, circle, line, rightAngleMarkPath, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
@@ -17,6 +17,7 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",
+    "technical annotation helpers",
     "line primitive",
     "circle primitive",
     "path arc command",
@@ -80,6 +81,7 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
       clockwise: true,
       offset: 11,
     });
+    const mapLabel = labelAlongSegment(p, pPrime, 0.52, -10);
 
     return sceneOf([
       line("geo1.axis.x", {
@@ -139,6 +141,13 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
         radius: angleRadius,
         clockwise: true,
         style: { stroke: "#0f766e", strokeWidth: 1.8, fill: "none", strokeLineCap: "round" },
+      }),
+      rightAngleMarkPath("geo1.right.angle", {
+        vertex: origin,
+        from: add(origin, i),
+        to: add(origin, j),
+        size: 10,
+        style: { stroke: "#334155", strokeWidth: 1.6, fill: "none", strokeLineCap: "round" },
       }),
       circle("geo1.point.p", {
         center: p,
@@ -209,6 +218,11 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
         center: add(pPrime, point(10, -8)),
         text: "P'",
         style: { fill: "#2563eb", fontSize: 11 },
+      }),
+      text("geo1.label.map", {
+        center: mapLabel,
+        text: "m",
+        style: { fill: "#64748b", fontSize: 10 },
       }),
       text("geo1.label.ppp", {
         center: add(pDoublePrime, point(10, -8)),
