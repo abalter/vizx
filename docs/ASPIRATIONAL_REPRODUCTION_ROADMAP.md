@@ -242,6 +242,10 @@ Acceptance criteria:
 - examples reach recognizable visual resemblance
 - clipping/gradients remain separate follow-up slices unless explicitly prioritized
 
+Detailed Milestone 4 plan:
+
+- [STYLE_EXPANSION_MODEL_PLAN.md](./STYLE_EXPANSION_MODEL_PLAN.md)
+
 ## 8. Milestone 5 - Plot/Data Coordinate Model
 
 Goal:

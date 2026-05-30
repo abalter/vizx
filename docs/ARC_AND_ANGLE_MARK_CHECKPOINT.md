@@ -254,6 +254,7 @@ Reasonable next branches from here are:
    - `lineJoin`
    - `fillRule`
    - richer visual fidelity
+   - design note: [STYLE_EXPANSION_MODEL_PLAN.md](./STYLE_EXPANSION_MODEL_PLAN.md)
 
 3. Plot/data-coordinate model planning
    - axes
