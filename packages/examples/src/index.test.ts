@@ -796,6 +796,33 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates aspirational-pendagon-lite", () => {
+    const example = requireVizxExample("aspirational-pendagon-lite");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "pend.main.circle" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.pentagon" && object.kind === "polygon")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.guide.ou" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.point.p1" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.point.t" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.label.p1" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "pend.label.t" && object.kind === "text")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<polygon");
+    expect(svg).toContain("<text");
+    expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(svg).toContain('stroke-linejoin="round"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates aspirational-arrow-label", () => {
     const example = requireVizxExample("aspirational-arrow-label");
     const scene = example.createScene();

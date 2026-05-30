@@ -72,6 +72,11 @@ Reachable next examples using current capabilities:
 - `aspirational-pendagon-lite`
 - one additional small technical/mechanism-lite example when scoped tightly
 
+Current note:
+
+- `aspirational-pendagon-lite` is now implemented as a manual Level 1-2 approximation using explicit helper-called circle-circle and line-circle intersection construction points.
+- this example remains solver-free, resolver-inference-free, and source-translation-free.
+
 ## 6. Recommended Next Feature Gaps
 
 Likely future technical/math feature slices (not implemented in this pass):

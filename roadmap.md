@@ -186,6 +186,7 @@ Current note:
 
 - one additional current-capability aspirational example (`aspirational-projectile-motion-lite`) now exists and remains deliberately outside any plot/data-coordinate model scope.
 - one additional current-capability geometry example (`aspirational-geometry-1-lite`) now exists and emphasizes technical/math construction drawing.
+- one additional intersection-heavy geometry example (`aspirational-pendagon-lite`) now exists and applies explicit helper-called construction points without solver behavior.
 
 ## D. Deferred Work
 
