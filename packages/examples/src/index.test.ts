@@ -836,6 +836,56 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates aspirational-pullys-lite", () => {
+    const example = requireVizxExample("aspirational-pullys-lite");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const belt = scene.objects.find((object) => object.id === "apl.belt.main");
+    const leftAngle = scene.objects.find((object) => object.id === "apl.angle.left");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "apl.pulley.left" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.pulley.right" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.belt.main" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.guide.radius.left.upper" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.guide.branch.left.radius" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.rope.left.branch" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.point.left.branch" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.tick.left.0" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.angle.left" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.label.alpha1" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "apl.label.mass.center" && object.kind === "text")).toBe(true);
+
+    expect(belt?.kind).toBe("path");
+    if (!belt || belt.kind !== "path") {
+      throw new Error("Expected apl.belt.main path object");
+    }
+
+    expect(belt.commands.filter((command) => command.kind === "arc")).toHaveLength(2);
+    expect(belt.commands.filter((command) => command.kind === "lineTo").length).toBeGreaterThanOrEqual(2);
+
+    expect(leftAngle?.kind).toBe("path");
+    if (!leftAngle || leftAngle.kind !== "path") {
+      throw new Error("Expected apl.angle.left path object");
+    }
+
+    expect(leftAngle.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<rect");
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<path");
+    expect(svg).toContain(" A ");
+    expect(svg).toContain("<text");
+    expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates aspirational-arrow-label", () => {
     const example = requireVizxExample("aspirational-arrow-label");
     const scene = example.createScene();

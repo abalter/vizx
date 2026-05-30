@@ -130,12 +130,15 @@ Current status:
   - `aspirational-projectile-motion-lite`
   - `aspirational-geometry-1-lite`
   - `aspirational-pendagon-lite`
+  - `aspirational-pullys-lite`
 - implemented as manual builder-authored Level 1-2 reproductions
 - `aspirational-labeled-polygon` now uses real circular angle marks for its beta labels
 - `aspirational-projectile-motion-lite` combines Bezier trajectory pathing, launch-angle arc annotation, arrowed vector styling, and dashed construction guides using existing capabilities only
 - `aspirational-geometry-1-lite` provides a manual coordinate-frame geometry sketch with labeled axes, mapped points, dashed guides, and an angle mark using existing capabilities only
 - `aspirational-pendagon-lite` provides a manual intersection-driven construction sketch using explicit helper-called `circleCircleIntersections(...)` and `lineCircleIntersections(...)` results for derived geometry points
 - `aspirational-pendagon-lite` now additionally uses clipped `rayCircleIntersections(...)` for finite-direction construction points on `OU`
+- `aspirational-pullys-lite` provides a manual static pulley-system sketch using `openBeltPath(...)`, `circleCircleTangents(...)`, `tangentPointsFromPointToCircle(...)`, label/tick helpers, and angle-mark arcs
+- no mechanics simulation, solver behavior, or source translation is added for this example
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
 

@@ -190,6 +190,7 @@ Current note:
 - one additional current-capability aspirational example (`aspirational-projectile-motion-lite`) now exists and remains deliberately outside any plot/data-coordinate model scope.
 - one additional current-capability geometry example (`aspirational-geometry-1-lite`) now exists and emphasizes technical/math construction drawing.
 - one additional intersection-heavy geometry example (`aspirational-pendagon-lite`) now exists and applies explicit helper-called construction points without solver behavior.
+- one additional richer mechanism-flavored geometry example (`aspirational-pullys-lite`) now exists and validates the current belt/tangent/annotation stack on a static pulley arrangement without mechanics simulation.
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.

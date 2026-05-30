@@ -5,6 +5,7 @@ import { aspirationalArrowLabelExample } from "./aspirationalArrowLabel";
 import { aspirationalGeometry1LiteExample } from "./aspirationalGeometry1Lite";
 import { aspirationalLabeledPolygonExample } from "./aspirationalLabeledPolygon";
 import { aspirationalPendagonLiteExample } from "./aspirationalPendagonLite";
+import { aspirationalPullysLiteExample } from "./aspirationalPullysLite";
 import { aspirationalProjectileMotionLiteExample } from "./aspirationalProjectileMotionLite";
 import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
@@ -43,6 +44,7 @@ export const vizxExamples: readonly VizxExample[] = [
   aspirationalGeometry1LiteExample,
   aspirationalLabeledPolygonExample,
   aspirationalPendagonLiteExample,
+  aspirationalPullysLiteExample,
   aspirationalProjectileMotionLiteExample,
   arrowheadsExample,
   basicExample,

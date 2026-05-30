@@ -127,6 +127,8 @@ Current technical/math-relevant examples and coverage:
   - demonstrates explicit helper-called construction points (`lineLineIntersection`) in a geometry-frame sketch
 - `aspirational-pendagon-lite`
   - demonstrates explicit circle-circle and line-circle intersection construction
+- `aspirational-pullys-lite`
+  - demonstrates a richer static pulley arrangement by combining `openBeltPath`, `circleCircleTangents`, `tangentPointsFromPointToCircle`, label/tick annotations, and angle-mark arcs without adding mechanics or source translation
 - `aspirational-projectile-motion-lite`
   - demonstrates a current-capability physics-style trajectory sketch with arc annotations and guides
 - `styled-primitives`
@@ -145,6 +147,7 @@ Current helper and object surfaces are sufficient to manually author:
 - circle-circle and line-circle construction sketches
 - dashed guide/construction-line diagrams
 - simple physics/trajectory sketches
+- static pulley/mechanism sketches built from explicit tangent and annotation helpers
 - selected Level 1-2 reproductions from Asymptote/MetaPost/TikZ geometry families
 
 This is now a credible manual technical-construction baseline for the current track.
@@ -157,6 +160,7 @@ Still missing for higher-fidelity technical/math construction work:
 - no automatic dependency graph/inference for geometric constructions
 - no tangent-to-path or tangent-to-arc helpers
 - no crossed-belt helper (internal tangent belt runs)
+- no mechanics or kinematics simulation
 - no automatic annotation collision avoidance
 - no dimension-line annotation system
 - no `cutbefore`/`cutafter`

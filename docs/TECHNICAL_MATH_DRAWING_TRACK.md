@@ -89,6 +89,8 @@ Current note:
 
 - `aspirational-pendagon-lite` is now implemented as a manual Level 1-2 approximation using explicit helper-called circle-circle and line-circle intersection construction points.
 - this example remains solver-free, resolver-inference-free, and source-translation-free.
+- `aspirational-pullys-lite` is now implemented as a manual Level 1-2 approximation of the MetaPost pulley source by combining the existing belt, common-tangent, tangent-point, angle-mark, and annotation helpers.
+- this example remains a static construction drawing only: no source translation, no solver, and no mechanics/kinematics simulation.
 
 ## 6. Recommended Next Feature Gaps
 
