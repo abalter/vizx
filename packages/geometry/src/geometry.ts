@@ -126,10 +126,39 @@ export interface DataPoint {
   readonly y: number;
 }
 
+const GEOMETRY_EPSILON = 1e-9;
+
 function assertFiniteNumber(value: number, label: string): void {
   if (!Number.isFinite(value)) {
     throw new TypeError(`${label} must be finite`);
   }
+}
+
+function assertFinitePoint(value: Point, label: string): void {
+  assertFiniteNumber(value.x, `${label}.x`);
+  assertFiniteNumber(value.y, `${label}.y`);
+}
+
+function assertNonNegativeRadius(radius: number, label: string): void {
+  assertFiniteNumber(radius, label);
+
+  if (radius < 0) {
+    throw new RangeError(`${label} must be >= 0`);
+  }
+}
+
+function assertNonDegenerateLine(a: Point, b: Point, label: string): void {
+  if (distance(a, b) <= GEOMETRY_EPSILON) {
+    throw new RangeError(`${label} must use distinct points`);
+  }
+}
+
+function cross2D(a: Vector, b: Vector): number {
+  return a.dx * b.dy - a.dy * b.dx;
+}
+
+function dot2D(a: Vector, b: Vector): number {
+  return a.dx * b.dx + a.dy * b.dy;
 }
 
 function assertFiniteInterval(interval: NumericInterval, label: string): void {
@@ -178,6 +207,131 @@ export function mapDataPoint(frame: PlotFrame, dataPoint: DataPoint): Point {
   const y = linearScale(frame.yDomain, frame.yRange).map(dataPoint.y);
 
   return point(x, y);
+}
+
+export function lineLineIntersection(a1: Point, a2: Point, b1: Point, b2: Point): Point | null {
+  assertFinitePoint(a1, "a1");
+  assertFinitePoint(a2, "a2");
+  assertFinitePoint(b1, "b1");
+  assertFinitePoint(b2, "b2");
+  assertNonDegenerateLine(a1, a2, "line a");
+  assertNonDegenerateLine(b1, b2, "line b");
+
+  const p = a1;
+  const q = b1;
+  const r = subtractPoints(a2, a1);
+  const s = subtractPoints(b2, b1);
+  const qMinusP = subtractPoints(q, p);
+  const denominator = cross2D(r, s);
+
+  if (Math.abs(denominator) <= GEOMETRY_EPSILON) {
+    // v0 behavior: parallel and coincident infinite lines both return null.
+    return null;
+  }
+
+  const t = cross2D(qMinusP, s) / denominator;
+
+  return point(
+    p.x + r.dx * t,
+    p.y + r.dy * t,
+  );
+}
+
+export function lineCircleIntersections(
+  lineA: Point,
+  lineB: Point,
+  center: Point,
+  radius: number,
+): readonly Point[] {
+  assertFinitePoint(lineA, "lineA");
+  assertFinitePoint(lineB, "lineB");
+  assertFinitePoint(center, "center");
+  assertNonNegativeRadius(radius, "radius");
+  assertNonDegenerateLine(lineA, lineB, "line");
+
+  const direction = subtractPoints(lineB, lineA);
+  const fromCenter = subtractPoints(lineA, center);
+  const a = dot2D(direction, direction);
+  const b = 2 * dot2D(fromCenter, direction);
+  const c = dot2D(fromCenter, fromCenter) - radius * radius;
+  const discriminant = b * b - 4 * a * c;
+
+  if (discriminant < -GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  if (Math.abs(discriminant) <= GEOMETRY_EPSILON) {
+    const t = -b / (2 * a);
+
+    return [point(
+      lineA.x + direction.dx * t,
+      lineA.y + direction.dy * t,
+    )];
+  }
+
+  const sqrtDiscriminant = Math.sqrt(Math.max(0, discriminant));
+  const t1 = (-b - sqrtDiscriminant) / (2 * a);
+  const t2 = (-b + sqrtDiscriminant) / (2 * a);
+
+  return [t1, t2].map((t) => point(
+    lineA.x + direction.dx * t,
+    lineA.y + direction.dy * t,
+  ));
+}
+
+export function circleCircleIntersections(
+  centerA: Point,
+  radiusA: number,
+  centerB: Point,
+  radiusB: number,
+): readonly Point[] {
+  assertFinitePoint(centerA, "centerA");
+  assertFinitePoint(centerB, "centerB");
+  assertNonNegativeRadius(radiusA, "radiusA");
+  assertNonNegativeRadius(radiusB, "radiusB");
+
+  const delta = subtractPoints(centerB, centerA);
+  const d = distance(centerA, centerB);
+
+  if (d <= GEOMETRY_EPSILON && Math.abs(radiusA - radiusB) <= GEOMETRY_EPSILON) {
+    // v0 behavior: coincident circles (infinite intersections) return empty.
+    return [];
+  }
+
+  if (d > radiusA + radiusB + GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  if (d < Math.abs(radiusA - radiusB) - GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  if (d <= GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  const a = (radiusA * radiusA - radiusB * radiusB + d * d) / (2 * d);
+  const hSquared = radiusA * radiusA - a * a;
+
+  if (hSquared < -GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  const midX = centerA.x + (a * delta.dx) / d;
+  const midY = centerA.y + (a * delta.dy) / d;
+
+  if (Math.abs(hSquared) <= GEOMETRY_EPSILON) {
+    return [point(midX, midY)];
+  }
+
+  const h = Math.sqrt(Math.max(0, hSquared));
+  const rx = (-delta.dy * h) / d;
+  const ry = (delta.dx * h) / d;
+
+  return [
+    point(midX + rx, midY + ry),
+    point(midX - rx, midY - ry),
+  ];
 }
 
 export function polar(origin: Point, radius: number, angleDegrees: number): Point {

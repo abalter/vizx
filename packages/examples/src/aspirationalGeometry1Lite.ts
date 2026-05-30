@@ -1,4 +1,4 @@
-import { angleLabelPoint, point } from "@vizx/geometry";
+import { angleLabelPoint, lineLineIntersection, point } from "@vizx/geometry";
 import { angleMarkPath, arrowEnd, circle, line, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
@@ -6,8 +6,8 @@ import type { VizxExample } from "./types";
   Aspirational reproduction note:
   - Original: examples/aspirational_gallery/asymptote/geometry_1
   - Target level: Level 1 to Level 2
-  - Compromises: manual coordinates and manual frame vectors; no source translation;
-    no intersection/construction solver; no automatic label placement; no full visual fidelity
+  - Compromises: manual coordinates and manual frame vectors; explicit helper-called intersections only;
+    no source translation; no construction solver; no automatic label placement; no full visual fidelity
 */
 export const aspirationalGeometry1LiteExample: VizxExample = {
   id: "aspirational-geometry-1-lite",
@@ -42,12 +42,38 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
     const originPrime = point(210, 186);
     const iPrime = point(30, -30);
     const jPrime = point(-30, -30);
-    const pPrime = fromBasis(originPrime, iPrime, jPrime, m.x, m.y);
+    const pPrimeLineA1 = add(originPrime, scale(iPrime, m.x));
+    const pPrimeLineA2 = add(pPrimeLineA1, jPrime);
+    const pPrimeLineB1 = add(originPrime, scale(jPrime, m.y));
+    const pPrimeLineB2 = add(pPrimeLineB1, iPrime);
+    const pPrime = lineLineIntersection(
+      pPrimeLineA1,
+      pPrimeLineA2,
+      pPrimeLineB1,
+      pPrimeLineB2,
+    );
+
+    if (!pPrime) {
+      throw new Error("Expected non-parallel construction lines for P'");
+    }
 
     const originDoublePrime = point(324, 188);
     const iDoublePrime = point(30, 30);
     const jDoublePrime = point(30, -30);
-    const pDoublePrime = fromBasis(originDoublePrime, iDoublePrime, jDoublePrime, m.x, m.y);
+    const pDoublePrimeLineA1 = add(originDoublePrime, scale(iDoublePrime, m.x));
+    const pDoublePrimeLineA2 = add(pDoublePrimeLineA1, jDoublePrime);
+    const pDoublePrimeLineB1 = add(originDoublePrime, scale(jDoublePrime, m.y));
+    const pDoublePrimeLineB2 = add(pDoublePrimeLineB1, iDoublePrime);
+    const pDoublePrime = lineLineIntersection(
+      pDoublePrimeLineA1,
+      pDoublePrimeLineA2,
+      pDoublePrimeLineB1,
+      pDoublePrimeLineB2,
+    );
+
+    if (!pDoublePrime) {
+      throw new Error("Expected non-parallel construction lines for P''");
+    }
 
     const angleRadius = 24;
     const angleLabel = angleLabelPoint(origin, add(origin, i), add(origin, iPrime), angleRadius, {

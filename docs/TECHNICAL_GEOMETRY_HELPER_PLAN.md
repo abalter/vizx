@@ -24,6 +24,10 @@ Current implementation status:
 - angle-mark follow-on helpers now implemented:
   - `angleBetweenPoints`
   - `angleLabelPoint`
+- intersection helper slice now implemented:
+  - `lineLineIntersection`
+  - `lineCircleIntersections`
+  - `circleCircleIntersections`
 - helpers remain pure and dependency-free
 - core path model now includes a circular `arc` command
 - object-model now includes a thin companion builder helper `angleMarkPath(...)` that returns a plain `PathObject`
@@ -309,6 +313,7 @@ Constraints for the first slice:
 Future helper slices after the first implementation:
 
 - angle helpers after arc-path model decision
+- intersection follow-on helpers (segment/ray variants, arc/path intersections)
 - coordinate-frame helper expansion
 - small vector algebra additions
 - projection helpers for 2.5D milestone

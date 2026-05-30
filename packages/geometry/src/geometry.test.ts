@@ -16,8 +16,11 @@ import {
   angleOf,
   angleDeltaDegrees,
   angleLabelPoint,
+  circleCircleIntersections,
   identityTransform,
   isAngleWithinSweep,
+  lineCircleIntersections,
+  lineLineIntersection,
   linearScale,
   mapDataPoint,
   midpoint,
@@ -34,6 +37,17 @@ import {
   transformPoints,
   vector,
 } from "./geometry";
+
+function expectPointClose(actual: { x: number; y: number }, expected: { x: number; y: number }): void {
+  expect(actual.x).toBeCloseTo(expected.x, 8);
+  expect(actual.y).toBeCloseTo(expected.y, 8);
+}
+
+function expectContainsPoint(points: readonly { x: number; y: number }[], expected: { x: number; y: number }): void {
+  expect(
+    points.some((entry) => Math.abs(entry.x - expected.x) <= 1e-8 && Math.abs(entry.y - expected.y) <= 1e-8),
+  ).toBe(true);
+}
 
 describe("geometry kernel", () => {
   it("adds a vector to a point", () => {
@@ -401,5 +415,134 @@ describe("geometry kernel", () => {
       xRange: [0, 100],
       yRange: [100, 0],
     }, { x: Number.NaN, y: 0 })).toThrow("dataPoint.x");
+  });
+
+  it("computes line-line intersections for crossing infinite lines", () => {
+    const intersection = lineLineIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(0, 4),
+      point(4, 0),
+    );
+
+    expect(intersection).not.toBeNull();
+
+    if (!intersection) {
+      throw new Error("Expected crossing lines to intersect");
+    }
+
+    expectPointClose(intersection, point(2, 2));
+  });
+
+  it("returns null for parallel line-line intersections", () => {
+    expect(lineLineIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(1, 0),
+      point(5, 4),
+    )).toBeNull();
+  });
+
+  it("returns null for coincident line-line intersections in v0", () => {
+    expect(lineLineIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(2, 2),
+      point(8, 8),
+    )).toBeNull();
+  });
+
+  it("computes two line-circle secant intersections", () => {
+    const intersections = lineCircleIntersections(
+      point(-6, 0),
+      point(6, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(intersections).toHaveLength(2);
+    expectContainsPoint(intersections, point(-5, 0));
+    expectContainsPoint(intersections, point(5, 0));
+  });
+
+  it("computes one line-circle tangent intersection", () => {
+    const intersections = lineCircleIntersections(
+      point(-5, 5),
+      point(5, 5),
+      point(0, 0),
+      5,
+    );
+
+    expect(intersections).toHaveLength(1);
+    expectPointClose(intersections[0]!, point(0, 5));
+  });
+
+  it("returns no line-circle intersections when disjoint", () => {
+    expect(lineCircleIntersections(
+      point(-5, 6),
+      point(5, 6),
+      point(0, 0),
+      5,
+    )).toEqual([]);
+  });
+
+  it("rejects invalid line-circle inputs", () => {
+    expect(() => lineCircleIntersections(point(1, 1), point(1, 1), point(0, 0), 2)).toThrow("line");
+    expect(() => lineCircleIntersections(point(0, 0), point(1, 1), point(0, 0), -1)).toThrow("radius");
+  });
+
+  it("computes two circle-circle intersections", () => {
+    const intersections = circleCircleIntersections(
+      point(0, 0),
+      5,
+      point(8, 0),
+      5,
+    );
+
+    expect(intersections).toHaveLength(2);
+    expectContainsPoint(intersections, point(4, 3));
+    expectContainsPoint(intersections, point(4, -3));
+  });
+
+  it("computes one circle-circle tangent intersection", () => {
+    const intersections = circleCircleIntersections(
+      point(0, 0),
+      5,
+      point(10, 0),
+      5,
+    );
+
+    expect(intersections).toHaveLength(1);
+    expectPointClose(intersections[0]!, point(5, 0));
+  });
+
+  it("returns no circle-circle intersections when separated or contained", () => {
+    expect(circleCircleIntersections(
+      point(0, 0),
+      2,
+      point(8, 0),
+      2,
+    )).toEqual([]);
+
+    expect(circleCircleIntersections(
+      point(0, 0),
+      6,
+      point(1, 0),
+      2,
+    )).toEqual([]);
+  });
+
+  it("returns no intersections for coincident circles in v0", () => {
+    expect(circleCircleIntersections(
+      point(3, 4),
+      5,
+      point(3, 4),
+      5,
+    )).toEqual([]);
+  });
+
+  it("rejects negative radii for circle-circle intersections", () => {
+    expect(() => circleCircleIntersections(point(0, 0), -1, point(4, 0), 2)).toThrow("radiusA");
+    expect(() => circleCircleIntersections(point(0, 0), 1, point(4, 0), -2)).toThrow("radiusB");
   });
 });

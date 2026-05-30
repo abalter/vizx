@@ -24,6 +24,7 @@ Target drawing families include:
 Current VizX capabilities that already support this track:
 
 - point and geometry helpers (`point`, `midpoint`, `distance`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`, `angleBetweenPoints`, `angleLabelPoint`)
+- intersection helpers (`lineLineIntersection`, `lineCircleIntersections`, `circleCircleIntersections`)
 - primitive geometry (`line`, `polyline`, `polygon`, `ellipse`, `circle`, `path`, `rect`, `text`, `group`)
 - Bezier and circular-arc path commands (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
 - angle-mark helper (`angleMarkPath`)
@@ -38,9 +39,9 @@ Current VizX capabilities that already support this track:
 
 Current blockers for higher-fidelity technical/math diagrams:
 
-- no intersection helpers
 - no construction solver behavior
-- no line-circle or circle-circle intersection helpers
+- no segment/ray intersection clipping helpers
+- no polygon/path/Bezier/arc intersection helpers
 - no tangent helpers
 - no cutbefore/cutafter behavior
 - no path length or point-at-length helpers
