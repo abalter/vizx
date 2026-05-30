@@ -82,6 +82,10 @@ Current style baseline in `Style`:
 - `stroke?: string`
 - `fill?: string`
 - `strokeWidth?: number`
+- `strokeDasharray?: readonly number[]`
+- `strokeLineCap?: "butt" | "round" | "square"`
+- `strokeLineJoin?: "miter" | "round" | "bevel"`
+- `fillRule?: "nonzero" | "evenodd"`
 - `fontFamily?: string`
 - `fontSize?: number`
 - `textAnchor?: "start" | "middle" | "end"`
@@ -213,7 +217,7 @@ Deferred for path follow-up slices:
 - flattening / sampling helpers
 - path intersections
 - smooth shorthand curve commands
-- fill-rule controls
+- split `strokeOpacity` / `fillOpacity` controls
 - clipping and path effects
 
 ### 2.6 Rect

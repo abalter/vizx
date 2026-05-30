@@ -227,12 +227,19 @@ describe("renderSvg", () => {
           y1: 20,
           x2: 80,
           y2: 20,
-          style: { stroke: "#ef4444", strokeWidth: 2, opacity: 0.7, fill: "none" },
+          style: {
+            stroke: "#ef4444",
+            strokeWidth: 2,
+            strokeDasharray: [4, 2],
+            strokeLineCap: "round",
+            opacity: 0.7,
+            fill: "none",
+          },
         },
         {
           kind: "polyline",
           points: [{ x: 20, y: 40 }, { x: 40, y: 60 }, { x: 70, y: 44 }],
-          style: { stroke: "#f97316", strokeWidth: 2, fill: "none" },
+          style: { stroke: "#f97316", strokeWidth: 2, fill: "none", strokeLineJoin: "round" },
         },
         {
           kind: "ellipse",
@@ -245,7 +252,7 @@ describe("renderSvg", () => {
         {
           kind: "polygon",
           points: [{ x: 128, y: 88 }, { x: 154, y: 64 }, { x: 186, y: 90 }, { x: 142, y: 106 }],
-          style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+          style: { stroke: "#0f766e", strokeWidth: 2, fill: "#ecfeff", fillRule: "evenodd" },
         },
       ],
     };
@@ -254,6 +261,10 @@ describe("renderSvg", () => {
 
     expect(svg).toContain('stroke="#ef4444"');
     expect(svg).toContain('stroke-width="2"');
+    expect(svg).toContain('stroke-dasharray="4 2"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(svg).toContain('stroke-linejoin="round"');
+    expect(svg).toContain('fill-rule="evenodd"');
     expect(svg).toContain('opacity="0.7"');
     expect(svg).toContain('stroke="#f97316"');
     expect(svg).toContain('stroke="#0ea5e9"');

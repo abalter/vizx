@@ -247,3 +247,27 @@ Explicitly out of scope for this milestone plan and first implementation slice:
 - [CAPABILITY_MATRIX.md](./CAPABILITY_MATRIX.md)
 - [ARC_AND_ANGLE_MARK_CHECKPOINT.md](./ARC_AND_ANGLE_MARK_CHECKPOINT.md)
 - [JS_GRAPHICS_LIBRARY_LANDSCAPE.md](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md)
+
+## 15. Implementation Status (Current)
+
+Implemented in the first Milestone 4 code slice:
+
+- `strokeDasharray`
+- `strokeLineCap`
+- `strokeLineJoin`
+- `fillRule`
+
+Implemented behavior:
+
+- shared `Style` type accepts all four fields
+- resolver style propagation preserves these fields through existing style merge/pass-through paths
+- SVG renderer serializes `stroke-dasharray`, `stroke-linecap`, `stroke-linejoin`, and `fill-rule`
+- no bbox/anchor/layout/distribution/connector geometry behavior changed
+
+Still deferred in style expansion:
+
+- `strokeOpacity`
+- `fillOpacity`
+- style presets/inheritance/themes/CSS-class systems
+- clipping, gradients, masks, blend modes, and pattern fills
+- parser syntax, JSON Core IR support, and parser AST support for these style fields

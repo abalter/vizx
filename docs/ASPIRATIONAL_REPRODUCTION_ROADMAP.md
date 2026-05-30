@@ -246,6 +246,12 @@ Detailed Milestone 4 plan:
 
 - [STYLE_EXPANSION_MODEL_PLAN.md](./STYLE_EXPANSION_MODEL_PLAN.md)
 
+Current status:
+
+- first implementation slice landed for `strokeDasharray`, `strokeLineCap`, `strokeLineJoin`, and `fillRule`
+- style serialization support is now present in the SVG renderer with resolver pass-through
+- `strokeOpacity`/`fillOpacity` remain deferred
+
 ## 8. Milestone 5 - Plot/Data Coordinate Model
 
 Goal:

@@ -130,6 +130,10 @@ function styleAttrs(style?: Style): string {
     stroke: style.stroke,
     fill: style.fill,
     "stroke-width": style.strokeWidth,
+    "stroke-dasharray": dasharrayAttr(style.strokeDasharray),
+    "stroke-linecap": style.strokeLineCap,
+    "stroke-linejoin": style.strokeLineJoin,
+    "fill-rule": style.fillRule,
     "font-family": style.fontFamily,
     "font-size": style.fontSize,
     "text-anchor": style.textAnchor,
@@ -140,6 +144,14 @@ function styleAttrs(style?: Style): string {
   };
 
   return attrsToString(attrs);
+}
+
+function dasharrayAttr(dasharray: readonly number[] | undefined): string | undefined {
+  if (!dasharray || dasharray.length === 0) {
+    return undefined;
+  }
+
+  return dasharray.join(" ");
 }
 
 function markerReference(markerName: string | undefined): string | undefined {

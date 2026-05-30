@@ -260,6 +260,10 @@ describe("example registry", () => {
     expect(svg).toContain('stroke="#0ea5e9"');
     expect(svg).toContain('stroke="#0f766e"');
     expect(svg).toContain('opacity="0.8"');
+    expect(svg).toContain('stroke-dasharray="8 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(svg).toContain('stroke-linejoin="round"');
+    expect(svg).toContain('fill-rule="evenodd"');
   });
 
   it("positions the relative-placement example around its center object", () => {

@@ -817,7 +817,7 @@ describe("resolveScene", () => {
           id: "styled-line",
           start: point(0, 0),
           end: point(40, 0),
-          style: { stroke: "#ef4444", strokeWidth: 2 },
+          style: { stroke: "#ef4444", strokeWidth: 2, strokeDasharray: [6, 3], strokeLineCap: "square" },
         },
         {
           kind: "ellipse",
@@ -830,7 +830,7 @@ describe("resolveScene", () => {
           kind: "polygon",
           id: "styled-polygon",
           points: [point(0, 40), point(15, 10), point(30, 40)],
-          style: { stroke: "#0f766e", strokeWidth: 3 },
+          style: { stroke: "#0f766e", strokeWidth: 3, strokeLineJoin: "bevel", fillRule: "evenodd" },
         },
       ],
     };
@@ -843,12 +843,16 @@ describe("resolveScene", () => {
     expect(result.diagnostics).toEqual([]);
     expect(line?.renderNode.style?.stroke).toBe("#ef4444");
     expect(line?.renderNode.style?.strokeWidth).toBe(2);
+    expect(line?.renderNode.style?.strokeDasharray).toEqual([6, 3]);
+    expect(line?.renderNode.style?.strokeLineCap).toBe("square");
     expect(ellipse?.renderNode.style?.stroke).toBe("black");
     expect(ellipse?.renderNode.style?.fill).toBe("none");
     expect(ellipse?.renderNode.style?.strokeWidth).toBe(1);
     expect(polygon?.renderNode.style?.stroke).toBe("#0f766e");
     expect(polygon?.renderNode.style?.strokeWidth).toBe(3);
     expect(polygon?.renderNode.style?.fill).toBe("none");
+    expect(polygon?.renderNode.style?.strokeLineJoin).toBe("bevel");
+    expect(polygon?.renderNode.style?.fillRule).toBe("evenodd");
   });
 
   it("places two groups with a connector using anchor references", () => {
