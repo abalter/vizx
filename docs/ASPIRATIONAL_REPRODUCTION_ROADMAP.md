@@ -105,6 +105,7 @@ Current status:
   - `aspirational-labeled-polygon`
   - `aspirational-arrow-label`
 - implemented as manual builder-authored Level 1-2 reproductions
+- `aspirational-labeled-polygon` now uses real circular angle marks for its beta labels
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
 

@@ -688,15 +688,27 @@ describe("example registry", () => {
     const svg = renderSvg(result.renderScene, { pretty: true });
     const debugScene = createDebugRenderScene(result);
     const polygon = requireResolvedObject(result, "poly.main");
+    const angleMark = scene.objects.find((object) => object.id === "beta.arc.0");
 
     expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
     expect(inspection.objects.some((object) => object.id === "poly.main" && object.kind === "polygon")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "vertex.A")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "vertex.C")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "vertex.E")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "beta.arc.0" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "beta.0")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "beta.1")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "beta.2")).toBe(true);
     expect(polygon.bbox.width).toBeGreaterThan(0);
     expect(polygon.bbox.height).toBeGreaterThan(0);
+    expect(angleMark?.kind).toBe("path");
+    if (!angleMark || angleMark.kind !== "path") {
+      throw new Error("Expected beta.arc.0 path object");
+    }
+
+    expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
     expect(svg).toContain("<polygon");
+    expect(svg).toContain(" A ");
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 

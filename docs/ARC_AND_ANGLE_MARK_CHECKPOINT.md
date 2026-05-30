@@ -235,7 +235,7 @@ Likely near-term follow-up examples for this branch are:
 
 Current state of the existing aspirational examples:
 
-- `aspirational-labeled-polygon` is the clearest immediate beneficiary and still explicitly approximates angle annotations with plain text
+- `aspirational-labeled-polygon` is the clearest immediate beneficiary and now uses real circular angle marks for its beta labels
 - `aspirational-android-lifecycle` and `aspirational-arrow-label` do not currently depend on arc support
 - `technical-angle-arc` is currently the only registry example using real angle-mark arc geometry
 

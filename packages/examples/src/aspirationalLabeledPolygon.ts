@@ -1,19 +1,19 @@
-import { midpoint, offsetPoint, point, regularPolygonPoints } from "@vizx/geometry";
-import { line, polygon, sceneOf, text } from "@vizx/object-model";
+import { angleLabelPoint, offsetPoint, point, regularPolygonPoints } from "@vizx/geometry";
+import { angleMarkPath, line, polygon, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
   Aspirational reproduction note:
   - Original: examples/aspirational_gallery/asymptote/labeled_polygon
   - Target level: Level 1 to Level 2
-  - Compromises: edge-angle arc annotations are approximated with plain text labels
-  - Missing features: no arc primitives for exact angle marks
+  - Compromises: some label placement and styling remain simplified relative to the original
+  - Missing features: no full annotation subsystem, and no multi-style or right-angle mark helpers
 */
 export const aspirationalLabeledPolygonExample: VizxExample = {
   id: "aspirational-labeled-polygon",
   title: "Aspirational: Labeled polygon",
   description:
-    "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels and simple interior guide segments.",
+    "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels and real circular angle marks.",
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",
@@ -26,10 +26,42 @@ export const aspirationalLabeledPolygonExample: VizxExample = {
   createScene: () => {
     const polygonPoints = regularPolygonPoints(point(188, 152), 84, 5, -96);
     const [a, b, c, d, e] = polygonPoints;
+    const angleMarkRadius = 22;
+    const angleLabelOffset = 10;
 
     if (!a || !b || !c || !d || !e) {
       throw new Error("Expected a 5-point regular polygon");
     }
+
+    const angleMarks = [
+      {
+        id: "beta.arc.0",
+        vertex: a,
+        fromPoint: e,
+        toPoint: b,
+        labelId: "beta.0",
+        labelCenter: angleLabelPoint(a, e, b, angleMarkRadius, { clockwise: true, offset: angleLabelOffset }),
+        labelText: "beta0",
+      },
+      {
+        id: "beta.arc.1",
+        vertex: c,
+        fromPoint: b,
+        toPoint: d,
+        labelId: "beta.1",
+        labelCenter: angleLabelPoint(c, b, d, angleMarkRadius, { clockwise: true, offset: angleLabelOffset }),
+        labelText: "beta1",
+      },
+      {
+        id: "beta.arc.2",
+        vertex: e,
+        fromPoint: d,
+        toPoint: a,
+        labelId: "beta.2",
+        labelCenter: angleLabelPoint(e, d, a, angleMarkRadius, { clockwise: true, offset: angleLabelOffset }),
+        labelText: "beta2",
+      },
+    ] as const;
 
     return sceneOf([
       polygon("poly.main", {
@@ -71,21 +103,21 @@ export const aspirationalLabeledPolygonExample: VizxExample = {
         text: "E",
         style: { fill: "#0f172a", fontSize: 12 },
       }),
-      text("beta.0", {
-        center: offsetPoint(midpoint(a, c), -10, -4),
-        text: "beta0",
-        style: { fill: "#0f766e", fontSize: 11 },
-      }),
-      text("beta.1", {
-        center: offsetPoint(midpoint(b, d), -6, -2),
-        text: "beta1",
-        style: { fill: "#0f766e", fontSize: 11 },
-      }),
-      text("beta.2", {
-        center: offsetPoint(midpoint(c, e), -2, -8),
-        text: "beta2",
-        style: { fill: "#0f766e", fontSize: 11 },
-      }),
+      ...angleMarks.flatMap((mark) => [
+        angleMarkPath(mark.id, {
+          vertex: mark.vertex,
+          fromPoint: mark.fromPoint,
+          toPoint: mark.toPoint,
+          radius: angleMarkRadius,
+          clockwise: true,
+          style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+        }),
+        text(mark.labelId, {
+          center: mark.labelCenter,
+          text: mark.labelText,
+          style: { fill: "#0f766e", fontSize: 11 },
+        }),
+      ]),
       text("caption", {
         center: { x: 188, y: 24 },
         text: "Labeled polygon (approximation)",
