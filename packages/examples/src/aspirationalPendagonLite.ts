@@ -1,9 +1,9 @@
 import {
   circleCircleIntersections,
   distance,
-  lineCircleIntersections,
   midpoint,
   point,
+  rayCircleIntersections,
 } from "@vizx/geometry";
 import { circle, line, polygon, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
@@ -12,7 +12,8 @@ import type { VizxExample } from "./types";
   Aspirational reproduction note:
   - Original: examples/aspirational_gallery/metapost/pendagon.mp
   - Target level: Level 1 to Level 2
-  - Compromises: manual coordinates and simplified styling; explicit helper-called construction points only;
+  - Compromises: manual coordinates and simplified styling; explicit helper-called construction points only,
+    including clipped ray-circle construction for L/T on OU;
     no source translation; no construction solver; no automatic label placement; no full visual fidelity
 */
 export const aspirationalPendagonLiteExample: VizxExample = {
@@ -56,19 +57,26 @@ export const aspirationalPendagonLiteExample: VizxExample = {
       throw new Error("Expected sorted helper intersections P1 and P2");
     }
 
-    const lineOUIntersections = lineCircleIntersections(
+    const rightRayIntersections = rayCircleIntersections(
       centerO,
       pointU,
       helperCircleCenter,
       helperCircleRadius,
     );
-    if (lineOUIntersections.length !== 2) {
-      throw new Error("Expected two intersections between line OU and circle C_KA");
+
+    const leftRayIntersections = rayCircleIntersections(
+      pointU,
+      centerO,
+      helperCircleCenter,
+      helperCircleRadius,
+    );
+
+    if (rightRayIntersections.length !== 1 || leftRayIntersections.length !== 1) {
+      throw new Error("Expected one clipped intersection for each opposing ray on OU and circle C_KA");
     }
 
-    const sortedLineOU = [...lineOUIntersections].sort((a, b) => a.x - b.x);
-    const pointL = sortedLineOU[0];
-    const pointT = sortedLineOU[1];
+    const pointL = leftRayIntersections[0];
+    const pointT = rightRayIntersections[0];
 
     if (!pointL || !pointT) {
       throw new Error("Expected sorted line-circle intersections L and T");

@@ -27,11 +27,16 @@ import {
   normalizeAngleDegrees,
   offsetPoint,
   point,
+  pointOnRay,
+  pointOnSegment,
   polar,
+  rayCircleIntersections,
   bboxFromCircularArc,
   regularPolygonPoints,
   rotatePoint,
   scalePoint,
+  segmentCircleIntersections,
+  segmentSegmentIntersection,
   subtractPoints,
   tangentLineAtCirclePoint,
   tangentPointsFromPointToCircle,
@@ -452,6 +457,165 @@ describe("geometry kernel", () => {
       point(2, 2),
       point(8, 8),
     )).toBeNull();
+  });
+
+  it("detects points on finite segments", () => {
+    expect(pointOnSegment(point(2, 2), point(0, 0), point(4, 4))).toBe(true);
+    expect(pointOnSegment(point(0, 0), point(0, 0), point(4, 4))).toBe(true);
+    expect(pointOnSegment(point(5, 5), point(0, 0), point(4, 4))).toBe(false);
+    expect(pointOnSegment(point(2, 3), point(0, 0), point(4, 4))).toBe(false);
+  });
+
+  it("handles zero-length segments for pointOnSegment", () => {
+    expect(pointOnSegment(point(1, 1), point(1, 1), point(1, 1))).toBe(true);
+    expect(pointOnSegment(point(1, 1.01), point(1, 1), point(1, 1))).toBe(false);
+  });
+
+  it("detects points on rays", () => {
+    expect(pointOnRay(point(3, 3), point(0, 0), point(1, 1))).toBe(true);
+    expect(pointOnRay(point(-1, -1), point(0, 0), point(1, 1))).toBe(false);
+    expect(pointOnRay(point(2, 3), point(0, 0), point(1, 1))).toBe(false);
+  });
+
+  it("rejects zero-length rays for pointOnRay", () => {
+    expect(() => pointOnRay(point(1, 1), point(0, 0), point(0, 0))).toThrow("ray");
+  });
+
+  it("computes finite segment-segment intersections", () => {
+    const crossing = segmentSegmentIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(0, 4),
+      point(4, 0),
+    );
+
+    expect(crossing).not.toBeNull();
+    if (!crossing) {
+      throw new Error("Expected crossing segments to intersect");
+    }
+
+    expectPointClose(crossing, point(2, 2));
+
+    const touching = segmentSegmentIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(4, 4),
+      point(8, 4),
+    );
+
+    expect(touching).not.toBeNull();
+    if (!touching) {
+      throw new Error("Expected endpoint-touching segments to intersect");
+    }
+
+    expectPointClose(touching, point(4, 4));
+  });
+
+  it("returns null for disjoint, parallel, and overlapping segment-segment cases in v0", () => {
+    expect(segmentSegmentIntersection(
+      point(0, 0),
+      point(1, 1),
+      point(2, 0),
+      point(3, 1),
+    )).toBeNull();
+
+    expect(segmentSegmentIntersection(
+      point(0, 0),
+      point(4, 4),
+      point(0, 1),
+      point(4, 5),
+    )).toBeNull();
+
+    expect(segmentSegmentIntersection(
+      point(0, 0),
+      point(4, 0),
+      point(2, 0),
+      point(6, 0),
+    )).toBeNull();
+  });
+
+  it("computes finite segment-circle intersections", () => {
+    const secants = segmentCircleIntersections(
+      point(-6, 0),
+      point(6, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(secants).toHaveLength(2);
+    expectContainsPoint(secants, point(-5, 0));
+    expectContainsPoint(secants, point(5, 0));
+
+    const tangent = segmentCircleIntersections(
+      point(-5, 5),
+      point(5, 5),
+      point(0, 0),
+      5,
+    );
+
+    expect(tangent).toHaveLength(1);
+    expectPointClose(tangent[0]!, point(0, 5));
+
+    const missesFiniteSegment = segmentCircleIntersections(
+      point(6, 0),
+      point(8, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(missesFiniteSegment).toEqual([]);
+
+    const endpointHit = segmentCircleIntersections(
+      point(5, 0),
+      point(8, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(endpointHit).toHaveLength(1);
+    expectPointClose(endpointHit[0]!, point(5, 0));
+  });
+
+  it("computes ray-circle intersections with forward filtering", () => {
+    const forwardHits = rayCircleIntersections(
+      point(-10, 0),
+      point(-9, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(forwardHits).toHaveLength(2);
+    expectContainsPoint(forwardHits, point(-5, 0));
+    expectContainsPoint(forwardHits, point(5, 0));
+
+    const awayFromCircle = rayCircleIntersections(
+      point(-10, 0),
+      point(-11, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(awayFromCircle).toEqual([]);
+
+    const tangent = rayCircleIntersections(
+      point(-5, 5),
+      point(5, 5),
+      point(0, 0),
+      5,
+    );
+
+    expect(tangent).toHaveLength(1);
+    expectPointClose(tangent[0]!, point(0, 5));
+
+    const insideOrigin = rayCircleIntersections(
+      point(1, 0),
+      point(2, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(insideOrigin).toHaveLength(1);
+    expectPointClose(insideOrigin[0]!, point(5, 0));
   });
 
   it("computes two line-circle secant intersections", () => {

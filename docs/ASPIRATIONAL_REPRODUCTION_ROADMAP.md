@@ -91,6 +91,11 @@ Current limitations and intentional deferrals:
 - graph layout/routing
 - source-language translation
 
+Current note:
+
+- first segment/ray clipped construction helpers now exist in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`)
+- these helpers remain pure, explicit, and solver-free
+
 ## 4. Milestone 1 - Current-Capability Aspirational Mini-Gallery
 
 Goal:
@@ -129,6 +134,7 @@ Current status:
 - `aspirational-projectile-motion-lite` combines Bezier trajectory pathing, launch-angle arc annotation, arrowed vector styling, and dashed construction guides using existing capabilities only
 - `aspirational-geometry-1-lite` provides a manual coordinate-frame geometry sketch with labeled axes, mapped points, dashed guides, and an angle mark using existing capabilities only
 - `aspirational-pendagon-lite` provides a manual intersection-driven construction sketch using explicit helper-called `circleCircleIntersections(...)` and `lineCircleIntersections(...)` results for derived geometry points
+- `aspirational-pendagon-lite` now additionally uses clipped `rayCircleIntersections(...)` for finite-direction construction points on `OU`
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
 

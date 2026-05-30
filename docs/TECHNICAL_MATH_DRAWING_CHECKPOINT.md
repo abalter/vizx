@@ -58,8 +58,16 @@ Current explicit intersection helpers include:
 - `lineLineIntersection`
 - `lineCircleIntersections`
 - `circleCircleIntersections`
+- `segmentSegmentIntersection`
+- `segmentCircleIntersections`
+- `rayCircleIntersections`
+- `pointOnSegment`
+- `pointOnRay`
 
-These currently operate on infinite primitives and intentionally do not provide segment/ray clipping variants yet.
+Current note:
+
+- line-based helpers still provide infinite-primitive intersections
+- segment/ray helpers now provide bounded finite-primitive filtering for the v0 slice
 
 ### 2.4 Tangent helpers
 
@@ -124,7 +132,6 @@ Still missing for higher-fidelity technical/math construction work:
 - no construction solver
 - no automatic dependency graph/inference for geometric constructions
 - no common tangents between two circles
-- no segment/ray-clipped intersection variants
 - no tangent-to-path or tangent-to-arc helpers
 - no `cutbefore`/`cutafter`
 - no path length or point-at-length
@@ -136,6 +143,11 @@ Still missing for higher-fidelity technical/math construction work:
 - no parser/JSON/AST support for helper surfaces
 
 ## 6. Next Branch Options
+
+Current status update:
+
+- Option A (segment/ray clipped helpers) is now implemented in a narrow v0 slice.
+- See `docs/GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md`.
 
 ### Option A: Segment/ray variants and clipped constructions
 
@@ -213,7 +225,7 @@ Cons:
 
 ## 7. Recommendation
 
-Default recommendation: choose Option A next (segment/ray clipped construction helpers).
+Recommendation after this slice: continue with the next bounded helper branch where repeated example pressure appears (for example common tangents, right-angle annotation helpers, or cutbefore/cutafter-adjacent planning without rendering semantics).
 
 Rationale:
 
@@ -229,9 +241,19 @@ Alternate sequencing if visible output is prioritized:
 
 ## 8. Suggested Next Implementation Slice
 
-Recommended next prompt target:
+Completed in this pass:
 
 - docs-first plan: `docs/GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md`
+- helper additions (pure geometry only):
+  - `segmentSegmentIntersection`
+  - `segmentCircleIntersections`
+  - `rayCircleIntersections`
+  - `pointOnSegment`
+  - `pointOnRay`
+
+Suggested next prompt target:
+
+- one bounded follow-on helper branch (common tangents, right-angle annotation helpers, or a narrowly scoped segment/ray extension)
 
 Then a bounded implementation slice:
 

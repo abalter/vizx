@@ -242,6 +242,110 @@ export function lineLineIntersection(a1: Point, a2: Point, b1: Point, b2: Point)
   );
 }
 
+export function pointOnSegment(testPoint: Point, a: Point, b: Point): boolean {
+  assertFinitePoint(testPoint, "testPoint");
+  assertFinitePoint(a, "a");
+  assertFinitePoint(b, "b");
+
+  const segment = subtractPoints(b, a);
+  const segmentLength = Math.hypot(segment.dx, segment.dy);
+
+  if (segmentLength <= GEOMETRY_EPSILON) {
+    return distance(testPoint, a) <= GEOMETRY_EPSILON;
+  }
+
+  const fromA = subtractPoints(testPoint, a);
+  const cross = cross2D(fromA, segment);
+
+  if (Math.abs(cross) > GEOMETRY_EPSILON * Math.max(1, segmentLength)) {
+    return false;
+  }
+
+  const projection = dot2D(fromA, segment);
+  const segmentLengthSquared = dot2D(segment, segment);
+
+  return projection >= -GEOMETRY_EPSILON
+    && projection <= segmentLengthSquared + GEOMETRY_EPSILON;
+}
+
+export function pointOnRay(testPoint: Point, origin: Point, through: Point): boolean {
+  assertFinitePoint(testPoint, "testPoint");
+  assertFinitePoint(origin, "origin");
+  assertFinitePoint(through, "through");
+  assertNonDegenerateLine(origin, through, "ray");
+
+  const direction = subtractPoints(through, origin);
+  const fromOrigin = subtractPoints(testPoint, origin);
+  const cross = cross2D(fromOrigin, direction);
+  const directionLength = Math.hypot(direction.dx, direction.dy);
+
+  if (Math.abs(cross) > GEOMETRY_EPSILON * Math.max(1, directionLength)) {
+    return false;
+  }
+
+  const projection = dot2D(fromOrigin, direction);
+
+  return projection >= -GEOMETRY_EPSILON;
+}
+
+export function segmentSegmentIntersection(a1: Point, a2: Point, b1: Point, b2: Point): Point | null {
+  assertFinitePoint(a1, "a1");
+  assertFinitePoint(a2, "a2");
+  assertFinitePoint(b1, "b1");
+  assertFinitePoint(b2, "b2");
+  assertNonDegenerateLine(a1, a2, "segment a");
+  assertNonDegenerateLine(b1, b2, "segment b");
+
+  const intersection = lineLineIntersection(a1, a2, b1, b2);
+
+  if (!intersection) {
+    // v0 behavior: parallel and overlapping collinear segments return null.
+    return null;
+  }
+
+  if (!pointOnSegment(intersection, a1, a2)) {
+    return null;
+  }
+
+  if (!pointOnSegment(intersection, b1, b2)) {
+    return null;
+  }
+
+  return intersection;
+}
+
+export function segmentCircleIntersections(
+  a: Point,
+  b: Point,
+  center: Point,
+  radius: number,
+): readonly Point[] {
+  assertFinitePoint(a, "a");
+  assertFinitePoint(b, "b");
+  assertFinitePoint(center, "center");
+  assertNonNegativeRadius(radius, "radius");
+  assertNonDegenerateLine(a, b, "segment");
+
+  return lineCircleIntersections(a, b, center, radius)
+    .filter((entry) => pointOnSegment(entry, a, b));
+}
+
+export function rayCircleIntersections(
+  origin: Point,
+  through: Point,
+  center: Point,
+  radius: number,
+): readonly Point[] {
+  assertFinitePoint(origin, "origin");
+  assertFinitePoint(through, "through");
+  assertFinitePoint(center, "center");
+  assertNonNegativeRadius(radius, "radius");
+  assertNonDegenerateLine(origin, through, "ray");
+
+  return lineCircleIntersections(origin, through, center, radius)
+    .filter((entry) => pointOnRay(entry, origin, through));
+}
+
 export function lineCircleIntersections(
   lineA: Point,
   lineB: Point,
