@@ -13,6 +13,17 @@ Top-level navigation:
 
 - [README.md](../README.md) for current status and entry points
 - [roadmap.md](../roadmap.md) for root milestone sequencing and deferred work
+- [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md) for technical/mathematical drawing priority guidance
+
+## Technical Track Priority Note
+
+Plot/data-coordinate planning is documented and remains useful, but near-term implementation pressure should prioritize technical/mathematical construction drawings.
+
+Priority guidance:
+
+- favor geometry/math/physics-style Level 1-2 examples
+- treat `aspirational-projectile-motion-lite` as a bridge example, not evidence of a chart subsystem
+- avoid expanding plot infrastructure unless example pressure requires it
 
 ## 1. Purpose
 
@@ -110,9 +121,11 @@ Current status:
   - `aspirational-labeled-polygon`
   - `aspirational-arrow-label`
   - `aspirational-projectile-motion-lite`
+  - `aspirational-geometry-1-lite`
 - implemented as manual builder-authored Level 1-2 reproductions
 - `aspirational-labeled-polygon` now uses real circular angle marks for its beta labels
 - `aspirational-projectile-motion-lite` combines Bezier trajectory pathing, launch-angle arc annotation, arrowed vector styling, and dashed construction guides using existing capabilities only
+- `aspirational-geometry-1-lite` provides a manual coordinate-frame geometry sketch with labeled axes, mapped points, dashed guides, and an angle mark using existing capabilities only
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
 

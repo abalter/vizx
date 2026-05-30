@@ -2,6 +2,7 @@ import { alignmentFamilyExample } from "./alignmentFamily";
 import { alignmentReferenceExample } from "./alignmentReference";
 import { aspirationalAndroidLifecycleExample } from "./aspirationalAndroidLifecycle";
 import { aspirationalArrowLabelExample } from "./aspirationalArrowLabel";
+import { aspirationalGeometry1LiteExample } from "./aspirationalGeometry1Lite";
 import { aspirationalLabeledPolygonExample } from "./aspirationalLabeledPolygon";
 import { aspirationalProjectileMotionLiteExample } from "./aspirationalProjectileMotionLite";
 import { arrowheadsExample } from "./arrowheads";
@@ -35,6 +36,7 @@ export const vizxExamples: readonly VizxExample[] = [
   alignmentReferenceExample,
   aspirationalAndroidLifecycleExample,
   aspirationalArrowLabelExample,
+  aspirationalGeometry1LiteExample,
   aspirationalLabeledPolygonExample,
   aspirationalProjectileMotionLiteExample,
   arrowheadsExample,

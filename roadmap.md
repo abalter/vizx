@@ -10,6 +10,7 @@ See also:
 - [DESIGN.md](./DESIGN.md)
 - [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
 - [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
+- [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md)
 
 ## A. Current Completed Foundation
 
@@ -39,6 +40,16 @@ Practical state:
 
 Milestones are example-driven and documented in detail in [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md).
 
+### Priority Note: Technical/Math Drawing First
+
+Near-term roadmap priority is technical/mathematical construction drawing using existing geometry/path/arc/style capabilities.
+
+- Plot/data-coordinate planning and helper slices remain useful.
+- Plot expansion is not the immediate branch focus.
+- Immediate example pressure should come from geometry/math/physics-style drawings.
+
+See [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md).
+
 ### 1. Current-capability aspirational mini-gallery
 
 Goal:
@@ -55,10 +66,11 @@ Representative examples:
 - aspirational-labeled-polygon
 - aspirational-arrow-label
 - aspirational-projectile-motion-lite
+- aspirational-geometry-1-lite
 
 Next likely slice:
 
-- add one more Level 1-2 aspirational example in an adjacent family
+- add one more Level 1-2 aspirational geometry/math example in an adjacent family
 
 ### 2. Technical geometry helper layer
 
@@ -128,6 +140,10 @@ Current status:
 - first helper slice implemented; broader plot/data model still planned
 - Milestone 5 planning docs now exist: [docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md](./docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md) and [docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md](./docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md)
 
+Priority clarification:
+
+- technical/math drawing work is currently prioritized over further plot infrastructure slices
+
 Representative targets:
 
 - timeline/schedule and simple plotted technical examples
@@ -160,14 +176,16 @@ Next likely slice:
 
 Recommended near-term sequence after this docs pass:
 
-1. Plan plot/data coordinate model (docs-only first).
-2. Optionally add one additional aspirational example using existing arcs and style distinctions.
-3. Evaluate a narrow style second slice (`strokeOpacity`/`fillOpacity`) only if visual pressure justifies it.
-4. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
+1. Add one additional geometry/math aspirational-lite example using current capabilities.
+2. Continue technical construction examples that expose geometry helper gaps.
+3. Evaluate narrow technical helper additions only when repeatedly justified by examples.
+4. Expand plot/data helper slices only after technical/math-example pressure subsides.
+5. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
 
 Current note:
 
 - one additional current-capability aspirational example (`aspirational-projectile-motion-lite`) now exists and remains deliberately outside any plot/data-coordinate model scope.
+- one additional current-capability geometry example (`aspirational-geometry-1-lite`) now exists and emphasizes technical/math construction drawing.
 
 ## D. Deferred Work
 

@@ -763,6 +763,39 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates aspirational-geometry-1-lite", () => {
+    const example = requireVizxExample("aspirational-geometry-1-lite");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const angleMark = scene.objects.find((object) => object.id === "geo1.angle.frame");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "geo1.axis.x" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.origin.circle" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.map.p_to_pp" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.point.pp" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.label.p")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.label.pp")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "geo1.label.ppp")).toBe(true);
+    expect(angleMark?.kind).toBe("path");
+
+    if (!angleMark || angleMark.kind !== "path") {
+      throw new Error("Expected geo1.angle.frame path object");
+    }
+
+    expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<line");
+    expect(svg).toContain(" A ");
+    expect(svg).toContain('stroke-dasharray="4 3"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates aspirational-arrow-label", () => {
     const example = requireVizxExample("aspirational-arrow-label");
     const scene = example.createScene();

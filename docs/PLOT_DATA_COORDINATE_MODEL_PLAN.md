@@ -11,6 +11,12 @@ Scope for this pass:
 - no parser AST expansion
 - no dependency additions
 
+Priority positioning:
+
+- this branch remains useful and documented
+- near-term roadmap pressure is currently technical/mathematical construction drawing
+- see [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md)
+
 ## 0. Current Implementation Checkpoint
 
 Implemented in the first Milestone 5 slice:
