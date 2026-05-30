@@ -4,12 +4,28 @@ This document starts Milestone 5 of the aspirational reproduction roadmap.
 
 Scope for this pass:
 
-- docs-only planning
-- no runtime implementation
+- first narrow helper implementation slice landed
+- still not a full plot runtime subsystem
 - no parser syntax work
 - no JSON Core IR expansion
 - no parser AST expansion
 - no dependency additions
+
+## 0. Current Implementation Checkpoint
+
+Implemented in the first Milestone 5 slice:
+
+- pure `linearScale(...)` helper in `@vizx/geometry`
+- pure `PlotFrame` + `mapDataPoint(...)` helper in `@vizx/geometry`
+- minimal `xAxis(...)` / `yAxis(...)` builder helpers emitting existing line/text objects
+- registry-backed example `technical-linear-plot`
+
+Still deferred:
+
+- no full plot/data runtime subsystem
+- no automatic tick generation strategy
+- no scatter-series helper surface
+- no parser/JSON/AST plot support
 
 ## 1. Purpose
 
@@ -220,15 +236,15 @@ Important boundary:
 
 ## 10. Recommended First Implementation Slice
 
-After this plan, recommended narrow code slice:
+Implemented narrow code slice:
 
-1. Add pure `linearScale(...)` helper.
-2. Add a small frame mapping helper for data point to scene point conversion.
-3. Add one axis helper that emits existing line/text objects.
-4. Add one registry-backed example:
+1. Added pure `linearScale(...)` helper.
+2. Added a frame mapping helper for data point to scene point conversion.
+3. Added axis helpers that emit existing line/text objects.
+4. Added one registry-backed example:
 - `technical-linear-plot` or
 - `aspirational-linear-regression-lite`
-5. Add focused tests for scale mapping and helper-generated object semantics.
+5. Added focused tests for scale mapping and helper-generated object semantics.
 
 Hard constraints for this slice:
 

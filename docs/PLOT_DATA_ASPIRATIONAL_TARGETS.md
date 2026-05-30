@@ -4,9 +4,14 @@ This audit supports Milestone 5 planning by reviewing real aspirational gallery 
 
 Scope for this pass:
 
-- docs-only audit
-- no runtime changes
+- target audit with first-helper-slice implementation checkpoint
+- no additional runtime scope beyond the first helper slice
 - no parser/JSON/AST changes
+
+Current checkpoint:
+
+- first helper slice exists (`linearScale`, `PlotFrame` + `mapDataPoint`, minimal axis helpers)
+- `technical-linear-plot` now provides a concrete v0 plot-like technical example
 
 ## 1. Purpose
 

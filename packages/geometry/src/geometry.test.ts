@@ -18,6 +18,8 @@ import {
   angleLabelPoint,
   identityTransform,
   isAngleWithinSweep,
+  linearScale,
+  mapDataPoint,
   midpoint,
   normalizeAngleDegrees,
   offsetPoint,
@@ -338,5 +340,66 @@ describe("geometry kernel", () => {
     expect(bbox.y).toBeCloseTo(0, 8);
     expect(bbox.width).toBeCloseTo(20, 8);
     expect(bbox.height).toBeCloseTo(10, 8);
+  });
+
+  it("maps linear scale endpoints and midpoint", () => {
+    const scale = linearScale([0, 10], [100, 300]);
+
+    expect(scale.map(0)).toBeCloseTo(100, 8);
+    expect(scale.map(10)).toBeCloseTo(300, 8);
+    expect(scale.map(5)).toBeCloseTo(200, 8);
+  });
+
+  it("supports reversed linear ranges", () => {
+    const scale = linearScale([0, 10], [300, 100]);
+
+    expect(scale.map(0)).toBeCloseTo(300, 8);
+    expect(scale.map(10)).toBeCloseTo(100, 8);
+    expect(scale.map(2.5)).toBeCloseTo(250, 8);
+  });
+
+  it("rejects zero-width domains and non-finite inputs for linear scale", () => {
+    expect(() => linearScale([4, 4], [0, 1])).toThrow("domain");
+    expect(() => linearScale([0, Number.POSITIVE_INFINITY], [0, 1])).toThrow("domain");
+
+    const scale = linearScale([0, 1], [0, 1]);
+    expect(() => scale.map(Number.NaN)).toThrow("value");
+  });
+
+  it("maps data points through a plot frame with reversed y range", () => {
+    const frame = {
+      xDomain: [0, 10] as const,
+      yDomain: [0, 100] as const,
+      xRange: [50, 250] as const,
+      yRange: [220, 80] as const,
+    };
+
+    const mapped = mapDataPoint(frame, { x: 2.5, y: 25 });
+
+    expect(mapped.x).toBeCloseTo(100, 8);
+    expect(mapped.y).toBeCloseTo(185, 8);
+  });
+
+  it("rejects invalid plot frame and data point inputs", () => {
+    expect(() => mapDataPoint({
+      xDomain: [0, 0],
+      yDomain: [0, 1],
+      xRange: [0, 100],
+      yRange: [100, 0],
+    }, { x: 0, y: 0 })).toThrow("xDomain");
+
+    expect(() => mapDataPoint({
+      xDomain: [0, 1],
+      yDomain: [0, 1],
+      xRange: [0, Number.NaN],
+      yRange: [100, 0],
+    }, { x: 0, y: 0 })).toThrow("xRange");
+
+    expect(() => mapDataPoint({
+      xDomain: [0, 1],
+      yDomain: [0, 1],
+      xRange: [0, 100],
+      yRange: [100, 0],
+    }, { x: Number.NaN, y: 0 })).toThrow("dataPoint.x");
   });
 });

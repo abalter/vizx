@@ -92,6 +92,11 @@ Style and arrow helpers:
 - `arrowStart(style?)`
 - `arrowEnd(style?)`
 
+Plot helper slice (v0):
+
+- `xAxis(idPrefix, frame, options?)`
+- `yAxis(idPrefix, frame, options?)`
+
 ## 3. Basic Object Construction Example
 
 Illustrative example using implemented helper names:
@@ -267,7 +272,39 @@ const scene = sceneOf(nodes);
 
 If a host app already uses D3 scales, compute coordinates/sizes in host code first, then pass plain numbers into builder helpers.
 
-## 9. Builder Versus ObjectScene Literals
+## 9. Linear Plot Helper Example
+
+The first Milestone 5 helper slice adds pure geometry mapping (`linearScale`, `mapDataPoint`) and minimal builder axis helpers (`xAxis`, `yAxis`) that emit plain line/text objects.
+
+```ts
+import { mapDataPoint, type PlotFrame } from "@vizx/geometry";
+import { polyline, sceneOf, xAxis, yAxis } from "@vizx/object-model";
+
+const frame: PlotFrame = {
+  xDomain: [0, 10],
+  yDomain: [60, 130],
+  xRange: [70, 350],
+  yRange: [220, 70],
+};
+
+const data = [82, 90, 100, 97, 70, 75, 93, 103, 115, 121, 119];
+
+const scene = sceneOf([
+  ...xAxis("plot.x", frame, { axisValue: 60, tickValues: [0, 2, 4, 6, 8, 10] }),
+  ...yAxis("plot.y", frame, { axisValue: 0, tickValues: [60, 80, 100, 120] }),
+  polyline("plot.series", {
+    points: data.map((value, index) => mapDataPoint(frame, { x: index, y: value })),
+  }),
+]);
+```
+
+Notes:
+
+- no new runtime object kinds are introduced
+- no parser syntax, JSON Core IR, or parser AST support is added in this slice
+- this is a small technical plotting helper surface, not a full chart system
+
+## 10. Builder Versus ObjectScene Literals
 
 Use builder helpers when:
 
@@ -285,7 +322,7 @@ Use raw ObjectScene literals when:
 
 Both approaches produce ObjectScene-compatible data.
 
-## 10. Builder Versus Parser Syntax
+## 11. Builder Versus Parser Syntax
 
 Current state:
 
@@ -294,7 +331,7 @@ Current state:
 - builder ergonomics may inform future parser design
 - builder does not require a custom VizX programming language
 
-## 10. Builder Versus JSON Core IR
+## 12. Builder Versus JSON Core IR
 
 Current state:
 
@@ -302,7 +339,7 @@ Current state:
 - JSON Core IR remains an interchange/fixture path
 - a builder-to-JSON bridge is not implemented in this slice
 
-## 11. Best Practices
+## 13. Best Practices
 
 - keep object IDs explicit and stable across refactors
 - prefer small local helper functions for reusable object clusters
@@ -311,7 +348,7 @@ Current state:
 - keep renderer-specific assumptions out of construction when possible
 - treat builder helpers as convenience constructors, not alternate semantics
 
-## 12. Current Limitations
+## 14. Current Limitations
 
 Not implemented in this builder pass:
 
@@ -323,7 +360,7 @@ Not implemented in this builder pass:
 - parser syntax expansion
 - JSON Core IR bridge from builder helpers
 
-## 13. Recommended Next Implementation Options
+## 15. Recommended Next Implementation Options
 
 1. Add more builder-based examples.
 - Mirror or convert relative-placement, alignment-family, and bezier-path scenes with builder helpers.

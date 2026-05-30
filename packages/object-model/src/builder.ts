@@ -1,5 +1,12 @@
 import type { Style } from "@vizx/core";
-import { angleBetweenPoints, circlePoint, type Point } from "@vizx/geometry";
+import {
+  angleBetweenPoints,
+  circlePoint,
+  linearScale,
+  mapDataPoint,
+  type PlotFrame,
+  type Point,
+} from "@vizx/geometry";
 import type { AnchorName, AnchorRef } from "./anchors";
 import type {
   ArcPathCommand,
@@ -112,6 +119,21 @@ interface AngleMarkPathOptions {
   readonly style?: Style;
 }
 
+interface AxisOptions {
+  readonly axisValue?: number;
+  readonly tickValues?: readonly number[];
+  readonly tickSize?: number;
+  readonly labelOffset?: number;
+  readonly labelFormatter?: (value: number) => string;
+  readonly gridLines?: boolean;
+  readonly axisStyle?: Style;
+  readonly tickStyle?: Style;
+  readonly gridStyle?: Style;
+  readonly labelStyle?: Style;
+}
+
+type AxisObject = LineObject | TextObject;
+
 export function arc(
   center: Point,
   radius: number,
@@ -151,6 +173,96 @@ export function angleMarkPath(id: string, options: AngleMarkPathOptions): PathOb
     ],
     ...(options.style ? { style: options.style } : {}),
   });
+}
+
+export function xAxis(idPrefix: string, frame: PlotFrame, options: AxisOptions = {}): readonly AxisObject[] {
+  const axisValue = options.axisValue ?? frame.yDomain[0];
+  const tickValues = options.tickValues ?? [];
+  const tickSize = options.tickSize ?? 6;
+  const labelOffset = options.labelOffset ?? 12;
+  const format = options.labelFormatter ?? ((value: number) => String(value));
+  const yScale = linearScale(frame.yDomain, frame.yRange);
+  const axisY = yScale.map(axisValue);
+  const [xStart, xEnd] = frame.xRange;
+
+  const objects: AxisObject[] = [
+    line(`${idPrefix}.axis`, {
+      start: { x: xStart, y: axisY },
+      end: { x: xEnd, y: axisY },
+      style: options.axisStyle,
+    }),
+  ];
+
+  for (const [index, value] of tickValues.entries()) {
+    const tickX = mapDataPoint(frame, { x: value, y: axisValue }).x;
+
+    if (options.gridLines) {
+      objects.push(line(`${idPrefix}.grid.${index}`, {
+        start: { x: tickX, y: frame.yRange[0] },
+        end: { x: tickX, y: frame.yRange[1] },
+        style: options.gridStyle,
+      }));
+    }
+
+    objects.push(line(`${idPrefix}.tick.${index}`, {
+      start: { x: tickX, y: axisY - tickSize / 2 },
+      end: { x: tickX, y: axisY + tickSize / 2 },
+      style: options.tickStyle,
+    }));
+
+    objects.push(text(`${idPrefix}.label.${index}`, {
+      center: { x: tickX, y: axisY + labelOffset },
+      text: format(value),
+      style: options.labelStyle,
+    }));
+  }
+
+  return objects;
+}
+
+export function yAxis(idPrefix: string, frame: PlotFrame, options: AxisOptions = {}): readonly AxisObject[] {
+  const axisValue = options.axisValue ?? frame.xDomain[0];
+  const tickValues = options.tickValues ?? [];
+  const tickSize = options.tickSize ?? 6;
+  const labelOffset = options.labelOffset ?? 14;
+  const format = options.labelFormatter ?? ((value: number) => String(value));
+  const xScale = linearScale(frame.xDomain, frame.xRange);
+  const axisX = xScale.map(axisValue);
+  const [yStart, yEnd] = frame.yRange;
+
+  const objects: AxisObject[] = [
+    line(`${idPrefix}.axis`, {
+      start: { x: axisX, y: yStart },
+      end: { x: axisX, y: yEnd },
+      style: options.axisStyle,
+    }),
+  ];
+
+  for (const [index, value] of tickValues.entries()) {
+    const tickY = mapDataPoint(frame, { x: axisValue, y: value }).y;
+
+    if (options.gridLines) {
+      objects.push(line(`${idPrefix}.grid.${index}`, {
+        start: { x: frame.xRange[0], y: tickY },
+        end: { x: frame.xRange[1], y: tickY },
+        style: options.gridStyle,
+      }));
+    }
+
+    objects.push(line(`${idPrefix}.tick.${index}`, {
+      start: { x: axisX - tickSize / 2, y: tickY },
+      end: { x: axisX + tickSize / 2, y: tickY },
+      style: options.tickStyle,
+    }));
+
+    objects.push(text(`${idPrefix}.label.${index}`, {
+      center: { x: axisX - labelOffset, y: tickY },
+      text: format(value),
+      style: options.labelStyle,
+    }));
+  }
+
+  return objects;
 }
 
 export function anchor(objectId: string, name: AnchorName = "center"): AnchorRef {

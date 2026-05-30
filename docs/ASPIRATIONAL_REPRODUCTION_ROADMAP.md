@@ -302,7 +302,7 @@ Acceptance criteria:
 Current status:
 
 - planning docs now exist
-- no runtime plot/data-coordinate implementation yet
+- first narrow helper slice implemented (`linearScale`, `PlotFrame` + `mapDataPoint`, minimal axis helpers, `technical-linear-plot`)
 - `aspirational-projectile-motion-lite` remains a manual bridge example, not a plot model implementation
 
 Milestone 5 planning documents:

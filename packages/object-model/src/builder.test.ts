@@ -21,6 +21,8 @@ import {
   sceneOf,
   text,
   translate,
+  xAxis,
+  yAxis,
 } from "./builder";
 
 describe("object-model builder helpers", () => {
@@ -196,5 +198,49 @@ describe("object-model builder helpers", () => {
       ],
       style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
     });
+  });
+
+  it("creates x-axis and y-axis helper output as plain line/text objects", () => {
+    const frame = {
+      xDomain: [0, 10] as const,
+      yDomain: [0, 100] as const,
+      xRange: [60, 300] as const,
+      yRange: [220, 80] as const,
+    };
+    const xObjects = xAxis("plot.x", frame, {
+      axisValue: 0,
+      tickValues: [0, 5, 10],
+      gridLines: true,
+    });
+    const yObjects = yAxis("plot.y", frame, {
+      axisValue: 0,
+      tickValues: [0, 50, 100],
+      gridLines: true,
+    });
+
+    expect(xObjects.find((object) => object.id === "plot.x.axis" && object.kind === "line")).toBeDefined();
+    expect(xObjects.some((object) => object.id === "plot.x.tick.0" && object.kind === "line")).toBe(true);
+    expect(xObjects.some((object) => object.id === "plot.x.label.0" && object.kind === "text")).toBe(true);
+    expect(xObjects.some((object) => object.id === "plot.x.grid.1" && object.kind === "line")).toBe(true);
+
+    expect(yObjects.find((object) => object.id === "plot.y.axis" && object.kind === "line")).toBeDefined();
+    expect(yObjects.some((object) => object.id === "plot.y.tick.2" && object.kind === "line")).toBe(true);
+    expect(yObjects.some((object) => object.id === "plot.y.label.1" && object.kind === "text")).toBe(true);
+    expect(yObjects.some((object) => object.id === "plot.y.grid.0" && object.kind === "line")).toBe(true);
+  });
+
+  it("does not mutate frame inputs passed to axis helpers", () => {
+    const frame = {
+      xDomain: [0, 10] as const,
+      yDomain: [0, 100] as const,
+      xRange: [60, 300] as const,
+      yRange: [220, 80] as const,
+    };
+    const before = JSON.parse(JSON.stringify(frame));
+
+    xAxis("plot.x", frame, { axisValue: 0, tickValues: [0, 10] });
+    yAxis("plot.y", frame, { axisValue: 0, tickValues: [0, 100] });
+
+    expect(frame).toEqual(before);
   });
 });

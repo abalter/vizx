@@ -125,7 +125,7 @@ Goal:
 
 Current status:
 
-- planned, not implemented
+- first helper slice implemented; broader plot/data model still planned
 - Milestone 5 planning docs now exist: [docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md](./docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md) and [docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md](./docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md)
 
 Representative targets:
@@ -135,7 +135,8 @@ Representative targets:
 Next likely slice:
 
 - docs-first model plan for coordinate systems, axes, ticks, and mark generation boundaries (completed)
-- first implementation slice remains pending (v0 linear scale + frame mapping + minimal axis helper)
+- first implementation slice landed (`linearScale`, `PlotFrame` + `mapDataPoint`, minimal `xAxis`/`yAxis`, `technical-linear-plot`)
+- next bounded follow-up: scatter/series helper refinement and one additional plot-like aspirational-lite example
 
 ### 6. 2.5D/projection helpers
 

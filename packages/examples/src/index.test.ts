@@ -807,6 +807,30 @@ describe("example registry", () => {
     expect(svg).toContain("<path");
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
+
+  it("registers and semantically validates technical-linear-plot", () => {
+    const example = requireVizxExample("technical-linear-plot");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const series = scene.objects.find((object) => object.id === "plot.series");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "plot.frame")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "plot.x.axis" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "plot.y.axis" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "plot.x.label.0" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "plot.series" && object.kind === "polyline")).toBe(true);
+    expect(series?.kind).toBe("polyline");
+    expect(svg).toContain('id="plot.series"');
+    expect(svg).toContain("<polyline");
+    expect(svg).toContain("<text");
+    expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

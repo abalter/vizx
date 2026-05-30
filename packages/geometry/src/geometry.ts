@@ -106,6 +106,80 @@ export interface AngleBetweenPointsResult {
   readonly clockwise: boolean;
 }
 
+export type NumericInterval = readonly [number, number];
+
+export interface LinearScale {
+  readonly domain: NumericInterval;
+  readonly range: NumericInterval;
+  map(value: number): number;
+}
+
+export interface PlotFrame {
+  readonly xDomain: NumericInterval;
+  readonly yDomain: NumericInterval;
+  readonly xRange: NumericInterval;
+  readonly yRange: NumericInterval;
+}
+
+export interface DataPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+function assertFiniteNumber(value: number, label: string): void {
+  if (!Number.isFinite(value)) {
+    throw new TypeError(`${label} must be finite`);
+  }
+}
+
+function assertFiniteInterval(interval: NumericInterval, label: string): void {
+  assertFiniteNumber(interval[0], `${label}[0]`);
+  assertFiniteNumber(interval[1], `${label}[1]`);
+}
+
+function assertNonZeroDomain(domain: NumericInterval, label: string): void {
+  if (Math.abs(domain[1] - domain[0]) <= 1e-12) {
+    throw new RangeError(`${label} must have non-zero width`);
+  }
+}
+
+export function linearScale(domain: NumericInterval, range: NumericInterval): LinearScale {
+  assertFiniteInterval(domain, "domain");
+  assertFiniteInterval(range, "range");
+  assertNonZeroDomain(domain, "domain");
+
+  const [domainMin, domainMax] = domain;
+  const [rangeMin, rangeMax] = range;
+  const domainSpan = domainMax - domainMin;
+  const rangeSpan = rangeMax - rangeMin;
+
+  return {
+    domain: [domainMin, domainMax],
+    range: [rangeMin, rangeMax],
+    map(value: number): number {
+      assertFiniteNumber(value, "value");
+      const ratio = (value - domainMin) / domainSpan;
+      return rangeMin + ratio * rangeSpan;
+    },
+  };
+}
+
+export function mapDataPoint(frame: PlotFrame, dataPoint: DataPoint): Point {
+  assertFiniteInterval(frame.xDomain, "xDomain");
+  assertFiniteInterval(frame.yDomain, "yDomain");
+  assertFiniteInterval(frame.xRange, "xRange");
+  assertFiniteInterval(frame.yRange, "yRange");
+  assertNonZeroDomain(frame.xDomain, "xDomain");
+  assertNonZeroDomain(frame.yDomain, "yDomain");
+  assertFiniteNumber(dataPoint.x, "dataPoint.x");
+  assertFiniteNumber(dataPoint.y, "dataPoint.y");
+
+  const x = linearScale(frame.xDomain, frame.xRange).map(dataPoint.x);
+  const y = linearScale(frame.yDomain, frame.yRange).map(dataPoint.y);
+
+  return point(x, y);
+}
+
 export function polar(origin: Point, radius: number, angleDegrees: number): Point {
   const radians = (angleDegrees * Math.PI) / 180;
 
