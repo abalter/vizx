@@ -4,6 +4,7 @@ Current examples and tests cover the active inside-out pipeline only: unresolved
 
 For the current formal model behind these capabilities, see [CORE_IR_SPEC.md](./CORE_IR_SPEC.md).
 For parser-readiness planning (not implementation status), see [PARSER_LOWERING_CONTRACT.md](./PARSER_LOWERING_CONTRACT.md).
+For milestone progression from current capabilities to aspirational examples, see [ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) and the root [roadmap.md](../roadmap.md).
 
 | Capability | Unit test | Resolver test | Example | Debug overlay | Notes |
 | --- | --- | --- | --- | --- | --- |

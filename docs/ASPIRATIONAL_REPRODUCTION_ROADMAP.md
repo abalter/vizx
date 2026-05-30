@@ -9,6 +9,11 @@ Scope:
 - no parser/JSON/AST implementation changes
 - no dependency additions
 
+Top-level navigation:
+
+- [README.md](../README.md) for current status and entry points
+- [roadmap.md](../roadmap.md) for root milestone sequencing and deferred work
+
 ## 1. Purpose
 
 This roadmap is example-driven, not feature-count-driven.

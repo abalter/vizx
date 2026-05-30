@@ -1,913 +1,188 @@
-I would develop **VizX from the inside out**, not from the syntax inward.
+# VizX Roadmap
 
-The most important roadmap principle is:
+This is the top-level development roadmap from the repository root.
 
-> First build a core drawing compiler that consumes a structured object model, resolves geometry/anchors/layout, and emits SVG. Only later worry about the human-facing syntax.
-
-That keeps the architecture honest. The parser should eventually become just one front end that produces the same core IR as hand-written JSON fixtures or programmatic TypeScript builders.
-
----
-
-# Recommended development roadmap
-
-## Phase 0 — Lock the architecture vocabulary
-
-Before writing much code, define the major internal layers and the names you will use consistently.
-
-I would settle on this pipeline:
-
-```text
-Source syntax
-  ↓
-AST
-  ↓
-Core IR
-  ↓
-Unresolved object graph
-  ↓
-Resolved scene
-  ↓
-Render scene graph
-  ↓
-Backend output
-```
-
-For early development, skip the source syntax and AST. Start here:
-
-```text
-Core IR fixture
-  ↓
-Unresolved object graph
-  ↓
-Resolved scene
-  ↓
-SVG output
-```
-
-The first real goal is not “parse a language.” It is:
-
-> Given a structured drawing description, can VizX resolve geometry and render a correct SVG?
-
----
-
-# Phase 1 — Define the core packages and contracts
-
-I would structure the repo around packages like this:
-
-```text
-packages/
-  core/
-  geometry/
-  object-model/
-  resolver/
-  renderer-svg/
-  testing/
-  cli/
-  parser/          later
-  language-server/ much later
-```
-
-## `@vizx/core`
-
-Defines shared types and schemas.
-
-Responsibilities:
-
-```text
-ids
-units
-styles
-colors
-errors
-diagnostics
-source locations
-common IR types
-result types
-```
-
-This package should avoid depending on any renderer.
-
-## `@vizx/geometry`
-
-Defines mathematical primitives.
-
-Responsibilities:
-
-```text
-Point
-Vector
-Length
-Angle
-Transform
-Line
-Segment
-Circle
-Arc
-Bezier
-Path
-BoundingBox
-intersection helpers
-transform helpers
-```
+It connects the original inside-out architecture strategy with the current milestone path for aspirational example reproduction.
 
-This should be pure and heavily tested.
-
-## `@vizx/object-model`
-
-Defines drawable and layout-aware objects.
-
-Responsibilities:
-
-```text
-Rect
-Circle
-Ellipse
-PathObject
-TextObject
-Group
-Symbol
-Instance
-Connector
-Anchor
-AnchorRef
-Port
-```
-
-This package knows about objects and anchors but not final SVG serialization.
-
-## `@vizx/resolver`
-
-Turns unresolved objects into resolved geometry.
-
-Responsibilities:
-
-```text
-component instantiation
-text measurement interface
-bounding-box resolution
-anchor resolution
-relative placement
-simple constraints
-connector path generation
-diagnostics
-```
-
-This is the heart of the system.
-
-## `@vizx/renderer-svg`
-
-Turns a resolved render scene into SVG.
-
-Responsibilities:
-
-```text
-SVG scene serialization
-groups
-paths
-rectangles
-circles
-text
-markers
-defs
-symbols
-styles
-viewBox calculation
-```
-
-## `@vizx/testing`
-
-Shared test fixtures and golden-output utilities.
-
-Responsibilities:
-
-```text
-fixture loading
-snapshot normalization
-geometry assertions
-SVG comparison helpers
-diagnostic assertions
-```
-
-## `@vizx/cli`
-
-Lets you run examples.
-
-Responsibilities:
-
-```text
-vizx render input.json --out output.svg
-vizx inspect input.json
-vizx validate input.json
-```
-
-The parser should come later. Early examples should be JSON or TypeScript fixture objects.
-
----
-
-# Phase 2 — Write specifications before implementation
-
-I would add these files before building too much:
-
-```text
-docs/
-  ARCHITECTURE.md
-  CORE_IR_SPEC.md
-  GEOMETRY_SPEC.md
-  OBJECT_MODEL_SPEC.md
-  ANCHOR_SPEC.md
-  RESOLVER_SPEC.md
-  RENDER_SCENE_SPEC.md
-  SVG_BACKEND_SPEC.md
-  ERROR_MODEL.md
-```
-
-Each spec should define what counts as valid input/output for that layer.
-
-For example, `ANCHOR_SPEC.md` should answer:
-
-```text
-What is an anchor?
-Is an anchor always a point?
-Can an anchor be unresolved?
-Can anchors depend on bounding boxes?
-Can groups define inherited anchors?
-How are custom anchors declared?
-What happens if an anchor is missing?
-```
-
-`RESOLVER_SPEC.md` should answer:
-
-```text
-What gets resolved first?
-How are dependencies represented?
-How are cycles detected?
-How are text boxes measured?
-What constraints are supported in v0?
-What produces diagnostics instead of throwing?
-```
-
-This matters because otherwise “resolver” becomes a grab bag.
-
----
-
-# Phase 3 — Build the geometry kernel first
-
-Start with the lowest layer.
+See also:
 
-Minimum useful geometry types:
+- [README.md](./README.md)
+- [DESIGN.md](./DESIGN.md)
+- [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
+- [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
 
-```ts
-type Scalar = number;
+## A. Current Completed Foundation
 
-interface Point {
-  x: number;
-  y: number;
-}
-
-interface Vector {
-  dx: number;
-  dy: number;
-}
-
-interface BoundingBox {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
-}
-```
-
-Then add richer constructors and operations:
-
-```text
-point(x, y)
-vector(dx, dy)
-add(point, vector)
-subtract(point, point) -> vector
-distance(a, b)
-midpoint(a, b)
-bboxUnion(...)
-bboxTranslate(...)
-transformPoint(...)
-```
+Current implemented or substantially established foundation areas:
 
-Do **not** start with everything: splines, boolean paths, complex intersections, nonlinear solving. Start with rectangles, circles, line segments, and transforms.
+- package structure for core model, geometry, object model, resolver, renderer, CLI, examples, and parser scaffold
+- pure geometry kernel for points/bboxes/transforms and technical helper functions
+- ObjectScene/object model with typed primitives, groups, connectors, placements, alignments, and distribution
+- resolver pipeline for geometry resolution and diagnostics
+- SVG renderer backend for current render scene output
+- debug and inspect tooling, including debug overlays
+- ObjectScene builder helper layer in TypeScript
+- primitive geometry family: line/polyline/ellipse/polygon/path/rect/circle/text/group
+- path commands: moveTo/lineTo/quadraticCurveTo/cubicCurveTo/arc/closePath
+- transforms: ordered translate/rotate/scale
+- markers: built-in arrow marker support via markerStart/markerEnd
+- style v0 expansion: strokeDasharray/strokeLineCap/strokeLineJoin/fillRule
+- aspirational example registry slices and semantic tests
 
-Definition of done for this phase:
+Practical state:
 
-```text
-geometry package has pure functions
-unit tests cover all operations
-no renderer dependency
-no object-model dependency
-```
-
----
-
-# Phase 4 — Define the render scene graph
+- active authoring is TypeScript ObjectScene + builder helpers
+- parser syntax is still deferred
+- SVG is the current rendering target
 
-Before resolving high-level objects, define the final backend-neutral scene model.
-
-This should be SVG-like but not identical to SVG.
-
-Example:
-
-```ts
-type RenderNode =
-  | RenderGroup
-  | RenderRect
-  | RenderCircle
-  | RenderPath
-  | RenderText;
-
-interface RenderScene {
-  type: "scene";
-  width?: number;
-  height?: number;
-  viewBox: BoundingBox;
-  defs: RenderDef[];
-  children: RenderNode[];
-}
-```
-
-Keep this layer boring. It should only include things that can actually be drawn.
-
-Important principle:
-
-> The render scene should not contain unresolved anchors, relative placement, components, or semantic constraints.
-
-By the time something reaches the render scene, it should be drawable.
-
-Definition of done:
-
-```text
-can construct a RenderScene manually
-can serialize it to SVG
-basic SVG opens correctly in browser
-```
-
----
-
-# Phase 5 — Build SVG renderer early
+## B. Active Roadmap Toward Aspirational Examples
 
-This gives you visual feedback quickly.
-
-Start with:
+Milestones are example-driven and documented in detail in [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md).
 
-```text
-scene
-group
-rect
-circle
-path
-text
-style
-transform
-```
+### 1. Current-capability aspirational mini-gallery
 
-Then add:
+Goal:
 
-```text
-markers
-arrowheads
-defs
-symbols
-clip paths
-```
+- prove what VizX can reproduce now with existing primitives and builder helpers
 
-A simple SVG renderer is not hard, and it helps validate every later layer.
-
-Definition of done:
-
-```text
-manual RenderScene fixture renders to valid SVG
-output can be viewed in browser
-snapshot tests normalize irrelevant whitespace
-```
-
----
-
-# Phase 6 — Build unresolved objects
-
-Now define the object model above the render scene.
+Current status:
 
-Core objects:
-
-```text
-RectObject
-CircleObject
-TextObject
-PathObject
-GroupObject
-ConnectorObject
-```
+- initial slices implemented
 
-Each object should support:
-
-```text
-id
-style
-transform
-children
-intrinsic geometry
-computed bounding box
-anchors
-```
+Representative examples:
 
-A rectangle object, for example, might know:
+- aspirational-android-lifecycle
+- aspirational-labeled-polygon
+- aspirational-arrow-label
 
-```text
-center
-north
-south
-east
-west
-northEast
-northWest
-southEast
-southWest
-```
-
-A group object might compute anchors from its children’s bounding box.
-
-This layer should **not** immediately render. It should produce unresolved object structures.
-
-Definition of done:
-
-```text
-can create object graph manually
-can ask which anchors an object supports
-can lower simple resolved objects to render scene
-```
-
----
-
-# Phase 7 — Implement the resolver
-
-This is the main compiler stage.
-
-The resolver should take:
-
-```text
-Core IR or object graph
-```
-
-and produce:
-
-```text
-ResolvedScene
-```
-
-A `ResolvedScene` should include both:
-
-```text
-resolved object graph
-render scene graph
-diagnostics
-```
-
-Early resolver responsibilities:
-
-```text
-assign ids
-instantiate objects
-measure text using a simple placeholder measurer
-compute bounding boxes
-compute anchors
-apply absolute placement
-apply relative placement
-create simple connector paths
-lower to render scene
-```
-
-For v0, use a simple deterministic text measurement interface:
-
-```ts
-interface TextMeasurer {
-  measureText(input: TextMeasureInput): TextMetrics;
-}
-```
-
-Then provide:
-
-```text
-ApproximateTextMeasurer
-BrowserSvgTextMeasurer later
-LatexTextMeasurer much later
-```
-
-Do not block on perfect text measurement.
-
-Definition of done:
-
-```text
-Box("Raw data") can resolve to rect + text
-A.east and B.west compute correctly
-connect A.east to B.west creates a path
-SVG output works
-```
+Next likely slice:
 
----
+- add one more Level 1-2 aspirational example in an adjacent family
 
-# Phase 8 — Implement a tiny Core IR
+### 2. Technical geometry helper layer
 
-Only now define a minimal input IR.
+Goal:
 
-Not syntax. Just JSON-like structured objects.
+- improve technical geometry authoring ergonomics in plain TypeScript
 
-Example:
-
-```json
-{
-  "type": "scene",
-  "objects": [
-    {
-      "type": "textBox",
-      "id": "a",
-      "text": "Raw data",
-      "position": { "x": 0, "y": 0 }
-    },
-    {
-      "type": "textBox",
-      "id": "b",
-      "text": "Clean",
-      "place": {
-        "targetAnchor": "west",
-        "relation": "rightOf",
-        "reference": { "object": "a", "anchor": "east" },
-        "distance": 48
-      }
-    },
-    {
-      "type": "connector",
-      "from": { "object": "a", "anchor": "east" },
-      "to": { "object": "b", "anchor": "west" }
-    }
-  ]
-}
-```
+Current status:
 
-This becomes the first contract that any future parser must emit.
+- first pure-helper slice implemented
 
-Definition of done:
+Representative examples:
 
-```text
-JSON fixture validates
-resolver consumes fixture
-SVG output generated
-parser is still unnecessary
-```
-
----
-
-# Phase 9 — Add components and reuse
+- technical-angle-arc
+- aspirational-labeled-polygon (helper-assisted construction)
 
-Once boxes and connectors work, add reusable components.
-
-There are two kinds of reuse:
-
-## Functional reuse
-
-```text
-regularPolygon(center, radius, sides)
-braceBetween(a, b)
-```
-
-## Object/component reuse
-
-```text
-TextBox(label)
-Callout(label, target)
-LabeledCircle(label)
-```
+Next likely slice:
 
-Internally, a component should be a function that returns an object graph.
+- add a small helper-focused technical example for another geometry pattern
 
-In TypeScript, this might look like:
+### 3. Arc and angle-mark support
 
-```ts
-function textBox(id: string, text: string): VizxObject[] {
-  // returns group with rect + text + anchors
-}
-```
+Goal:
 
-Later, user syntax can define components. But early on, hard-coded TypeScript component constructors are enough.
-
-Definition of done:
+- support circular angle marks and arc-based technical annotations
 
-```text
-component constructors create valid object graphs
-components expose anchors
-components can be nested
-custom anchors can be defined
-```
+Current status:
 
----
+- circular arc path command and angle-mark helpers implemented
 
-# Phase 10 — Add simple constraints
+Representative examples:
 
-Add only the constraints that are deterministic and easy to debug.
-
-Start with:
-
-```text
-place anchor relative to anchor
-align x
-align y
-same width
-same height
-distribute horizontally
-distribute vertically
-```
-
-Avoid at first:
-
-```text
-general nonlinear constraints
-automatic graph layout
-force-directed layout
-collision avoidance
-complex routing
-```
-
-The first constraint solver can be very simple: a dependency resolver plus ordered placement operations.
-
-Definition of done:
-
-```text
-detects missing references
-detects cycles
-reports useful diagnostics
-resolves ordered relative placement
-```
+- technical-angle-arc
+- aspirational-labeled-polygon
 
----
+Next likely slice:
 
-# Phase 11 — Add connector routing
+- incremental precision/planning work for future arc/curve geometry branches (without broad runtime expansion)
 
-Start with straight connectors.
+### 4. Fill, dash, and style expansion
 
-Then:
+Goal:
 
-```text
-polyline with waypoints
-orthogonal h-v route
-orthogonal v-h route
-curved connector
-arrowheads
-labels on connectors
-```
+- improve visual distinction and fidelity for technical illustration scenes
 
-Later:
+Current status:
 
-```text
-obstacle avoidance
-automatic routing
-edge bundling
-```
+- v0 style fields implemented: strokeDasharray/strokeLineCap/strokeLineJoin/fillRule
 
-Definition of done:
+Representative examples:
 
-```text
-connectors attach to anchors
-connectors update when object position changes
-arrowheads render correctly
-connector labels have positions
-```
+- styled-primitives
+- aspirational-labeled-polygon (style fields applied)
 
----
+Next likely slice:
 
-# Phase 12 — Add debug/inspection tooling
+- add style expansion checkpoint documentation after additional example-level application
 
-This is important enough to be its own milestone.
+### 5. Plot/data coordinate model
 
-A diagram language like this will be hard to debug unless the user can inspect:
+Goal:
 
-```text
-object tree
-computed bounding boxes
-anchors
-placement constraints
-dependency graph
-resolved render nodes
-diagnostics
-```
+- introduce axes/scales/data-mark substrate for plot-like examples
 
-Add a CLI command:
+Current status:
 
-```bash
-vizx inspect examples/basic.json
-```
+- planned, not implemented
 
-Possible outputs:
+Representative targets:
 
-```text
-a:
-  type: TextBox
-  bbox: x=0 y=0 w=72 h=24
-  anchors:
-    east: 72,12
-    west: 0,12
-    center: 36,12
+- timeline/schedule and simple plotted technical examples
 
-b:
-  type: TextBox
-  bbox: x=120 y=0 w=54 h=24
-```
+Next likely slice:
 
-Also add an optional debug SVG overlay:
+- docs-first model plan for coordinate systems, axes, ticks, and mark generation boundaries
 
-```text
-show bounding boxes
-show anchor points
-show object ids
-show connector endpoints
-```
+### 6. 2.5D/projection helpers
 
-Definition of done:
+Goal:
 
-```text
-debug SVG overlay renders anchors and bboxes
-CLI can inspect resolved scene
-errors include object ids and source/IR paths
-```
+- support projected technical illustrations without full 3D-engine scope
 
----
+Current status:
 
-# Phase 13 — Only then build a parser
+- planned, not implemented
 
-Once the IR is stable, the parser becomes much easier.
+Representative targets:
 
-The parser’s job is simply:
+- isometric/projection-style gallery figures
 
-```text
-source syntax → AST → Core IR
-```
+Next likely slice:
 
-It should not know how to render.
+- projection-helper design note after plot/data model planning
 
-This avoids the common failure mode where syntax decisions infect the core architecture.
+## C. Next Likely Slices
 
-For the parser package:
+Recommended near-term sequence after this docs pass:
 
-```text
-parser/
-  lexer
-  parser
-  AST types
-  AST-to-CoreIR lowering
-  syntax diagnostics
-```
+1. Apply style fields to another aspirational example (or deepen current style application coverage).
+2. Add a style expansion checkpoint after enough v0 application evidence is in place.
+3. Plan plot/data coordinate model (docs-only first).
+4. Add an additional aspirational example using arcs plus style distinctions.
+5. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
 
-Definition of done:
+## D. Deferred Work
 
-```text
-one small syntax example lowers to existing Core IR
-existing resolver/render tests still pass
-syntax can change without touching resolver
-```
+Still deferred or out-of-scope categories:
 
----
+- parser syntax as a primary authoring surface
+- JSON Core IR catch-up for newer path/transform/marker/helper/style features
+- parser AST catch-up for newer path/transform/marker/helper/style features
+- clipping/gradients/themes/style inheritance/class systems
+- source-language translation (TikZ/Asymptote/MetaPost import/transpile)
+- plotting/data model implementation until milestone planning lands
+- 2.5D/projection helpers until milestone 6 work is active
+- graph layout/routing systems
+- nonlinear solver/constraint system
+- visual editor
 
-# Phase 14 — Browser playground
+## Related Documents
 
-After the SVG renderer and resolver work, a browser playground becomes straightforward.
-
-Architecture:
-
-```text
-editor pane
-IR/debug pane
-SVG preview pane
-diagnostics pane
-```
-
-Browser app can call:
-
-```text
-parse source
-lower to IR
-resolve scene
-render SVG
-insert SVG into DOM
-```
-
-Since this is TypeScript, this should be natural.
-
-Definition of done:
-
-```text
-edit source or JSON fixture
-live SVG preview
-show diagnostics
-download SVG
-toggle debug overlay
-```
-
----
-
-# Phase 15 — Additional backends
-
-Only after SVG is solid:
-
-```text
-renderer-canvas
-renderer-pdf
-renderer-tikz
-renderer-typst
-```
-
-I would treat TikZ export as useful but not core. SVG should remain the first-class reference backend.
-
-Definition of done:
-
-```text
-same ResolvedScene can render to SVG and at least one other target
-backend differences documented
-unsupported features produce clear diagnostics
-```
-
----
-
-# Suggested MVP milestone
-
-The first meaningful MVP should be:
-
-> VizX can read a JSON Core IR file describing labeled boxes, relative anchor placement, and connectors; resolve all geometry; render clean SVG; and optionally render a debug overlay showing anchors and bounding boxes.
-
-Example target:
-
-```text
-[Raw data] ---> [Clean] ---> [Model]
-                    |
-                    v
-                [Report]
-```
-
-But internally this is not a flowchart language yet. It is just:
-
-```text
-objects
-anchors
-relative placement
-connectors
-SVG rendering
-```
-
-That is the right core MVP.
-
----
-
-# Recommended order of implementation
-
-I would implement in this order:
-
-```text
-1. Geometry primitives
-2. Render scene graph
-3. SVG renderer
-4. Object model
-5. Anchor model
-6. Approximate text measurement
-7. Resolver
-8. Core IR JSON schema
-9. CLI render command
-10. Test fixtures
-11. Components/reuse
-12. Simple constraints
-13. Connector routing
-14. Debug overlay
-15. Parser
-16. Browser playground
-17. Additional backends
-```
-
-The parser is intentionally late.
-
----
-
-# What not to build yet
-
-I would explicitly defer:
-
-```text
-plots
-flowcharts as semantic objects
-graph layout
-grammar-of-graphics layer
-3D
-animation
-interactive editing
-general constraint solver
-full LaTeX text measurement
-TikZ backend
-visual editor
-```
-
-Those are future layers. The core should first prove that objects, geometry, anchors, reuse, and rendering work cleanly.
-
----
-
-# The roadmap in one sentence
-
-Build VizX first as a **TypeScript geometry/object compiler** that turns a structured core IR into a resolved SVG scene; then add components, constraints, debug tooling, parser syntax, browser playground, and only later high-level semantic diagram languages.
+- [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
+- [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
+- [docs/TECHNICAL_GEOMETRY_HELPER_PLAN.md](./docs/TECHNICAL_GEOMETRY_HELPER_PLAN.md)
+- [docs/ARC_AND_ANGLE_MARK_CHECKPOINT.md](./docs/ARC_AND_ANGLE_MARK_CHECKPOINT.md)
+- [docs/STYLE_EXPANSION_MODEL_PLAN.md](./docs/STYLE_EXPANSION_MODEL_PLAN.md)
+- [docs/JS_TS_BUILDER_API_COOKBOOK.md](./docs/JS_TS_BUILDER_API_COOKBOOK.md)
+- [docs/SPEC_INDEX.md](./docs/SPEC_INDEX.md)

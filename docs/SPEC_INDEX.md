@@ -12,6 +12,8 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 
 ## Design docs
 
+- [`README.md`](../README.md) — top-level current status, capability highlights, and recommended entry points.
+- [`roadmap.md`](../roadmap.md) — root milestone roadmap connecting implemented foundation to aspirational-example progression.
 - [`DESIGN.md`](../DESIGN.md) — overall architecture.
 - [`LANGUAGE_SKETCH.md`](./LANGUAGE_SKETCH.md) — provisional syntax ideas.
 - [`JS_GRAPHICS_LIBRARY_LANDSCAPE.md`](./JS_GRAPHICS_LIBRARY_LANDSCAPE.md) — comparative design note across VizX, Two.js, Raphaël, Snap.svg, D3, and Three.js.

@@ -2,7 +2,7 @@
 
 VizX is a layered drawing language/runtime. Its central idea is that a drawing should preserve structure and relationships until the system has enough information to resolve geometry and render output.
 
-This document describes the intended architecture, not a complete implementation.
+This document describes both the intended long-term architecture and the currently implemented inside-out pipeline.
 
 ## 1. Conceptual model
 
@@ -18,6 +18,8 @@ VizX has four core conceptual layers:
 Higher-level diagram systems—plots, flowcharts, graph diagrams, commutative diagrams, circuits, trees, timelines—should eventually compile into these lower-level layers.
 
 ## 2. Processing pipeline
+
+Long-term intended pipeline:
 
 ```text
 source syntax
@@ -37,11 +39,25 @@ render scene graph
 backend renderer
 ```
 
+Current implemented pipeline:
+
+```text
+TypeScript ObjectScene / builder helpers
+  ↓
+resolver
+  ↓
+resolved scene
+  ↓
+render scene graph
+  ↓
+SVG renderer
+```
+
 Each stage has a different responsibility.
 
 ### 2.1 Source syntax
 
-The source syntax is the human-facing language. It is deliberately not settled yet.
+The source syntax is the human-facing language. It is deliberately not settled yet and remains deferred in active implementation work.
 
 A provisional sketch might look like:
 
@@ -167,7 +183,18 @@ PNG via SVG conversion
 
 ## 3. Geometry model
 
-The geometry model should eventually include:
+Implemented geometry/model surface currently includes:
+
+```text
+Point
+BoundingBox
+line / polyline / ellipse / polygon primitives
+path commands: moveTo, lineTo, quadraticCurveTo, cubicCurveTo, arc, closePath
+ordered transforms: translate, rotate, scale
+pure helper functions: midpoint, distance, angleOf, polar, circlePoint, regularPolygonPoints, angleBetweenPoints, angleLabelPoint
+```
+
+Longer-term geometry model should eventually include:
 
 ```text
 Scalar
@@ -190,7 +217,7 @@ Region
 BoundingBox
 ```
 
-The first implementation only includes a minimal 2D point/vector/bounding-box model.
+Current implementation remains conservative for geometry precision and advanced operations.
 
 ### 3.1 Units
 
@@ -230,6 +257,17 @@ intersect(object1, object2)
 project(P, onto=line)
 rotate(object, angle, around=C)
 offset(path, distance)
+```
+
+Future/deferred geometry items include:
+
+```text
+intersections
+projection helpers
+path length / point-at-length
+flattening / sampling
+clipping/regions
+full computational geometry
 ```
 
 ## 4. Object and anchor model
@@ -292,30 +330,49 @@ A component instance should be a normal object with anchors and styles.
 
 ## 6. Styles
 
-The style model should support:
+Current implemented style model supports:
 
 ```text
 stroke
 fill
 strokeWidth
-fontFamily
-fontSize
-textAnchor
 opacity
 markerStart
 markerEnd
+strokeDasharray
+strokeLineCap
+strokeLineJoin
+fillRule
+fontFamily
+fontSize
+textAnchor
+dominantBaseline
 ```
 
 Later versions may add:
 
 ```text
+strokeOpacity / fillOpacity
 style inheritance
 classes
 themes
-tokens
-scoped styles
-CSS export
+gradients
+clipping
+masks
+pattern fills
 ```
+
+These later style items remain intentionally deferred.
+
+## 6.1 Aspirational Example Roadmap Fit
+
+The aspirational examples are currently architecture stress tests, not source-language translation.
+
+- examples are manual TypeScript builder-authored reproductions
+- they validate object model + resolver + renderer behavior under realistic diagram pressure
+- they are currently aimed at Level 1-2 approximation, not Level 3 fidelity parity
+
+See [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md).
 
 ## 7. Constraints and layout
 

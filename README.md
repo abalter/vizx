@@ -1,22 +1,12 @@
 # VizX
 
-VizX is an experimental TypeScript project for a precise, programmable 2D drawing language built around geometry, objects, anchors, reusable components, and backend-neutral rendering.
+VizX is an experimental TypeScript project for precise, programmable 2D drawing built around geometry, objects, anchors, and an inspectable resolver/render pipeline.
 
-The goal is not to replace higher-level diagram languages such as Mermaid, Graphviz, PGFPlots, TikZ, or Asymptote directly. The goal is to define the layer underneath those systems: a coherent mid-level drawing model where objects have geometry, anchors, styles, transforms, reusable components, and eventually constraints.
+VizX is not trying to directly replace TikZ, Asymptote, MetaPost, D3, Mermaid, Graphviz, or similar tools. The goal is a distinct niche: semantic, inspectable, programmable technical illustration in TypeScript.
 
 VizX starts from a simple premise:
 
 > A drawing should be a resolved graph of geometric objects, not merely a sequence of drawing commands.
-
-That means a user should be able to say things like:
-
-```vizx
-box A "Raw data" at 60 40
-box B "Clean / transform" right_of A by 120
-connect A.east -> B.west
-```
-
-and the system should preserve the meaning long enough to compute object sizes, anchors, connector paths, and final renderable output.
 
 ## Why this exists
 
@@ -33,24 +23,15 @@ VizX is an attempt to build a clean lower/mid-level core that can eventually sup
 
 ## Current status
 
-This repository is a design scaffold and early TypeScript prototype. It includes:
+Development is currently inside-out.
 
-- a proposed architecture in [`DESIGN.md`](./DESIGN.md),
-- a capability matrix in [`docs/CAPABILITY_MATRIX.md`](./docs/CAPABILITY_MATRIX.md),
-- package-level specifications in each package's `SPEC.md`,
-- a small geometry kernel,
-- a minimal unresolved object model,
-- a small TypeScript example registry used by the CLI and tests,
-- a simple resolver,
-- an SVG renderer,
-- tests for the core pipeline,
-- and a CLI demo path.
+- Primary authoring surface is TypeScript `ObjectScene` plus builder helpers in `@vizx/object-model`.
+- The parser/language surface remains deferred.
+- SVG is the current renderer backend.
+- Examples are registry-backed TypeScript scenes in `@vizx/examples`.
+- `demo`, `inspect`, `debug`, and `examples` CLI/test flows are active and used as behavior contracts.
 
-The current syntax is intentionally provisional. The active development path is the core model and pipeline, built from the inside out.
-
-See [Core IR specification](./docs/CORE_IR_SPEC.md) for the current structured model consumed by the resolver.
-See [parser lowering contract](./docs/PARSER_LOWERING_CONTRACT.md) for planned AST-to-Core-IR boundaries.
-See [parser fixture matrix](./docs/PARSER_FIXTURE_MATRIX.md) for planned parser-lowering fixture families and reference examples.
+See [CORE_IR_SPEC.md](./docs/CORE_IR_SPEC.md) for the current structured model consumed by the resolver.
 
 ## Repository layout
 
@@ -67,32 +48,61 @@ vizx/
     basic.vizx
     basic.svg
   packages/
-    core/          Shared diagnostics, style types, and common interfaces
-    examples/      TypeScript example registry and capability harness
-    geometry/      Pure geometry primitives and operations
-    object-model/  Unresolved drawable objects and anchor references
-    resolver/      Object graph → resolved geometry → render scene
-    renderer-svg/  Render scene types and SVG serialization
-    cli/           Command-line demo entry point
-    parser/        Provisional syntax experiment, not the primary development path
+    core/          Shared style/diagnostic/core contracts
+    geometry/      Pure geometry types and helper functions
+    object-model/  ObjectScene types and builder helpers
+    resolver/      Object graph -> resolved geometry -> render scene
+    renderer-svg/  SVG serialization backend
+    examples/      Registry-backed TypeScript scenes and harness
+    cli/           Demo/inspect/debug/examples commands
+    parser/        Deferred/frontier parser-lowering scaffold
     interpreter/   Legacy compatibility scaffold
 ```
 
-## Pipeline
+## Current Implemented Capability Highlights
 
-```text
-core IR or object graph
-  ↓
-unresolved object graph
-  ↓
-resolver
-  ↓
-resolved scene
-  ↓
-render scene graph
-  ↓
-renderer backend: SVG first, others later
-```
+- Primitive geometry: `rect`, `circle`, `text`, `group`, `line`, `polyline`, `ellipse`, `polygon`.
+- Paths: `moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`.
+- Conservative path bbox behavior, including circular arc bbox handling.
+- Ordered transforms: `translate`, `rotate`, `scale`.
+- Connectors and built-in arrow markers.
+- Technical geometry helpers (`point`, `midpoint`, `distance`, `polar`, `regularPolygonPoints`, etc.).
+- Angle-mark helpers (`angleBetweenPoints`, `angleLabelPoint`, `angleMarkPath`).
+- v0 technical style fields (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`, `fillRule`).
+- Builder helpers for ObjectScene authoring.
+- Inspect/debug/render tooling with registry-backed example validation.
+- Aspirational reproduction examples (manual TS builder-authored Level 1-2 slices).
+
+Current non-goals/deferrals include parser-driven language authoring, full plotting grammar, source translation, general graph layout, clipping/gradients/themes, and full 3D.
+
+## Milestones Toward Aspirational Examples
+
+Milestone path (docs-first, example-driven):
+
+1. Current-capability aspirational mini-gallery.
+2. Technical geometry helper layer.
+3. Arc and angle-mark support.
+4. Fill, dash, and style expansion.
+5. Plot/data coordinate model.
+6. 2.5D/projection helpers.
+
+Current implementation status:
+
+- Milestone 1: first aspirational reproductions exist.
+- Milestone 2: first pure technical geometry helper slice exists.
+- Milestone 3: circular arcs and angle-mark helpers exist and are applied to `aspirational-labeled-polygon`.
+- Milestone 4: first v0 technical style fields exist.
+
+See [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md) and [roadmap.md](./roadmap.md) for milestone status and next slices.
+
+## Recommended Entry Points
+
+- [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
+- [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
+- [docs/JS_TS_BUILDER_API_COOKBOOK.md](./docs/JS_TS_BUILDER_API_COOKBOOK.md)
+- [docs/ARC_AND_ANGLE_MARK_CHECKPOINT.md](./docs/ARC_AND_ANGLE_MARK_CHECKPOINT.md)
+- [docs/STYLE_EXPANSION_MODEL_PLAN.md](./docs/STYLE_EXPANSION_MODEL_PLAN.md)
+- [docs/SPEC_INDEX.md](./docs/SPEC_INDEX.md)
 
 ## Quick start
 
@@ -108,9 +118,9 @@ npm run inspect
 npm run debug
 ```
 
-Examples are currently TypeScript scene builders collected in `@vizx/examples`, not parser-driven source files. `npm run demo` writes [`examples/basic.svg`](./examples/basic.svg) for the built-in basic example. `npm run examples` renders normal and debug SVGs for every registered example into `examples/`, including focused placement fixtures such as `relative-placement`, `mixed-nested-placement`, `alignment-reference`, `alignment-family`, `distribute-x`, and `distribute-y`. `npm run inspect` prints resolved geometry, anchors, connector endpoints, diagnostics, and nested group children for the basic example as JSON when available. Bounding boxes, anchors, and geometry summaries all use resolved scene coordinates. `npm run debug` writes `examples/basic.debug.svg`, overlaying resolved bounding boxes, anchor points, object ids, and connector endpoints on the normal diagram. The same example registry also feeds the capability-oriented test harness, and the current capability coverage is summarized in [`docs/CAPABILITY_MATRIX.md`](./docs/CAPABILITY_MATRIX.md), including deterministic alignment support for `alignLeft`, `alignRight`, `alignTop`, `alignBottom`, `alignX`, `alignY`, `distributeX`, and `distributeY`. The debug overlay is configurable programmatically through `createDebugOverlay(..., options)` and `createDebugRenderScene(..., options)` in the resolver package. The parser scaffold remains in the repository, but it is not the primary driver of the architecture.
+Examples are currently TypeScript scene builders collected in `@vizx/examples`, not parser-driven source files. `npm run demo` writes [examples/basic.svg](./examples/basic.svg). `npm run examples` renders normal and debug SVGs for every registered example into `examples/`. `npm run inspect` outputs resolved scene details as JSON, and `npm run debug` emits overlay SVG output for geometry inspection.
 
-## Design principles
+## Design Principles
 
 1. **Meaning before marks.** Preserve objects, anchors, and relationships before lowering to paths and text.
 2. **Backend-neutral core.** The interpreter should not know whether the final target is SVG, Canvas, PDF, or TikZ.
@@ -120,7 +130,7 @@ Examples are currently TypeScript scene builders collected in `@vizx/examples`, 
 6. **Composable objects.** Reusable components should be first-class.
 7. **Inspectability.** Debug output should expose the AST, core IR, object graph, anchors, and resolved scene.
 
-## Non-goals for the first prototype
+## Non-Goals For The First Prototype
 
 - Full plotting grammar.
 - Flowchart semantics.
