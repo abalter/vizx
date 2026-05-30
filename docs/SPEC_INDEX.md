@@ -25,3 +25,4 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`ARC_AND_ANGLE_MARK_MODEL_PLAN.md`](./ARC_AND_ANGLE_MARK_MODEL_PLAN.md) — Milestone 3 docs-only model plan for first-class arc path commands, diagnostics, and angle-mark composition strategy.
 - [`ARC_AND_ANGLE_MARK_CHECKPOINT.md`](./ARC_AND_ANGLE_MARK_CHECKPOINT.md) — post-implementation checkpoint for Milestone 3 circular arc and angle-mark helper support, current limits, and next branch options.
 - [`STYLE_EXPANSION_MODEL_PLAN.md`](./STYLE_EXPANSION_MODEL_PLAN.md) — Milestone 4 docs-only model plan for dash/cap/join/fill-rule style expansion and resolver/renderer contracts.
+- [`STYLE_EXPANSION_CHECKPOINT.md`](./STYLE_EXPANSION_CHECKPOINT.md) — post-implementation checkpoint for Milestone 4 style expansion, current limits, and next branch options.

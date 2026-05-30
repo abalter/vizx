@@ -258,6 +258,10 @@ Current status:
 - `aspirational-labeled-polygon` now applies `strokeDasharray`, `strokeLineCap`, and `strokeLineJoin` for clearer technical-geometry distinction
 - `strokeOpacity`/`fillOpacity` remain deferred
 
+Milestone 4 implementation checkpoint:
+
+- [STYLE_EXPANSION_CHECKPOINT.md](./STYLE_EXPANSION_CHECKPOINT.md)
+
 ## 8. Milestone 5 - Plot/Data Coordinate Model
 
 Goal:

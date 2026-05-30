@@ -114,7 +114,7 @@ Representative examples:
 
 Next likely slice:
 
-- add style expansion checkpoint documentation after additional example-level application
+- style expansion checkpoint now documented in [docs/STYLE_EXPANSION_CHECKPOINT.md](./docs/STYLE_EXPANSION_CHECKPOINT.md)
 
 ### 5. Plot/data coordinate model
 
@@ -156,11 +156,10 @@ Next likely slice:
 
 Recommended near-term sequence after this docs pass:
 
-1. Apply style fields to another aspirational example (or deepen current style application coverage).
-2. Add a style expansion checkpoint after enough v0 application evidence is in place.
-3. Plan plot/data coordinate model (docs-only first).
-4. Add an additional aspirational example using arcs plus style distinctions.
-5. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
+1. Plan plot/data coordinate model (docs-only first).
+2. Optionally add one additional aspirational example using existing arcs and style distinctions.
+3. Evaluate a narrow style second slice (`strokeOpacity`/`fillOpacity`) only if visual pressure justifies it.
+4. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
 
 ## D. Deferred Work
 
