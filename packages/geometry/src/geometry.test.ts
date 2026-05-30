@@ -33,6 +33,8 @@ import {
   rotatePoint,
   scalePoint,
   subtractPoints,
+  tangentLineAtCirclePoint,
+  tangentPointsFromPointToCircle,
   transformPoint,
   transformPoints,
   vector,
@@ -544,5 +546,60 @@ describe("geometry kernel", () => {
   it("rejects negative radii for circle-circle intersections", () => {
     expect(() => circleCircleIntersections(point(0, 0), -1, point(4, 0), 2)).toThrow("radiusA");
     expect(() => circleCircleIntersections(point(0, 0), 1, point(4, 0), -2)).toThrow("radiusB");
+  });
+
+  it("builds tangent line direction at rightmost unit-circle point", () => {
+    const tangent = tangentLineAtCirclePoint(point(0, 0), point(1, 0));
+
+    expectPointClose(tangent.point, point(1, 0));
+    expect(tangent.direction.dx).toBeCloseTo(0, 8);
+    expect(tangent.direction.dy).toBeCloseTo(1, 8);
+  });
+
+  it("builds tangent line direction at top unit-circle point", () => {
+    const tangent = tangentLineAtCirclePoint(point(0, 0), point(0, 1));
+
+    expectPointClose(tangent.point, point(0, 1));
+    expect(tangent.direction.dx).toBeCloseTo(-1, 8);
+    expect(tangent.direction.dy).toBeCloseTo(0, 8);
+  });
+
+  it("rejects invalid tangent line point inputs", () => {
+    expect(() => tangentLineAtCirclePoint(point(0, 0), point(0, 0))).toThrow("pointOnCircle");
+  });
+
+  it("computes two tangent points from an external point to a circle", () => {
+    const externalPoint = point(13, 0);
+    const center = point(0, 0);
+    const radius = 5;
+    const tangents = tangentPointsFromPointToCircle(externalPoint, center, radius);
+
+    expect(tangents).toHaveLength(2);
+
+    for (const tangentPoint of tangents) {
+      expect(distance(center, tangentPoint)).toBeCloseTo(radius, 8);
+
+      const radiusVector = subtractPoints(tangentPoint, center);
+      const tangentSegmentVector = subtractPoints(externalPoint, tangentPoint);
+      const dot = radiusVector.dx * tangentSegmentVector.dx + radiusVector.dy * tangentSegmentVector.dy;
+
+      expect(dot).toBeCloseTo(0, 8);
+    }
+  });
+
+  it("returns one tangent point when external point lies on the circle", () => {
+    const tangents = tangentPointsFromPointToCircle(point(5, 0), point(0, 0), 5);
+
+    expect(tangents).toHaveLength(1);
+    expectPointClose(tangents[0]!, point(5, 0));
+  });
+
+  it("returns no tangent points when external point is inside the circle", () => {
+    expect(tangentPointsFromPointToCircle(point(2, 1), point(0, 0), 5)).toEqual([]);
+  });
+
+  it("rejects invalid tangent-point radius values", () => {
+    expect(() => tangentPointsFromPointToCircle(point(10, 0), point(0, 0), -1)).toThrow("radius");
+    expect(() => tangentPointsFromPointToCircle(point(10, 0), point(0, 0), 0)).toThrow("radius");
   });
 });

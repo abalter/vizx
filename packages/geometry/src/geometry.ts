@@ -106,6 +106,11 @@ export interface AngleBetweenPointsResult {
   readonly clockwise: boolean;
 }
 
+export interface TangentLineAtCirclePoint {
+  readonly point: Point;
+  readonly direction: Vector;
+}
+
 export type NumericInterval = readonly [number, number];
 
 export interface LinearScale {
@@ -331,6 +336,70 @@ export function circleCircleIntersections(
   return [
     point(midX + rx, midY + ry),
     point(midX - rx, midY - ry),
+  ];
+}
+
+export function tangentLineAtCirclePoint(
+  center: Point,
+  pointOnCircle: Point,
+): TangentLineAtCirclePoint {
+  assertFinitePoint(center, "center");
+  assertFinitePoint(pointOnCircle, "pointOnCircle");
+
+  const radiusVector = subtractPoints(pointOnCircle, center);
+  const radiusLength = distance(center, pointOnCircle);
+
+  if (radiusLength <= GEOMETRY_EPSILON) {
+    throw new RangeError("pointOnCircle must differ from center");
+  }
+
+  // Tangent direction is a normalized perpendicular to the radius vector.
+  const direction = vector(-radiusVector.dy / radiusLength, radiusVector.dx / radiusLength);
+
+  return {
+    point: pointOnCircle,
+    direction,
+  };
+}
+
+export function tangentPointsFromPointToCircle(
+  externalPoint: Point,
+  center: Point,
+  radius: number,
+): readonly Point[] {
+  assertFinitePoint(externalPoint, "externalPoint");
+  assertFinitePoint(center, "center");
+  assertFiniteNumber(radius, "radius");
+
+  if (radius <= 0) {
+    throw new RangeError("radius must be > 0");
+  }
+
+  const delta = subtractPoints(externalPoint, center);
+  const distanceToCenter = distance(externalPoint, center);
+
+  if (distanceToCenter < radius - GEOMETRY_EPSILON) {
+    return [];
+  }
+
+  if (Math.abs(distanceToCenter - radius) <= GEOMETRY_EPSILON) {
+    return [point(externalPoint.x, externalPoint.y)];
+  }
+
+  const baseAngle = Math.atan2(delta.dy, delta.dx);
+  const offsetAngle = Math.acos(radius / distanceToCenter);
+  const angleA = baseAngle - offsetAngle;
+  const angleB = baseAngle + offsetAngle;
+
+  return [
+    point(
+      center.x + radius * Math.cos(angleA),
+      center.y + radius * Math.sin(angleA),
+    ),
+    point(
+      center.x + radius * Math.cos(angleB),
+      center.y + radius * Math.sin(angleB),
+    ),
   ];
 }
 

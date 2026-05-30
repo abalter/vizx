@@ -864,6 +864,29 @@ describe("example registry", () => {
     expect(svg).toContain('stroke-dasharray="4 4"');
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
+
+  it("registers and semantically validates technical-tangents", () => {
+    const example = requireVizxExample("technical-tangents");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "tg.circle" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.segment.0" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.segment.1" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.tangent.line.atA" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.external.point" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.label.t0" && object.kind === "text")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tg.label.t1" && object.kind === "text")).toBe(true);
+    expect(svg).toContain('id="tg.tangent.line.atA"');
+    expect(svg).toContain('stroke-dasharray="5 4"');
+    expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
 });
 
 function getDebugOverlayChildren(scene: RenderScene): readonly RenderNode[] {

@@ -25,6 +25,7 @@ Current VizX capabilities that already support this track:
 
 - point and geometry helpers (`point`, `midpoint`, `distance`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`, `angleBetweenPoints`, `angleLabelPoint`)
 - intersection helpers (`lineLineIntersection`, `lineCircleIntersections`, `circleCircleIntersections`)
+- tangent helpers (`tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`)
 - primitive geometry (`line`, `polyline`, `polygon`, `ellipse`, `circle`, `path`, `rect`, `text`, `group`)
 - Bezier and circular-arc path commands (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
 - angle-mark helper (`angleMarkPath`)
@@ -42,7 +43,7 @@ Current blockers for higher-fidelity technical/math diagrams:
 - no construction solver behavior
 - no segment/ray intersection clipping helpers
 - no polygon/path/Bezier/arc intersection helpers
-- no tangent helpers
+- no common tangent helpers (for example circle-circle common tangents)
 - no cutbefore/cutafter behavior
 - no path length or point-at-length helpers
 - no path flattening helpers
@@ -76,8 +77,8 @@ Reachable next examples using current capabilities:
 Likely future technical/math feature slices (not implemented in this pass):
 
 - intersection helpers
-- tangent helpers
 - label/annotation helper refinements
+- common tangent helper families
 - right-angle marker helper
 - cutbefore/cutafter support
 - projection helpers

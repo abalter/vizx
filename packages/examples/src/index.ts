@@ -27,6 +27,7 @@ import { rotatedPrimitivesExample } from "./rotatedPrimitives";
 import { styledPrimitivesExample } from "./styledPrimitives";
 import { technicalAngleArcExample } from "./technicalAngleArc";
 import { technicalLinearPlotExample } from "./technicalLinearPlot";
+import { technicalTangentsExample } from "./technicalTangents";
 import type { VizxExample } from "./types";
 
 export * from "./types";
@@ -59,6 +60,7 @@ export const vizxExamples: readonly VizxExample[] = [
   styledPrimitivesExample,
   technicalAngleArcExample,
   technicalLinearPlotExample,
+  technicalTangentsExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];
