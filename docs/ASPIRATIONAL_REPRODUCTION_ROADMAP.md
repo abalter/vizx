@@ -299,6 +299,17 @@ Acceptance criteria:
 - VizX provides coordinate/mark/rendering model only
 - D3 scales may be used by host code, but VizX does not become a D3 clone
 
+Current status:
+
+- planning docs now exist
+- no runtime plot/data-coordinate implementation yet
+- `aspirational-projectile-motion-lite` remains a manual bridge example, not a plot model implementation
+
+Milestone 5 planning documents:
+
+- [PLOT_DATA_COORDINATE_MODEL_PLAN.md](./PLOT_DATA_COORDINATE_MODEL_PLAN.md)
+- [PLOT_DATA_ASPIRATIONAL_TARGETS.md](./PLOT_DATA_ASPIRATIONAL_TARGETS.md)
+
 ## 9. Milestone 6 - 2.5D Projection Helpers (Not Full 3D)
 
 Goal:

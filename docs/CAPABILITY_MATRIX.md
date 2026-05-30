@@ -6,6 +6,7 @@ For the current formal model behind these capabilities, see [CORE_IR_SPEC.md](./
 For parser-readiness planning (not implementation status), see [PARSER_LOWERING_CONTRACT.md](./PARSER_LOWERING_CONTRACT.md).
 For milestone progression from current capabilities to aspirational examples, see [ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) and the root [roadmap.md](../roadmap.md).
 For Milestone 4 style-surface checkpoint status and limits, see [STYLE_EXPANSION_CHECKPOINT.md](./STYLE_EXPANSION_CHECKPOINT.md).
+For Milestone 5 plot/data-coordinate planning status (not implementation), see [PLOT_DATA_COORDINATE_MODEL_PLAN.md](./PLOT_DATA_COORDINATE_MODEL_PLAN.md) and [PLOT_DATA_ASPIRATIONAL_TARGETS.md](./PLOT_DATA_ASPIRATIONAL_TARGETS.md).
 
 | Capability | Unit test | Resolver test | Example | Debug overlay | Notes |
 | --- | --- | --- | --- | --- | --- |

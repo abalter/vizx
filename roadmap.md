@@ -126,6 +126,7 @@ Goal:
 Current status:
 
 - planned, not implemented
+- Milestone 5 planning docs now exist: [docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md](./docs/PLOT_DATA_COORDINATE_MODEL_PLAN.md) and [docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md](./docs/PLOT_DATA_ASPIRATIONAL_TARGETS.md)
 
 Representative targets:
 
@@ -133,7 +134,8 @@ Representative targets:
 
 Next likely slice:
 
-- docs-first model plan for coordinate systems, axes, ticks, and mark generation boundaries
+- docs-first model plan for coordinate systems, axes, ticks, and mark generation boundaries (completed)
+- first implementation slice remains pending (v0 linear scale + frame mapping + minimal axis helper)
 
 ### 6. 2.5D/projection helpers
 

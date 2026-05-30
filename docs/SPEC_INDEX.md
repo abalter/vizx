@@ -26,3 +26,5 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`ARC_AND_ANGLE_MARK_CHECKPOINT.md`](./ARC_AND_ANGLE_MARK_CHECKPOINT.md) — post-implementation checkpoint for Milestone 3 circular arc and angle-mark helper support, current limits, and next branch options.
 - [`STYLE_EXPANSION_MODEL_PLAN.md`](./STYLE_EXPANSION_MODEL_PLAN.md) — Milestone 4 docs-only model plan for dash/cap/join/fill-rule style expansion and resolver/renderer contracts.
 - [`STYLE_EXPANSION_CHECKPOINT.md`](./STYLE_EXPANSION_CHECKPOINT.md) — post-implementation checkpoint for Milestone 4 style expansion, current limits, and next branch options.
+- [`PLOT_DATA_COORDINATE_MODEL_PLAN.md`](./PLOT_DATA_COORDINATE_MODEL_PLAN.md) — Milestone 5 docs-only implementation-ready plan for a small plot/data-coordinate model (`CoordinateFrame`, linear scales, axis helpers, and first-slice boundaries).
+- [`PLOT_DATA_ASPIRATIONAL_TARGETS.md`](./PLOT_DATA_ASPIRATIONAL_TARGETS.md) — Milestone 5 target audit of plot/timeline/radar-like aspirational gallery examples with feasibility triage and first-slice prioritization.
