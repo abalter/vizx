@@ -8,6 +8,7 @@ Latest checkpoint:
 
 - [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
 - [GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md](./GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md)
+- [GEOMETRY_BELT_PULLEY_HELPER_PLAN.md](./GEOMETRY_BELT_PULLEY_HELPER_PLAN.md)
 - [GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md](./GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md)
 - [TECHNICAL_ANNOTATION_HELPER_PLAN.md](./TECHNICAL_ANNOTATION_HELPER_PLAN.md)
 
@@ -35,6 +36,7 @@ Current VizX capabilities that already support this track:
 - segment/ray clipped helpers (`segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`, `pointOnSegment`, `pointOnRay`)
 - tangent helpers (`tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`)
 - common tangent helpers (`circleCircleTangents`)
+- belt/pulley path helper (`openBeltPath`)
 - annotation helpers (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`)
 - primitive geometry (`line`, `polyline`, `polygon`, `ellipse`, `circle`, `path`, `rect`, `text`, `group`)
 - Bezier and circular-arc path commands (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
@@ -54,6 +56,7 @@ Current blockers for higher-fidelity technical/math diagrams:
 - no broad segment/ray intersection family coverage (for example ray-ray and segment-ray variants)
 - no polygon/path/Bezier/arc intersection helpers
 - no annotation collision avoidance or dimension-line annotation system
+- no crossed-belt helper (internal-tangent belt runs)
 - no cutbefore/cutafter behavior
 - no path length or point-at-length helpers
 - no path flattening helpers

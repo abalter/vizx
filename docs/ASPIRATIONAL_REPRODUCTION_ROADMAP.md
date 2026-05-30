@@ -211,6 +211,8 @@ Current status:
 - implemented helpers: `point`, `offsetPoint`, `distance`, `midpoint`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`
 - common tangent helper follow-on now implemented: `circleCircleTangents`
 - focused technical application now implemented: `technical-common-tangents`
+- first bounded belt/pulley bridge helper now implemented in builder layer: `openBeltPath`
+- focused technical bridge example now implemented: `technical-belt-pulley`
 - no arc helpers, angle-arc helpers, parser/JSON work, or runtime rendering features added in this slice
 
 ## 6. Milestone 3 - Arc And Angle-Mark Support

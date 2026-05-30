@@ -94,7 +94,7 @@ Geometric correctness checks expected in tests:
 
 Explicitly deferred from this slice:
 
-- belt wrapping paths
+- generalized belt wrapping systems beyond the first bounded helper
 - tangent arc connections around circles
 - clipping tangent segments to object outlines
 - tangent-to-path helpers

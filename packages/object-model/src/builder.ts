@@ -1,10 +1,14 @@
 import type { Style } from "@vizx/core";
 import {
+  angleOf,
   angleBetweenPoints,
   circlePoint,
+  circleCircleTangents,
+  distance,
   labelAlongSegment,
   linearScale,
   mapDataPoint,
+  normalizeAngleDegrees,
   type PlotFrame,
   type Point,
 } from "@vizx/geometry";
@@ -146,6 +150,14 @@ interface SegmentTickMarksOptions {
   readonly style?: Style;
 }
 
+interface OpenBeltPathOptions {
+  readonly centerA: Point;
+  readonly radiusA: number;
+  readonly centerB: Point;
+  readonly radiusB: number;
+  readonly style?: Style;
+}
+
 interface AxisOptions {
   readonly axisValue?: number;
   readonly tickValues?: readonly number[];
@@ -234,6 +246,42 @@ function assertPositiveFinite(value: number, label: string): void {
   if (value <= 0) {
     throw new RangeError(`${label} must be > 0`);
   }
+}
+
+function sweepDeltaDegrees(startAngleDegrees: number, endAngleDegrees: number, clockwise: boolean): number {
+  if (clockwise) {
+    return normalizeAngleDegrees(startAngleDegrees - endAngleDegrees);
+  }
+
+  return normalizeAngleDegrees(endAngleDegrees - startAngleDegrees);
+}
+
+function arcMidpoint(
+  center: Point,
+  radius: number,
+  startAngleDegrees: number,
+  endAngleDegrees: number,
+  clockwise: boolean,
+): Point {
+  const sweep = sweepDeltaDegrees(startAngleDegrees, endAngleDegrees, clockwise);
+  const midpointAngle = clockwise
+    ? startAngleDegrees - sweep / 2
+    : startAngleDegrees + sweep / 2;
+
+  return circlePoint(center, radius, midpointAngle);
+}
+
+function chooseOuterArcDirection(
+  center: Point,
+  radius: number,
+  startAngleDegrees: number,
+  endAngleDegrees: number,
+  awayFrom: Point,
+): boolean {
+  const midpointCcw = arcMidpoint(center, radius, startAngleDegrees, endAngleDegrees, false);
+  const midpointCw = arcMidpoint(center, radius, startAngleDegrees, endAngleDegrees, true);
+
+  return distance(midpointCw, awayFrom) > distance(midpointCcw, awayFrom);
 }
 
 export function rightAngleMarkPath(id: string, options: RightAngleMarkPathOptions): PathObject {
@@ -326,6 +374,68 @@ export function segmentTickMarks(idPrefix: string, options: SegmentTickMarksOpti
     size: options.size,
     style: options.style,
   }));
+}
+
+export function openBeltPath(id: string, options: OpenBeltPathOptions): PathObject {
+  assertFinitePointValue(options.centerA, "centerA");
+  assertFinitePointValue(options.centerB, "centerB");
+  assertPositiveFinite(options.radiusA, "radiusA");
+  assertPositiveFinite(options.radiusB, "radiusB");
+
+  const centerDistance = distance(options.centerA, options.centerB);
+  if (centerDistance <= options.radiusA + options.radiusB + 1e-9) {
+    throw new RangeError("open belt requires disjoint circles");
+  }
+
+  const externalTangents = circleCircleTangents(
+    options.centerA,
+    options.radiusA,
+    options.centerB,
+    options.radiusB,
+  ).filter((entry) => entry.kind === "external");
+
+  if (externalTangents.length < 2) {
+    throw new RangeError("open belt requires two external tangents");
+  }
+
+  const upper = externalTangents[0];
+  const lower = externalTangents[1];
+
+  if (!upper || !lower) {
+    throw new RangeError("open belt requires two external tangents");
+  }
+
+  const upperAngleA = angleOf(options.centerA, upper.pointA);
+  const lowerAngleA = angleOf(options.centerA, lower.pointA);
+  const upperAngleB = angleOf(options.centerB, upper.pointB);
+  const lowerAngleB = angleOf(options.centerB, lower.pointB);
+
+  const arcClockwiseB = chooseOuterArcDirection(
+    options.centerB,
+    options.radiusB,
+    upperAngleB,
+    lowerAngleB,
+    options.centerA,
+  );
+  const arcClockwiseA = chooseOuterArcDirection(
+    options.centerA,
+    options.radiusA,
+    lowerAngleA,
+    upperAngleA,
+    options.centerB,
+  );
+
+  return path(id, {
+    commands: [
+      moveTo(upper.pointA),
+      lineTo(upper.pointB),
+      arc(options.centerB, options.radiusB, upperAngleB, lowerAngleB, { clockwise: arcClockwiseB }),
+      lineTo(lower.pointA),
+      arc(options.centerA, options.radiusA, lowerAngleA, upperAngleA, { clockwise: arcClockwiseA }),
+      closePath(),
+    ],
+    ...(options.style ? { style: options.style } : {}),
+  });
 }
 
 export function xAxis(idPrefix: string, frame: PlotFrame, options: AxisOptions = {}): readonly AxisObject[] {

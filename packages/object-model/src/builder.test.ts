@@ -14,6 +14,7 @@ import {
   lineTo,
   moveTo,
   path,
+  openBeltPath,
   rect,
   rightOf,
   rotate,
@@ -317,5 +318,63 @@ describe("object-model builder helpers", () => {
     yAxis("plot.y", frame, { axisValue: 0, tickValues: [0, 100] });
 
     expect(frame).toEqual(before);
+  });
+
+  it("creates a plain path object for an open belt around two circles", () => {
+    const belt = openBeltPath("belt.path", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+      style: { stroke: "#0f172a", strokeWidth: 2, fill: "none", strokeLineCap: "round" },
+    });
+
+    expect(belt.kind).toBe("path");
+    expect(belt.id).toBe("belt.path");
+    expect(belt.style).toEqual({ stroke: "#0f172a", strokeWidth: 2, fill: "none", strokeLineCap: "round" });
+
+    const commandKinds = belt.commands.map((command) => command.kind);
+    expect(commandKinds).toEqual(["moveTo", "lineTo", "arc", "lineTo", "arc", "closePath"]);
+    expect(belt.commands.filter((command) => command.kind === "arc")).toHaveLength(2);
+  });
+
+  it("is deterministic for a simple open belt pair", () => {
+    const first = openBeltPath("belt.path", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+    const second = openBeltPath("belt.path", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+
+    expect(first).toEqual(second);
+  });
+
+  it("rejects open belt path cases with insufficient external tangents", () => {
+    expect(() => openBeltPath("belt.bad.overlap", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 130, y: 100 },
+      radiusB: 40,
+    })).toThrow("open belt");
+
+    expect(() => openBeltPath("belt.bad.contained", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 110, y: 100 },
+      radiusB: 10,
+    })).toThrow("open belt");
+
+    expect(() => openBeltPath("belt.bad.coincident", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 100, y: 100 },
+      radiusB: 20,
+    })).toThrow("open belt");
   });
 });

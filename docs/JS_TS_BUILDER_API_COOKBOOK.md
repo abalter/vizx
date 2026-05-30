@@ -55,6 +55,7 @@ Path command helpers:
 - `rightAngleMarkPath(id, options)`
 - `segmentTickMarkPath(id, options)`
 - `segmentTickMarks(idPrefix, options)`
+- `openBeltPath(id, options)`
 - `closePath()`
 
 Placement helpers:
@@ -296,6 +297,37 @@ Notes:
 - helpers emit ordinary `path` objects and points
 - no new runtime annotation type is introduced
 - no collision avoidance or automatic side selection is included in v0
+
+## 7.2 Belt/Pulley Path Helper Example
+
+The first belt/pulley helper slice adds `openBeltPath(...)` in the builder layer. It composes existing external common tangents plus circular `arc` path commands and returns a plain `PathObject`.
+
+```ts
+import { point } from "@vizx/geometry";
+import { circle, openBeltPath, sceneOf } from "@vizx/object-model";
+
+const centerA = point(120, 150);
+const centerB = point(300, 130);
+
+const scene = sceneOf([
+  circle("pulley.a", { center: centerA, radius: 42, style: { stroke: "#0f172a", fill: "none" } }),
+  circle("pulley.b", { center: centerB, radius: 28, style: { stroke: "#1d4ed8", fill: "none" } }),
+  openBeltPath("belt.loop", {
+    centerA,
+    radiusA: 42,
+    centerB,
+    radiusB: 28,
+    style: { stroke: "#0f766e", strokeWidth: 2.2, fill: "none", strokeLineCap: "round" },
+  }),
+]);
+```
+
+Notes:
+
+- helper emits existing `moveTo`/`lineTo`/`arc`/`closePath` commands only
+- no new runtime object kind is introduced
+- v0 requires disjoint circles and external tangents
+- belt thickness/length/mechanics semantics are deferred
 
 ## 8. Data-Driven Generation Example
 

@@ -101,6 +101,14 @@ Current explicit annotation helpers include:
 
 These are explicit authoring conveniences that return existing points/path objects only.
 
+### 2.7 Belt/pulley helper
+
+Current explicit belt/pulley helper includes:
+
+- `openBeltPath`
+
+This is a bounded builder-level path helper that composes existing external common tangents and circular arc commands into a closed open-belt loop path.
+
 ## 3. Example Coverage
 
 Current technical/math-relevant examples and coverage:
@@ -111,6 +119,8 @@ Current technical/math-relevant examples and coverage:
   - demonstrates explicit tangent construction with circle-point tangent line and external tangent points
 - `technical-common-tangents`
   - demonstrates explicit external/internal common tangents between two circles with tangent-point markers and dashed guide radii
+- `technical-belt-pulley`
+  - demonstrates a first open-belt loop path around two pulleys using external tangents, circular wrap arcs, and dashed guide radii
 - `aspirational-labeled-polygon`
   - demonstrates angle marks plus v0 technical style fields (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`)
 - `aspirational-geometry-1-lite`
@@ -146,6 +156,7 @@ Still missing for higher-fidelity technical/math construction work:
 - no construction solver
 - no automatic dependency graph/inference for geometric constructions
 - no tangent-to-path or tangent-to-arc helpers
+- no crossed-belt helper (internal tangent belt runs)
 - no automatic annotation collision avoidance
 - no dimension-line annotation system
 - no `cutbefore`/`cutafter`

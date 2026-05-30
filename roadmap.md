@@ -193,6 +193,7 @@ Current note:
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
+- first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.
 
 ## D. Deferred Work
 
