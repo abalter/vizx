@@ -14,6 +14,7 @@ Top-level navigation:
 - [README.md](../README.md) for current status and entry points
 - [roadmap.md](../roadmap.md) for root milestone sequencing and deferred work
 - [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md) for technical/mathematical drawing priority guidance
+- [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md) for consolidated post-intersection/tangent/application checkpoint status and next-branch recommendation
 
 ## Technical Track Priority Note
 

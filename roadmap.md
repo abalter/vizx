@@ -11,6 +11,7 @@ See also:
 - [docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./docs/ASPIRATIONAL_REPRODUCTION_ROADMAP.md)
 - [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
 - [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md)
+- [docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
 
 ## A. Current Completed Foundation
 
@@ -49,6 +50,8 @@ Near-term roadmap priority is technical/mathematical construction drawing using 
 - Immediate example pressure should come from geometry/math/physics-style drawings.
 
 See [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md).
+
+Consolidated post-intersection/tangent/application status is captured in [docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md).
 
 ### 1. Current-capability aspirational mini-gallery
 

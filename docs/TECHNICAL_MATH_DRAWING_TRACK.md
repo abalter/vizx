@@ -4,6 +4,10 @@ This note clarifies near-term roadmap priority after Milestone 5 plot/data-coord
 
 The plot/data branch remains documented and useful, but immediate priority should emphasize technical and mathematical construction drawing.
 
+Latest checkpoint:
+
+- [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
+
 ## 1. Purpose
 
 This track focuses on geometry/math/physics-style drawing rather than chart infrastructure.
@@ -81,7 +85,7 @@ Current note:
 
 Likely future technical/math feature slices (not implemented in this pass):
 
-- intersection helpers
+- segment/ray clipped intersection variants
 - label/annotation helper refinements
 - common tangent helper families
 - right-angle marker helper

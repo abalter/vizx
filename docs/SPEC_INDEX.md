@@ -22,6 +22,7 @@ This directory and each package-level `SPEC.md` describe the contracts that impl
 - [`JS_TS_BUILDER_API_CHECKPOINT.md`](./JS_TS_BUILDER_API_CHECKPOINT.md) — post-parity checkpoint summary of implemented builder scope, identity, limits, and next branches.
 - [`ASPIRATIONAL_REPRODUCTION_ROADMAP.md`](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) — milestone-driven, example-first roadmap for reproducing selected aspirational gallery examples.
 - [`TECHNICAL_MATH_DRAWING_TRACK.md`](./TECHNICAL_MATH_DRAWING_TRACK.md) — near-term technical/mathematical drawing track note that re-centers geometry-first example pressure while keeping plot/data planning documented.
+- [`TECHNICAL_MATH_DRAWING_CHECKPOINT.md`](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md) — docs-only medium-depth checkpoint consolidating implemented technical/math helper surface, aspirational example coverage, remaining gaps, and recommended next branch.
 - [`TECHNICAL_GEOMETRY_HELPER_PLAN.md`](./TECHNICAL_GEOMETRY_HELPER_PLAN.md) — Milestone 2 docs-only plan for a JS/TS technical geometry helper layer that complements builder-based scene authoring.
 - [`GEOMETRY_INTERSECTION_HELPER_PLAN.md`](./GEOMETRY_INTERSECTION_HELPER_PLAN.md) — implementation-facing v0 plan for pure line-line, line-circle, and circle-circle intersection helpers with explicit non-solver boundaries.
 - [`GEOMETRY_TANGENT_HELPER_PLAN.md`](./GEOMETRY_TANGENT_HELPER_PLAN.md) — implementation-facing v0 plan for pure tangent helpers (circle-point tangent line and external-point circle tangency points) with explicit no-solver boundaries.
