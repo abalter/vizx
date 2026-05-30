@@ -104,6 +104,11 @@ Current status remains:
 - not Level 3 fidelity
 - not source-language translation
 
+Additional current-capability application:
+
+- `aspirational-projectile-motion-lite` now applies existing style fields (`strokeDasharray`, `strokeLineCap`) together with existing Bezier-path, arc-angle-mark, arrow-marker, and text-label capabilities.
+- this remains a manual Level 1-2 approximation and does not introduce a plot/data-coordinate model, physics simulation, or source translation.
+
 ## 5. Current Limitations
 
 Still deferred in the style surface:

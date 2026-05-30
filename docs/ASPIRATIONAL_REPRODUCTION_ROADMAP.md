@@ -109,8 +109,10 @@ Current status:
   - `aspirational-android-lifecycle`
   - `aspirational-labeled-polygon`
   - `aspirational-arrow-label`
+  - `aspirational-projectile-motion-lite`
 - implemented as manual builder-authored Level 1-2 reproductions
 - `aspirational-labeled-polygon` now uses real circular angle marks for its beta labels
+- `aspirational-projectile-motion-lite` combines Bezier trajectory pathing, launch-angle arc annotation, arrowed vector styling, and dashed construction guides using existing capabilities only
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
 
@@ -135,6 +137,10 @@ Recommended first slice scope:
   - `aspirational-android-lifecycle`
   - `aspirational-labeled-polygon`
   - `aspirational-arrow-label`
+
+Current extension note:
+
+- a bounded current-capability extension example (`aspirational-projectile-motion-lite`) now exists without introducing a plot/data-coordinate model
 
 ## 5. Milestone 2 - Geometry Helper Layer For Math Diagrams
 

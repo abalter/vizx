@@ -54,6 +54,7 @@ Representative examples:
 - aspirational-android-lifecycle
 - aspirational-labeled-polygon
 - aspirational-arrow-label
+- aspirational-projectile-motion-lite
 
 Next likely slice:
 
@@ -160,6 +161,10 @@ Recommended near-term sequence after this docs pass:
 2. Optionally add one additional aspirational example using existing arcs and style distinctions.
 3. Evaluate a narrow style second slice (`strokeOpacity`/`fillOpacity`) only if visual pressure justifies it.
 4. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
+
+Current note:
+
+- one additional current-capability aspirational example (`aspirational-projectile-motion-lite`) now exists and remains deliberately outside any plot/data-coordinate model scope.
 
 ## D. Deferred Work
 

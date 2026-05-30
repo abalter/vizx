@@ -719,6 +719,50 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates aspirational-projectile-motion-lite", () => {
+    const example = requireVizxExample("aspirational-projectile-motion-lite");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const trajectory = scene.objects.find((object) => object.id === "proj.trajectory");
+    const angleMark = scene.objects.find((object) => object.id === "proj.angle.arc");
+    const launchVector = result.resolved.objects.find((object) => object.id === "proj.launch.vector");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "proj.ground")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "proj.trajectory" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "proj.launch.vector" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "proj.angle.arc" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "proj.angle.label")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "proj.caption")).toBe(true);
+
+    expect(trajectory?.kind).toBe("path");
+    if (!trajectory || trajectory.kind !== "path") {
+      throw new Error("Expected proj.trajectory path object");
+    }
+
+    expect(
+      trajectory.commands.some((command) => command.kind === "quadraticCurveTo")
+      || trajectory.commands.some((command) => command.kind === "cubicCurveTo"),
+    ).toBe(true);
+
+    expect(angleMark?.kind).toBe("path");
+    if (!angleMark || angleMark.kind !== "path") {
+      throw new Error("Expected proj.angle.arc path object");
+    }
+
+    expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(launchVector?.renderNode.style?.markerEnd).toBe("arrow");
+    expect(svg).toContain('id="proj.trajectory"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(svg).toContain('stroke-dasharray="6 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates aspirational-arrow-label", () => {
     const example = requireVizxExample("aspirational-arrow-label");
     const scene = example.createScene();

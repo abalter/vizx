@@ -3,6 +3,7 @@ import { alignmentReferenceExample } from "./alignmentReference";
 import { aspirationalAndroidLifecycleExample } from "./aspirationalAndroidLifecycle";
 import { aspirationalArrowLabelExample } from "./aspirationalArrowLabel";
 import { aspirationalLabeledPolygonExample } from "./aspirationalLabeledPolygon";
+import { aspirationalProjectileMotionLiteExample } from "./aspirationalProjectileMotionLite";
 import { arrowheadsExample } from "./arrowheads";
 import { anchorsExample } from "./anchors";
 import { basicExample } from "./basic";
@@ -34,6 +35,7 @@ export const vizxExamples: readonly VizxExample[] = [
   aspirationalAndroidLifecycleExample,
   aspirationalArrowLabelExample,
   aspirationalLabeledPolygonExample,
+  aspirationalProjectileMotionLiteExample,
   arrowheadsExample,
   basicExample,
   bezierPathExample,
