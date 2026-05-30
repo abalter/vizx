@@ -13,7 +13,7 @@ export const aspirationalLabeledPolygonExample: VizxExample = {
   id: "aspirational-labeled-polygon",
   title: "Aspirational: Labeled polygon",
   description:
-    "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels and real circular angle marks.",
+    "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.",
   expectedCapabilities: [
     "builder helpers",
     "technical geometry helpers",
@@ -66,17 +66,17 @@ export const aspirationalLabeledPolygonExample: VizxExample = {
     return sceneOf([
       polygon("poly.main", {
         points: polygonPoints,
-        style: { stroke: "#0f172a", strokeWidth: 2, fill: "none" },
+        style: { stroke: "#0f172a", strokeWidth: 2, fill: "none", strokeLineJoin: "round" },
       }),
       line("poly.diagonal.ac", {
         start: a,
         end: c,
-        style: { stroke: "#94a3b8", strokeWidth: 1.4 },
+        style: { stroke: "#94a3b8", strokeWidth: 1.4, strokeDasharray: [6, 4], strokeLineCap: "round" },
       }),
       line("poly.diagonal.ce", {
         start: c,
         end: e,
-        style: { stroke: "#94a3b8", strokeWidth: 1.4 },
+        style: { stroke: "#94a3b8", strokeWidth: 1.4, strokeDasharray: [6, 4], strokeLineCap: "round" },
       }),
       text("vertex.A", {
         center: offsetPoint(a, -22, 8),
@@ -110,7 +110,7 @@ export const aspirationalLabeledPolygonExample: VizxExample = {
           toPoint: mark.toPoint,
           radius: angleMarkRadius,
           clockwise: true,
-          style: { stroke: "#0f766e", strokeWidth: 2, fill: "none" },
+          style: { stroke: "#0f766e", strokeWidth: 2, fill: "none", strokeLineCap: "round" },
         }),
         text(mark.labelId, {
           center: mark.labelCenter,

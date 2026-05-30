@@ -713,6 +713,9 @@ describe("example registry", () => {
     expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
     expect(svg).toContain("<polygon");
     expect(svg).toContain(" A ");
+    expect(svg).toContain('stroke-linejoin="round"');
+    expect(svg).toContain('stroke-dasharray="6 4"');
+    expect(svg).toContain('stroke-linecap="round"');
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 

@@ -262,6 +262,7 @@ Implemented behavior:
 - shared `Style` type accepts all four fields
 - resolver style propagation preserves these fields through existing style merge/pass-through paths
 - SVG renderer serializes `stroke-dasharray`, `stroke-linecap`, `stroke-linejoin`, and `fill-rule`
+- `aspirational-labeled-polygon` applies style fields in practice (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`) for technical-geometry visual distinction
 - no bbox/anchor/layout/distribution/connector geometry behavior changed
 
 Still deferred in style expansion:

@@ -250,6 +250,7 @@ Current status:
 
 - first implementation slice landed for `strokeDasharray`, `strokeLineCap`, `strokeLineJoin`, and `fillRule`
 - style serialization support is now present in the SVG renderer with resolver pass-through
+- `aspirational-labeled-polygon` now applies `strokeDasharray`, `strokeLineCap`, and `strokeLineJoin` for clearer technical-geometry distinction
 - `strokeOpacity`/`fillOpacity` remain deferred
 
 ## 8. Milestone 5 - Plot/Data Coordinate Model
