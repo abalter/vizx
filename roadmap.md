@@ -13,6 +13,7 @@ See also:
 - [docs/CAPABILITY_MATRIX.md](./docs/CAPABILITY_MATRIX.md)
 - [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md)
 - [docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
+- [docs/TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md)
 
 ## A. Current Completed Foundation
 
@@ -53,6 +54,8 @@ Near-term roadmap priority is technical/mathematical construction drawing using 
 See [docs/TECHNICAL_MATH_DRAWING_TRACK.md](./docs/TECHNICAL_MATH_DRAWING_TRACK.md).
 
 Consolidated post-intersection/tangent/application status is captured in [docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_CHECKPOINT.md).
+
+The post-mechanism milestone decision and current next-branch recommendation are captured in [docs/TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./docs/TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md).
 
 ### 1. Current-capability aspirational mini-gallery
 
@@ -180,11 +183,11 @@ Next likely slice:
 
 Recommended near-term sequence after this docs pass:
 
-1. Add one additional geometry/math aspirational-lite example using current capabilities.
-2. Continue technical construction examples that expose geometry helper gaps.
-3. Evaluate narrow technical helper additions only when repeatedly justified by examples.
-4. Expand plot/data helper slices only after technical/math-example pressure subsides.
-5. Consider JSON Core IR and parser AST catch-up only when interchange priorities justify it.
+1. Prioritize JSON Core IR and parser AST catch-up for the currently implemented builder/helper/path/style/transform surface.
+2. Keep parser syntax and source-language translation deferred while the interchange model catches up.
+3. Revisit path measurement and trimming as the next visual-polish branch once model drift is reduced.
+4. Add further aspirational/technical examples only when they validate genuinely new surfaces rather than repeating known gaps.
+5. Expand plot/data helper slices only after technical/math and interchange priorities are stable.
 
 Current note:
 
@@ -197,6 +200,7 @@ Current note:
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
 - first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.
+- post-mechanism technical/math checkpoint guidance now recommends JSON Core IR / parser AST catch-up before another major geometry or fidelity branch.
 
 ## D. Deferred Work
 

@@ -8,9 +8,9 @@ import type { VizxExample } from "./types";
   - Reproduction level: Level 1-2
   - Helper families: primitives, intersections, annotation helpers,
     circular arcs / angle marks, style fields
-  - Compromises: static snapshot only, manual coordinates, no kinematics solver,
-    no animation, no source translation, no automatic construction inference,
-    no full visual fidelity
+  - Compromises: manual coordinates, no source translation, no solver,
+    no mechanics/physics simulation, no full visual fidelity,
+    no clipping/gradients, no parser/JSON/AST support
 */
 export const aspirationalMechanismLiteExample: VizxExample = {
   id: "aspirational-mechanism-lite",
@@ -27,13 +27,13 @@ export const aspirationalMechanismLiteExample: VizxExample = {
     "style fields",
   ],
   compromises: [
-    "static snapshot only",
     "manual coordinates",
-    "no kinematics solver",
-    "no animation",
+    "no solver",
+    "no mechanics/physics simulation",
     "no source translation",
-    "no automatic construction inference",
     "no full visual fidelity",
+    "no clipping/gradients",
+    "no parser/JSON/AST support",
   ],
   expectedCapabilities: [
     "builder helpers",

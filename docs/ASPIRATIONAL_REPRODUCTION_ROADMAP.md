@@ -16,6 +16,7 @@ Top-level navigation:
 - [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md) for the current aspirational example comparison index by source, helper families, and compromises
 - [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md) for technical/mathematical drawing priority guidance
 - [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md) for consolidated post-intersection/tangent/application checkpoint status and next-branch recommendation
+- [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md) for the post-mechanism checkpoint and current strategic branch recommendation
 
 ## Technical Track Priority Note
 
@@ -174,6 +175,7 @@ Current extension note:
 - aspirational examples now also expose standardized source/level/helper/compromise metadata, and the comparison view is documented in [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md)
 - a machine-readable aspirational manifest now exists at `examples/aspirational-gallery-manifest.json` and is regenerated with `npm run manifest:aspirational`; this is metadata-only (no scenes/SVG/source translation)
 - a generated static aspirational gallery report now exists at `examples/aspirational-gallery.html` and is regenerated with `npm run gallery:aspirational`; it combines manifest metadata with existing rendered SVG/debug outputs for review only (not source translation or fidelity guarantee)
+- the current post-mechanism recommendation is to prioritize JSON Core IR / parser AST catch-up for the implemented builder/helper surface before another major feature branch
 
 ## 5. Milestone 2 - Geometry Helper Layer For Math Diagrams
 

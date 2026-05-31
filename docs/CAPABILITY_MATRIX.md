@@ -8,6 +8,7 @@ For milestone progression from current capabilities to aspirational examples, se
 For a source/helper/compromise comparison across the current aspirational examples, see [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md).
 For near-term technical/mathematical drawing priority guidance, see [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md).
 For consolidated technical/math drawing checkpoint status and recommended next branch, see [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md).
+For the post-mechanism milestone decision and current strategic recommendation, see [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md).
 For Milestone 4 style-surface checkpoint status and limits, see [STYLE_EXPANSION_CHECKPOINT.md](./STYLE_EXPANSION_CHECKPOINT.md).
 For Milestone 5 plot/data-coordinate planning status (not implementation), see [PLOT_DATA_COORDINATE_MODEL_PLAN.md](./PLOT_DATA_COORDINATE_MODEL_PLAN.md) and [PLOT_DATA_ASPIRATIONAL_TARGETS.md](./PLOT_DATA_ASPIRATIONAL_TARGETS.md).
 

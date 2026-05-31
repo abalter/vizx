@@ -95,13 +95,13 @@
         "style fields"
       ],
       "compromises": [
-        "static snapshot only",
         "manual coordinates",
-        "no kinematics solver",
-        "no animation",
+        "no solver",
+        "no mechanics/physics simulation",
         "no source translation",
-        "no automatic construction inference",
-        "no full visual fidelity"
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
       ]
     },
     {

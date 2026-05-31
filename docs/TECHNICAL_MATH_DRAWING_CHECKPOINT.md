@@ -1,5 +1,7 @@
 # Technical Math Drawing Checkpoint
 
+Superseded by [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md) for the post-mechanism milestone decision and next-branch recommendation.
+
 This document is a docs-only checkpoint after landing the current technical/math drawing slices for:
 
 - explicit intersection helpers
@@ -183,6 +185,11 @@ Still missing for higher-fidelity technical/math construction work:
 - no parser/JSON/AST support for helper surfaces
 
 ## 6. Next Branch Options
+
+Historical note:
+
+- the options listed below reflect the earlier pre-mechanism branch discussion
+- the current post-mechanism recommendation now lives in [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md)
 
 Current status update:
 

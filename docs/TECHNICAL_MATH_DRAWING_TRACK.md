@@ -6,6 +6,7 @@ The plot/data branch remains documented and useful, but immediate priority shoul
 
 Latest checkpoint:
 
+- [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md)
 - [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md)
 - [GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md](./GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md)
 - [GEOMETRY_BELT_PULLEY_HELPER_PLAN.md](./GEOMETRY_BELT_PULLEY_HELPER_PLAN.md)
@@ -100,10 +101,14 @@ Current note:
 
 Likely future technical/math feature slices (not implemented in this pass):
 
-- segment/ray clipped intersection variants
-- label/annotation helper refinements
-- common tangent helper families
-- dimension-line and collision-aware annotation helpers
-- cutbefore/cutafter support
-- projection helpers
+- JSON Core IR / parser AST catch-up for the current builder/helper surface
+- path measurement and trimming helpers
 - clipping and fill-surface refinements
+- label/annotation refinement work
+- projection helpers
+
+Current recommendation:
+
+- after the static mechanism milestone, the most strategically useful next branch is JSON Core IR / parser AST catch-up for the currently implemented path/style/transform/helper surface
+- this is a model-consolidation recommendation, not an implementation claim
+- path measurement and trimming remains the strongest alternative if the immediate priority shifts to visible output polish
