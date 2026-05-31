@@ -193,3 +193,17 @@ Boundaries:
 - no automatic object-boundary lookup or resolver inference
 - no new runtime object kinds or renderer semantics
 - no parser syntax, JSON Core IR helper construct, or parser AST helper construct
+
+## 11. Application Checkpoint (current)
+
+Trimming helpers are now applied beyond the focused technical showcase in additional technical and aspirational examples where circular point-marker overlap reduced readability.
+
+Current application checkpoint:
+
+- [PATH_TRIMMING_APPLICATION_CHECKPOINT.md](./PATH_TRIMMING_APPLICATION_CHECKPOINT.md)
+
+Boundary reminder:
+
+- application remains explicit author-written helper usage
+- no automatic `cutbefore` / `cutafter` semantics
+- no resolver/renderer integration for inferred endpoint trimming

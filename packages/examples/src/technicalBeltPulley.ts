@@ -6,6 +6,7 @@ import {
   openBeltPath,
   sceneOf,
   text,
+  trimmedLine,
   type CircleObject,
   type LineObject,
   type PathObject,
@@ -124,44 +125,52 @@ export const technicalBeltPulleyExample: VizxExample = {
           strokeDasharray: [7, 4],
         },
       }),
-      line("tbp.guide.radius.a.upper", {
-        start: centerA,
-        end: upper.pointA,
+      trimmedLine("tbp.guide.radius.a.upper", {
+        a: centerA,
+        b: upper.pointA,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
-      line("tbp.guide.radius.a.lower", {
-        start: centerA,
-        end: lower.pointA,
+      trimmedLine("tbp.guide.radius.a.lower", {
+        a: centerA,
+        b: lower.pointA,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
-      line("tbp.guide.radius.b.upper", {
-        start: centerB,
-        end: upper.pointB,
+      trimmedLine("tbp.guide.radius.b.upper", {
+        a: centerB,
+        b: upper.pointB,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
-      line("tbp.guide.radius.b.lower", {
-        start: centerB,
-        end: lower.pointB,
+      trimmedLine("tbp.guide.radius.b.lower", {
+        a: centerB,
+        b: lower.pointB,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
-      line("tbp.cross.guide.radius.c.upper", {
-        start: centerC,
-        end: crossedUpper.pointA,
+      trimmedLine("tbp.cross.guide.radius.c.upper", {
+        a: centerC,
+        b: crossedUpper.pointA,
+        endDistance: 2.2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
       }),
-      line("tbp.cross.guide.radius.c.lower", {
-        start: centerC,
-        end: crossedLower.pointA,
+      trimmedLine("tbp.cross.guide.radius.c.lower", {
+        a: centerC,
+        b: crossedLower.pointA,
+        endDistance: 2.2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
       }),
-      line("tbp.cross.guide.radius.d.upper", {
-        start: centerD,
-        end: crossedUpper.pointB,
+      trimmedLine("tbp.cross.guide.radius.d.upper", {
+        a: centerD,
+        b: crossedUpper.pointB,
+        endDistance: 2.2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
       }),
-      line("tbp.cross.guide.radius.d.lower", {
-        start: centerD,
-        end: crossedLower.pointB,
+      trimmedLine("tbp.cross.guide.radius.d.lower", {
+        a: centerD,
+        b: crossedLower.pointB,
+        endDistance: 2.2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
       }),
       circle("tbp.contact.a.upper", {

@@ -6,7 +6,7 @@ import {
   point,
   rayCircleIntersections,
 } from "@vizx/geometry";
-import { circle, line, polygon, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
+import { circle, circleToCircleLine, polygon, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
@@ -164,24 +164,32 @@ export const aspirationalPendagonLiteExample: VizxExample = {
         radius: circleATRadius,
         style: { stroke: "#38bdf8", strokeWidth: 1.1, fill: "none" },
       }),
-      line("pend.guide.ou", {
-        start: centerO,
-        end: pointU,
+      circleToCircleLine("pend.guide.ou", {
+        centerA: centerO,
+        radiusA: 2.5,
+        centerB: pointU,
+        radiusB: 2.5,
         style: { stroke: "#475569", strokeWidth: 1.1, strokeDasharray: [5, 4], strokeLineCap: "round" },
       }),
-      line("pend.guide.oa", {
-        start: centerO,
-        end: pointA,
+      circleToCircleLine("pend.guide.oa", {
+        centerA: centerO,
+        radiusA: 2.5,
+        centerB: pointA,
+        radiusB: 2.5,
         style: { stroke: "#475569", strokeWidth: 1.1, strokeDasharray: [5, 4], strokeLineCap: "round" },
       }),
-      line("pend.guide.ap", {
-        start: pointA,
-        end: pointT,
+      circleToCircleLine("pend.guide.ap", {
+        centerA: pointA,
+        radiusA: 2.5,
+        centerB: pointT,
+        radiusB: 2.4,
         style: { stroke: "#64748b", strokeWidth: 1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
-      line("pend.guide.p1p2", {
-        start: pointP1,
-        end: pointP2,
+      circleToCircleLine("pend.guide.p1p2", {
+        centerA: pointP1,
+        radiusA: 2.4,
+        centerB: pointP2,
+        radiusB: 2.4,
         style: { stroke: "#64748b", strokeWidth: 1, strokeDasharray: [4, 4], strokeLineCap: "round" },
       }),
       ...apTicks,

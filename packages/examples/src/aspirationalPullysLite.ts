@@ -3,12 +3,14 @@ import {
   angleMarkPath,
   arrowEnd,
   circle,
+  circleToCircleLine,
   line,
   openBeltPath,
   rect,
   sceneOf,
   segmentTickMarks,
   text,
+  trimmedLine,
 } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
@@ -172,19 +174,24 @@ export const aspirationalPullysLiteExample: VizxExample = {
         end: rightMassTop,
         style: { stroke: "#0f172a", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
-      line("apl.rope.left.branch", {
-        start: leftBranchPoint,
-        end: hookPoint,
+      circleToCircleLine("apl.rope.left.branch", {
+        centerA: leftBranchPoint,
+        radiusA: 2.4,
+        centerB: hookPoint,
+        radiusB: 2.6,
         style: { stroke: "#0f172a", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
-      line("apl.rope.right.branch", {
-        start: rightBranchPoint,
-        end: hookPoint,
+      circleToCircleLine("apl.rope.right.branch", {
+        centerA: rightBranchPoint,
+        radiusA: 2.4,
+        centerB: hookPoint,
+        radiusB: 2.6,
         style: { stroke: "#0f172a", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
-      line("apl.rope.center.drop", {
-        start: hookPoint,
-        end: centerMassTop,
+      trimmedLine("apl.rope.center.drop", {
+        a: hookPoint,
+        b: centerMassTop,
+        startDistance: 2.6,
         style: { stroke: "#0f172a", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
       ...segmentTickMarks("apl.tick.left", {

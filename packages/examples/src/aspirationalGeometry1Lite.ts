@@ -1,5 +1,5 @@
 import { angleLabelPoint, labelAlongSegment, lineLineIntersection, point } from "@vizx/geometry";
-import { angleMarkPath, arrowEnd, circle, line, rightAngleMarkPath, sceneOf, text } from "@vizx/object-model";
+import { angleMarkPath, arrowEnd, circle, circleToCircleLine, line, rightAngleMarkPath, sceneOf, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
@@ -143,14 +143,18 @@ export const aspirationalGeometry1LiteExample: VizxExample = {
           strokeDasharray: [5, 4],
         },
       }),
-      line("geo1.map.p_to_pp", {
-        start: p,
-        end: pPrime,
+      circleToCircleLine("geo1.map.p_to_pp", {
+        centerA: p,
+        radiusA: 3,
+        centerB: pPrime,
+        radiusB: 3,
         style: { stroke: "#94a3b8", strokeWidth: 1.2, strokeDasharray: [4, 3], strokeLineCap: "round" },
       }),
-      line("geo1.map.pp_to_ppp", {
-        start: pPrime,
-        end: pDoublePrime,
+      circleToCircleLine("geo1.map.pp_to_ppp", {
+        centerA: pPrime,
+        radiusA: 3,
+        centerB: pDoublePrime,
+        radiusB: 3,
         style: { stroke: "#94a3b8", strokeWidth: 1.2, strokeDasharray: [4, 3], strokeLineCap: "round" },
       }),
       angleMarkPath("geo1.angle.frame", {

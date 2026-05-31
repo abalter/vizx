@@ -8,6 +8,7 @@ import {
   line,
   sceneOf,
   text,
+  trimmedLine,
   type CircleObject,
   type LineObject,
   type TextObject,
@@ -82,14 +83,18 @@ export const technicalCommonTangentsExample: VizxExample = {
         end: tangent.pointB,
         style: { stroke: "#0f766e", strokeWidth: 2.2, strokeLineCap: "round" },
       }));
-      objects.push(line(`tct.radius.external.a.${index}`, {
-        start: centerA,
-        end: tangent.pointA,
+      objects.push(trimmedLine(`tct.radius.external.a.${index}`, {
+        a: centerA,
+        b: tangent.pointA,
+        startDistance: 2.6,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.2, strokeDasharray: [4, 4] },
       }));
-      objects.push(line(`tct.radius.external.b.${index}`, {
-        start: centerB,
-        end: tangent.pointB,
+      objects.push(trimmedLine(`tct.radius.external.b.${index}`, {
+        a: centerB,
+        b: tangent.pointB,
+        startDistance: 2.6,
+        endDistance: 2.2,
         style: { stroke: "#64748b", strokeWidth: 1.2, strokeDasharray: [4, 4] },
       }));
       objects.push(circle(`tct.point.external.a.${index}`, {
@@ -120,14 +125,18 @@ export const technicalCommonTangentsExample: VizxExample = {
         end: tangent.pointB,
         style: { stroke: "#b45309", strokeWidth: 1.9, strokeLineCap: "round" },
       }));
-      objects.push(line(`tct.radius.internal.a.${index}`, {
-        start: centerA,
-        end: tangent.pointA,
+      objects.push(trimmedLine(`tct.radius.internal.a.${index}`, {
+        a: centerA,
+        b: tangent.pointA,
+        startDistance: 2.6,
+        endDistance: 2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3] },
       }));
-      objects.push(line(`tct.radius.internal.b.${index}`, {
-        start: centerB,
-        end: tangent.pointB,
+      objects.push(trimmedLine(`tct.radius.internal.b.${index}`, {
+        a: centerB,
+        b: tangent.pointB,
+        startDistance: 2.6,
+        endDistance: 2,
         style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3] },
       }));
       objects.push(circle(`tct.point.internal.a.${index}`, {

@@ -100,6 +100,7 @@ Current note:
 - this example remains a static construction drawing only: no source translation, no solver, and no mechanics/kinematics simulation.
 - generated gallery tooling now includes both `aspirational-*` and `technical-*` example metadata for side-by-side review in `examples/example-gallery-manifest.json` and `examples/example-gallery.html`.
 - bounded straight-segment trimming helpers are now implemented in `@vizx/geometry` with focused example coverage (`technical-trimmed-segments`) for technical line polish near circle boundaries.
+- trimming application has now expanded to additional technical/aspirational examples using explicit `trimmedLine(...)` and `circleToCircleLine(...)` where line endpoints meet circular pivots/contact markers; this remains author-driven polish with no automatic trimming semantics.
 
 ## 6. Recommended Next Feature Gaps
 

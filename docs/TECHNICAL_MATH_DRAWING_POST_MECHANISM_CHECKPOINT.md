@@ -46,7 +46,7 @@ Implemented baseline object and rendering surface:
 - ordered transforms: `translate`, `rotate`, `scale`
 - connectors and built-in arrow markers
 - current style fields including dash/cap/join/fill-rule support
-- builder trimmed-line convenience (`trimmedLine`) over geometry `trimSegment`
+- builder trimming conveniences (`trimmedLine`, `circleToCircleLine`) over existing geometry helpers
 
 ### 2.2 Geometry construction helpers
 
@@ -105,6 +105,8 @@ Implemented aspirational review tooling:
 | `technical-belt-pulley` | Focused technical example | `common tangents`, `belt/pulley path`, `circular arcs / angle marks`, `style fields` | Open and crossed belt helpers are stable, explicit builder composition on top of tangent math | No belt metrics, no thickness, no pulley mechanics |
 | `technical-common-tangents` | Focused technical example | `common tangents`, `annotation helpers`, `style fields` | Circle-circle common tangents are deterministic and useful for technical guides | No tangent-to-path/arc families, no higher-level trimming |
 | `technical-trimmed-segments` | Focused technical example | `segment/ray clipping`, `annotation helpers`, `style fields` | Explicit straight-segment trimming yields cleaner technical line polish without adding runtime semantics | No curve/path-length trimming or cutbefore/cutafter semantics |
+| `technical-tangents`, `technical-common-tangents`, `technical-belt-pulley` | Technical trimming application pass | existing helper families plus explicit line trimming usage | Existing diagrams can improve endpoint readability near circular markers with explicit trimming only | Still manual; no inferred object-boundary trimming |
+| `aspirational-mechanism-lite`, `aspirational-pullys-lite`, `aspirational-pendagon-lite`, `aspirational-geometry-1-lite` | Aspirational trimming application pass | existing helper families plus explicit line trimming usage | Existing aspirational scenes can reduce circular marker overlap without model/runtime expansion | Still manual; no automatic cutbefore/cutafter semantics |
 | `technical-tangents` | Focused technical example | `tangents`, `style fields` | Point-to-circle tangent helpers cover the expected v0 construction cases | No finite tangent clipping families, no perimeter-aware trim behavior |
 | `technical-angle-arc` | Focused technical example | `circular arcs / angle marks` | Arc command plus angle-mark helper supports readable angle annotation | No arc measurement, no elliptical arcs, no advanced arc labeling |
 

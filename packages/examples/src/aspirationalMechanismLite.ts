@@ -1,5 +1,5 @@
 import { angleLabelPoint, circleCircleIntersections, labelAlongSegment, point } from "@vizx/geometry";
-import { angleMarkPath, circle, line, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
+import { angleMarkPath, circle, circleToCircleLine, line, sceneOf, segmentTickMarks, text } from "@vizx/object-model";
 import type { VizxExample } from "./types";
 
 /*
@@ -123,44 +123,60 @@ export const aspirationalMechanismLiteExample: VizxExample = {
         radius: couplerRadius,
         style: { stroke: "#cbd5e1", strokeWidth: 1, strokeDasharray: [4, 4], fill: "none" },
       }),
-      line("mek.bar.base", {
-        start: baseO,
-        end: baseA,
+      circleToCircleLine("mek.bar.base", {
+        centerA: baseO,
+        radiusA: 4.4,
+        centerB: baseA,
+        radiusB: 4.4,
         style: { stroke: "#d97706", strokeWidth: 3.2, strokeLineCap: "round" },
       }),
-      line("mek.bar.crank", {
-        start: baseA,
-        end: movingP,
+      circleToCircleLine("mek.bar.crank", {
+        centerA: baseA,
+        radiusA: 4.4,
+        centerB: movingP,
+        radiusB: 4.4,
         style: { stroke: "#d97706", strokeWidth: 3.2, strokeLineCap: "round" },
       }),
-      line("mek.bar.left.upper", {
-        start: movingP,
-        end: jointN1,
+      circleToCircleLine("mek.bar.left.upper", {
+        centerA: movingP,
+        radiusA: 4.4,
+        centerB: jointN1,
+        radiusB: 3.6,
         style: { stroke: "#b91c1c", strokeWidth: 2.4, strokeLineCap: "round" },
       }),
-      line("mek.bar.left.lower", {
-        start: movingP,
-        end: jointN2,
+      circleToCircleLine("mek.bar.left.lower", {
+        centerA: movingP,
+        radiusA: 4.4,
+        centerB: jointN2,
+        radiusB: 3.6,
         style: { stroke: "#b91c1c", strokeWidth: 2.4, strokeLineCap: "round" },
       }),
-      line("mek.bar.right.upper", {
-        start: mechanismJoint,
-        end: jointN1,
+      circleToCircleLine("mek.bar.right.upper", {
+        centerA: mechanismJoint,
+        radiusA: 4.2,
+        centerB: jointN1,
+        radiusB: 3.6,
         style: { stroke: "#166534", strokeWidth: 2.4, strokeLineCap: "round" },
       }),
-      line("mek.bar.right.lower", {
-        start: mechanismJoint,
-        end: jointN2,
+      circleToCircleLine("mek.bar.right.lower", {
+        centerA: mechanismJoint,
+        radiusA: 4.2,
+        centerB: jointN2,
+        radiusB: 3.6,
         style: { stroke: "#166534", strokeWidth: 2.4, strokeLineCap: "round" },
       }),
-      line("mek.bar.support.upper", {
-        start: baseO,
-        end: jointN1,
+      circleToCircleLine("mek.bar.support.upper", {
+        centerA: baseO,
+        radiusA: 4.4,
+        centerB: jointN1,
+        radiusB: 3.6,
         style: { stroke: "#0f766e", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
-      line("mek.bar.support.lower", {
-        start: baseO,
-        end: jointN2,
+      circleToCircleLine("mek.bar.support.lower", {
+        centerA: baseO,
+        radiusA: 4.4,
+        centerB: jointN2,
+        radiusB: 3.6,
         style: { stroke: "#0f766e", strokeWidth: 1.8, strokeLineCap: "round" },
       }),
       ...segmentTickMarks("mek.tick.base", {

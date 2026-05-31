@@ -9,6 +9,7 @@ import {
   line,
   sceneOf,
   text,
+  trimmedLine,
   type CircleObject,
   type LineObject,
   type TextObject,
@@ -71,24 +72,32 @@ export const technicalTangentsExample: VizxExample = {
         radius: 3,
         style: { stroke: "#b91c1c", fill: "#b91c1c" },
       }),
-      line("tg.segment.0", {
-        start: externalPoint,
-        end: tangentA,
+      trimmedLine("tg.segment.0", {
+        a: externalPoint,
+        b: tangentA,
+        startDistance: 3,
+        endDistance: 2.5,
         style: { stroke: "#0f766e", strokeWidth: 2 },
       }),
-      line("tg.segment.1", {
-        start: externalPoint,
-        end: tangentB,
+      trimmedLine("tg.segment.1", {
+        a: externalPoint,
+        b: tangentB,
+        startDistance: 3,
+        endDistance: 2.5,
         style: { stroke: "#0f766e", strokeWidth: 2 },
       }),
-      line("tg.radius.0", {
-        start: center,
-        end: tangentA,
+      trimmedLine("tg.radius.0", {
+        a: center,
+        b: tangentA,
+        startDistance: 2.5,
+        endDistance: 2.5,
         style: { stroke: "#64748b", strokeWidth: 1.4, strokeDasharray: [5, 4] },
       }),
-      line("tg.radius.1", {
-        start: center,
-        end: tangentB,
+      trimmedLine("tg.radius.1", {
+        a: center,
+        b: tangentB,
+        startDistance: 2.5,
+        endDistance: 2.5,
         style: { stroke: "#64748b", strokeWidth: 1.4, strokeDasharray: [5, 4] },
       }),
       line("tg.tangent.line.atA", {
