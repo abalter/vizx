@@ -14,6 +14,7 @@ import {
   lineTo,
   moveTo,
   path,
+  crossedBeltPath,
   openBeltPath,
   rect,
   rightOf,
@@ -376,5 +377,81 @@ describe("object-model builder helpers", () => {
       centerB: { x: 100, y: 100 },
       radiusB: 20,
     })).toThrow("open belt");
+  });
+
+  it("creates a plain path object for a crossed belt around two circles", () => {
+    const belt = crossedBeltPath("belt.crossed", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+      style: { stroke: "#7c3aed", strokeWidth: 2, fill: "none", strokeLineCap: "round" },
+    });
+
+    expect(belt.kind).toBe("path");
+    expect(belt.id).toBe("belt.crossed");
+    expect(belt.style).toEqual({ stroke: "#7c3aed", strokeWidth: 2, fill: "none", strokeLineCap: "round" });
+
+    const commandKinds = belt.commands.map((command) => command.kind);
+    expect(commandKinds).toEqual(["moveTo", "lineTo", "arc", "lineTo", "arc", "closePath"]);
+    expect(belt.commands.filter((command) => command.kind === "arc")).toHaveLength(2);
+  });
+
+  it("is deterministic for a simple crossed belt pair", () => {
+    const first = crossedBeltPath("belt.crossed", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+    const second = crossedBeltPath("belt.crossed", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+
+    expect(first).toEqual(second);
+  });
+
+  it("rejects crossed belt path cases with insufficient internal tangents", () => {
+    expect(() => crossedBeltPath("belt.crossed.bad.overlap", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 130, y: 100 },
+      radiusB: 40,
+    })).toThrow("crossed belt");
+
+    expect(() => crossedBeltPath("belt.crossed.bad.contained", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 110, y: 100 },
+      radiusB: 10,
+    })).toThrow("crossed belt");
+
+    expect(() => crossedBeltPath("belt.crossed.bad.coincident", {
+      centerA: { x: 100, y: 100 },
+      radiusA: 40,
+      centerB: { x: 100, y: 100 },
+      radiusB: 20,
+    })).toThrow("crossed belt");
+  });
+
+  it("differs from openBeltPath for the same pulley pair", () => {
+    const openBelt = openBeltPath("belt.open", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+    const crossedBelt = crossedBeltPath("belt.crossed", {
+      centerA: { x: 100, y: 140 },
+      radiusA: 30,
+      centerB: { x: 220, y: 140 },
+      radiusB: 20,
+    });
+
+    expect(crossedBelt.commands).not.toEqual(openBelt.commands);
+    expect(crossedBelt.commands.filter((command) => command.kind === "lineTo")).toHaveLength(2);
   });
 });

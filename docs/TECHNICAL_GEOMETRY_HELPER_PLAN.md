@@ -45,6 +45,7 @@ Current implementation status:
   - `segmentTickMarks`
 - belt/pulley path helper slice now implemented in builder layer:
   - `openBeltPath`
+  - `crossedBeltPath`
 - helpers remain pure and dependency-free
 - core path model now includes a circular `arc` command
 - object-model now includes a thin companion builder helper `angleMarkPath(...)` that returns a plain `PathObject`

@@ -37,6 +37,7 @@ Current VizX capabilities that already support this track:
 - tangent helpers (`tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`)
 - common tangent helpers (`circleCircleTangents`)
 - belt/pulley path helper (`openBeltPath`)
+- crossed-belt path helper (`crossedBeltPath`)
 - annotation helpers (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`)
 - primitive geometry (`line`, `polyline`, `polygon`, `ellipse`, `circle`, `path`, `rect`, `text`, `group`)
 - Bezier and circular-arc path commands (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
@@ -56,7 +57,7 @@ Current blockers for higher-fidelity technical/math diagrams:
 - no broad segment/ray intersection family coverage (for example ray-ray and segment-ray variants)
 - no polygon/path/Bezier/arc intersection helpers
 - no annotation collision avoidance or dimension-line annotation system
-- no crossed-belt helper (internal-tangent belt runs)
+- no belt thickness/length metrics or physical belt mechanics
 - no cutbefore/cutafter behavior
 - no path length or point-at-length helpers
 - no path flattening helpers

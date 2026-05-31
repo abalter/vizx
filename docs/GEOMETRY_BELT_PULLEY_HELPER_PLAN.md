@@ -35,6 +35,14 @@ openBeltPath(id, {
   radiusB,
   style?,
 })
+
+crossedBeltPath(id, {
+  centerA,
+  radiusA,
+  centerB,
+  radiusB,
+  style?,
+})
 ```
 
 Return type:
@@ -44,6 +52,8 @@ PathObject
 ```
 
 The helper internally uses `circleCircleTangents(...)` and selects the two external tangents.
+
+`crossedBeltPath(...)` is the internal-tangent counterpart and selects the two internal tangents.
 
 ## 3. Semantics
 
@@ -58,6 +68,22 @@ v0 semantics:
   - `lineTo` back to circle A lower tangent point
   - `arc` wrap on circle A back to the starting tangent point
   - `closePath`
+
+Crossed-belt v0 semantics:
+
+- internal tangents only
+- constructs a closed crossed-belt centerline path
+- command sequence:
+  - `moveTo` (circle A first internal tangent point)
+  - `lineTo` (circle B matching internal tangent point)
+  - `arc` wrap on circle B to the second internal tangent point
+  - `lineTo` back to circle A second internal tangent point
+  - `arc` wrap on circle A back to the starting tangent point
+  - `closePath`
+- requires two usable internal tangents
+- disallows overlap/containment/coincident-center geometries through separation and tangent availability checks
+- does not compute belt thickness or belt length
+- does not infer rotation direction or mechanics
 
 Arc direction selection:
 
@@ -78,6 +104,11 @@ Out of scope in v0:
 - returns a normal `PathObject`
 - preserves provided `id` and optional `style`
 
+`crossedBeltPath(...)`:
+
+- returns a normal `PathObject`
+- preserves provided `id` and optional `style`
+
 Validation behavior:
 
 - finite centers and radii required
@@ -85,6 +116,8 @@ Validation behavior:
 - circles must be disjoint (`distance(centerA, centerB) > radiusA + radiusB`) in v0
 - if fewer than two external tangents are available, throw `RangeError`
   - includes overlap/containment/coincident-center cases where a valid open-belt loop cannot be formed
+- crossed belt requires separated circles (`distance(centerA, centerB) > radiusA + radiusB`) in v0
+- if fewer than two internal tangents are available, throw `RangeError`
 
 ## 5. Numeric/Tolerance Behavior
 
@@ -99,7 +132,6 @@ v0 follows existing internal tolerance behavior from the geometry helper stack.
 
 Explicitly deferred from this slice:
 
-- crossed belts using internal tangent runs
 - belt thickness and offset boundaries
 - belt length computation
 - pulley rotation direction and mechanics semantics

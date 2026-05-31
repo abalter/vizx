@@ -1049,6 +1049,7 @@ describe("example registry", () => {
     const svg = renderSvg(result.renderScene, { pretty: true });
     const debugScene = createDebugRenderScene(result);
     const belt = scene.objects.find((object) => object.id === "tbp.belt");
+    const crossedBelt = scene.objects.find((object) => object.id === "tbp.crossed.belt");
 
     expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
     expect(svg.length).toBeGreaterThan(0);
@@ -1059,6 +1060,10 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "tbp.label.b" && object.kind === "text")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tbp.contact.a.upper" && object.kind === "circle")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tbp.guide.radius.a.upper" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tbp.crossed.belt" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tbp.cross.contact.c.upper" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tbp.cross.guide.radius.c.upper" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tbp.caption.crossed" && object.kind === "text")).toBe(true);
 
     expect(belt?.kind).toBe("path");
     if (!belt || belt.kind !== "path") {
@@ -1068,11 +1073,20 @@ describe("example registry", () => {
     expect(belt.commands.filter((command) => command.kind === "arc")).toHaveLength(2);
     expect(belt.commands.filter((command) => command.kind === "lineTo").length).toBeGreaterThanOrEqual(2);
 
+    expect(crossedBelt?.kind).toBe("path");
+    if (!crossedBelt || crossedBelt.kind !== "path") {
+      throw new Error("Expected tbp.crossed.belt path object");
+    }
+
+    expect(crossedBelt.commands.filter((command) => command.kind === "arc")).toHaveLength(2);
+    expect(crossedBelt.commands.filter((command) => command.kind === "lineTo").length).toBeGreaterThanOrEqual(2);
+
     expect(svg).toContain("<circle");
     expect(svg).toContain("<path");
     expect(svg).toContain(" A ");
     expect(svg).toContain("<text");
     expect(svg).toContain('stroke-dasharray="4 4"');
+    expect(svg).toContain('stroke-dasharray="7 4"');
     expect(svg).toContain('stroke-linecap="round"');
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });

@@ -158,6 +158,8 @@ interface OpenBeltPathOptions {
   readonly style?: Style;
 }
 
+type CrossedBeltPathOptions = OpenBeltPathOptions;
+
 interface AxisOptions {
   readonly axisValue?: number;
   readonly tickValues?: readonly number[];
@@ -432,6 +434,68 @@ export function openBeltPath(id: string, options: OpenBeltPathOptions): PathObje
       arc(options.centerB, options.radiusB, upperAngleB, lowerAngleB, { clockwise: arcClockwiseB }),
       lineTo(lower.pointA),
       arc(options.centerA, options.radiusA, lowerAngleA, upperAngleA, { clockwise: arcClockwiseA }),
+      closePath(),
+    ],
+    ...(options.style ? { style: options.style } : {}),
+  });
+}
+
+export function crossedBeltPath(id: string, options: CrossedBeltPathOptions): PathObject {
+  assertFinitePointValue(options.centerA, "centerA");
+  assertFinitePointValue(options.centerB, "centerB");
+  assertPositiveFinite(options.radiusA, "radiusA");
+  assertPositiveFinite(options.radiusB, "radiusB");
+
+  const centerDistance = distance(options.centerA, options.centerB);
+  if (centerDistance <= options.radiusA + options.radiusB + 1e-9) {
+    throw new RangeError("crossed belt requires separated circles");
+  }
+
+  const internalTangents = circleCircleTangents(
+    options.centerA,
+    options.radiusA,
+    options.centerB,
+    options.radiusB,
+  ).filter((entry) => entry.kind === "internal");
+
+  if (internalTangents.length < 2) {
+    throw new RangeError("crossed belt requires two internal tangents");
+  }
+
+  const first = internalTangents[0];
+  const second = internalTangents[1];
+
+  if (!first || !second) {
+    throw new RangeError("crossed belt requires two internal tangents");
+  }
+
+  const firstAngleA = angleOf(options.centerA, first.pointA);
+  const secondAngleA = angleOf(options.centerA, second.pointA);
+  const firstAngleB = angleOf(options.centerB, first.pointB);
+  const secondAngleB = angleOf(options.centerB, second.pointB);
+
+  const arcClockwiseB = chooseOuterArcDirection(
+    options.centerB,
+    options.radiusB,
+    firstAngleB,
+    secondAngleB,
+    options.centerA,
+  );
+  const arcClockwiseA = chooseOuterArcDirection(
+    options.centerA,
+    options.radiusA,
+    secondAngleA,
+    firstAngleA,
+    options.centerB,
+  );
+
+  return path(id, {
+    commands: [
+      moveTo(first.pointA),
+      lineTo(first.pointB),
+      arc(options.centerB, options.radiusB, firstAngleB, secondAngleB, { clockwise: arcClockwiseB }),
+      lineTo(second.pointA),
+      arc(options.centerA, options.radiusA, secondAngleA, firstAngleA, { clockwise: arcClockwiseA }),
       closePath(),
     ],
     ...(options.style ? { style: options.style } : {}),

@@ -1,6 +1,7 @@
 import { circleCircleTangents, point } from "@vizx/geometry";
 import {
   circle,
+  crossedBeltPath,
   line,
   openBeltPath,
   sceneOf,
@@ -16,7 +17,7 @@ export const technicalBeltPulleyExample: VizxExample = {
   id: "technical-belt-pulley",
   title: "Technical belt pulley",
   description:
-    "Demonstrates a first open-belt loop path around two pulleys using external common tangents and circular wrap arcs.",
+    "Demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal common tangents and circular wrap arcs.",
   expectedCapabilities: [
     "technical geometry helpers",
     "common tangent helpers",
@@ -26,6 +27,7 @@ export const technicalBeltPulleyExample: VizxExample = {
     "text labels",
     "strokeDasharray",
     "strokeLineCap",
+    "strokeLineJoin",
     "inspect output",
     "debug overlay",
   ],
@@ -34,6 +36,10 @@ export const technicalBeltPulleyExample: VizxExample = {
     const centerB = point(310, 138);
     const radiusA = 44;
     const radiusB = 28;
+    const centerC = point(136, 308);
+    const centerD = point(310, 292);
+    const radiusC = 36;
+    const radiusD = 22;
 
     const externalTangents = circleCircleTangents(centerA, radiusA, centerB, radiusB)
       .filter((entry) => entry.kind === "external");
@@ -47,6 +53,20 @@ export const technicalBeltPulleyExample: VizxExample = {
 
     if (!upper || !lower) {
       throw new Error("Expected two external tangents for technical-belt-pulley");
+    }
+
+    const internalTangents = circleCircleTangents(centerC, radiusC, centerD, radiusD)
+      .filter((entry) => entry.kind === "internal");
+
+    if (internalTangents.length < 2) {
+      throw new Error("Expected two internal tangents for technical-belt-pulley");
+    }
+
+    const crossedUpper = internalTangents[0];
+    const crossedLower = internalTangents[1];
+
+    if (!crossedUpper || !crossedLower) {
+      throw new Error("Expected sorted internal tangents for technical-belt-pulley");
     }
 
     const objects: (CircleObject | LineObject | PathObject | TextObject)[] = [
@@ -73,6 +93,20 @@ export const technicalBeltPulleyExample: VizxExample = {
           strokeLineJoin: "round",
         },
       }),
+      crossedBeltPath("tbp.crossed.belt", {
+        centerA: centerC,
+        radiusA: radiusC,
+        centerB: centerD,
+        radiusB: radiusD,
+        style: {
+          stroke: "#7c3aed",
+          strokeWidth: 2.4,
+          fill: "none",
+          strokeLineCap: "round",
+          strokeLineJoin: "round",
+          strokeDasharray: [7, 4],
+        },
+      }),
       line("tbp.guide.radius.a.upper", {
         start: centerA,
         end: upper.pointA,
@@ -92,6 +126,26 @@ export const technicalBeltPulleyExample: VizxExample = {
         start: centerB,
         end: lower.pointB,
         style: { stroke: "#64748b", strokeWidth: 1.1, strokeDasharray: [4, 4], strokeLineCap: "round" },
+      }),
+      line("tbp.cross.guide.radius.c.upper", {
+        start: centerC,
+        end: crossedUpper.pointA,
+        style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
+      }),
+      line("tbp.cross.guide.radius.c.lower", {
+        start: centerC,
+        end: crossedLower.pointA,
+        style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
+      }),
+      line("tbp.cross.guide.radius.d.upper", {
+        start: centerD,
+        end: crossedUpper.pointB,
+        style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
+      }),
+      line("tbp.cross.guide.radius.d.lower", {
+        start: centerD,
+        end: crossedLower.pointB,
+        style: { stroke: "#94a3b8", strokeWidth: 1.1, strokeDasharray: [5, 3], strokeLineCap: "round" },
       }),
       circle("tbp.contact.a.upper", {
         center: upper.pointA,
@@ -113,6 +167,26 @@ export const technicalBeltPulleyExample: VizxExample = {
         radius: 2.2,
         style: { stroke: "#0f766e", fill: "#0f766e" },
       }),
+      circle("tbp.cross.contact.c.upper", {
+        center: crossedUpper.pointA,
+        radius: 2.2,
+        style: { stroke: "#7c3aed", fill: "#7c3aed" },
+      }),
+      circle("tbp.cross.contact.c.lower", {
+        center: crossedLower.pointA,
+        radius: 2.2,
+        style: { stroke: "#7c3aed", fill: "#7c3aed" },
+      }),
+      circle("tbp.cross.contact.d.upper", {
+        center: crossedUpper.pointB,
+        radius: 2.2,
+        style: { stroke: "#7c3aed", fill: "#7c3aed" },
+      }),
+      circle("tbp.cross.contact.d.lower", {
+        center: crossedLower.pointB,
+        radius: 2.2,
+        style: { stroke: "#7c3aed", fill: "#7c3aed" },
+      }),
       text("tbp.label.a", {
         center: point(centerA.x - 12, centerA.y + 14),
         text: "O1",
@@ -121,6 +195,16 @@ export const technicalBeltPulleyExample: VizxExample = {
       text("tbp.label.b", {
         center: point(centerB.x + 12, centerB.y + 12),
         text: "O2",
+        style: { fill: "#1d4ed8", fontSize: 11 },
+      }),
+      text("tbp.cross.label.c", {
+        center: point(centerC.x - 12, centerC.y + 14),
+        text: "O3",
+        style: { fill: "#0f172a", fontSize: 11 },
+      }),
+      text("tbp.cross.label.d", {
+        center: point(centerD.x + 12, centerD.y + 12),
+        text: "O4",
         style: { fill: "#1d4ed8", fontSize: 11 },
       }),
       text("tbp.label.contact.upper", {
@@ -134,9 +218,19 @@ export const technicalBeltPulleyExample: VizxExample = {
         style: { fill: "#0f766e", fontSize: 10 },
       }),
       text("tbp.caption", {
-        center: point(222, 34),
-        text: "Technical belt pulley (open-belt helper)",
+        center: point(222, 28),
+        text: "Technical belt pulley (open + crossed helper)",
         style: { fill: "#334155", fontSize: 12 },
+      }),
+      text("tbp.caption.open", {
+        center: point(222, 62),
+        text: "Open belt (external tangents)",
+        style: { fill: "#0f766e", fontSize: 10 },
+      }),
+      text("tbp.caption.crossed", {
+        center: point(222, 214),
+        text: "Crossed belt (internal tangents)",
+        style: { fill: "#7c3aed", fontSize: 10 },
       }),
     ];
 

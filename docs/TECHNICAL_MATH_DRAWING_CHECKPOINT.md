@@ -107,8 +107,9 @@ These are explicit authoring conveniences that return existing points/path objec
 Current explicit belt/pulley helper includes:
 
 - `openBeltPath`
+- `crossedBeltPath`
 
-This is a bounded builder-level path helper that composes existing external common tangents and circular arc commands into a closed open-belt loop path.
+These are bounded builder-level path helpers that compose existing external/internal common tangents and circular arc commands into closed belt-loop path variants.
 
 ## 3. Example Coverage
 
@@ -121,7 +122,7 @@ Current technical/math-relevant examples and coverage:
 - `technical-common-tangents`
   - demonstrates explicit external/internal common tangents between two circles with tangent-point markers and dashed guide radii
 - `technical-belt-pulley`
-  - demonstrates a first open-belt loop path around two pulleys using external tangents, circular wrap arcs, and dashed guide radii
+  - demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal tangents, circular wrap arcs, and dashed guide radii
 - `aspirational-labeled-polygon`
   - demonstrates angle marks plus v0 technical style fields (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`)
 - `aspirational-geometry-1-lite`
