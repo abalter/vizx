@@ -186,6 +186,16 @@ interface TrimmedLineOptions {
   readonly markerEnd?: Style["markerEnd"];
 }
 
+interface CircleToCircleLineOptions {
+  readonly centerA: Point;
+  readonly radiusA: number;
+  readonly centerB: Point;
+  readonly radiusB: number;
+  readonly style?: Style;
+  readonly markerStart?: Style["markerStart"];
+  readonly markerEnd?: Style["markerEnd"];
+}
+
 export function trimmedLine(id: string, options: TrimmedLineOptions): LineObject {
   const trimmed = trimSegment(
     options.a,
@@ -202,6 +212,47 @@ export function trimmedLine(id: string, options: TrimmedLineOptions): LineObject
   return line(id, {
     start: trimmed.a,
     end: trimmed.b,
+    ...(Object.keys(style).length > 0 ? { style } : {}),
+  });
+}
+
+export function circleToCircleLine(id: string, options: CircleToCircleLineOptions): LineObject {
+  assertFinitePointValue(options.centerA, "centerA");
+  assertFinitePointValue(options.centerB, "centerB");
+  assertPositiveFinite(options.radiusA, "radiusA");
+  assertPositiveFinite(options.radiusB, "radiusB");
+
+  const centerDistance = distance(options.centerA, options.centerB);
+  if (centerDistance <= 1e-9) {
+    throw new RangeError("circleToCircleLine requires distinct circle centers");
+  }
+
+  if (centerDistance <= options.radiusA + options.radiusB + 1e-9) {
+    throw new RangeError("circleToCircleLine requires separated circles");
+  }
+
+  const unitDirection = {
+    x: (options.centerB.x - options.centerA.x) / centerDistance,
+    y: (options.centerB.y - options.centerA.y) / centerDistance,
+  };
+
+  const start = {
+    x: options.centerA.x + unitDirection.x * options.radiusA,
+    y: options.centerA.y + unitDirection.y * options.radiusA,
+  };
+  const end = {
+    x: options.centerB.x - unitDirection.x * options.radiusB,
+    y: options.centerB.y - unitDirection.y * options.radiusB,
+  };
+  const style = {
+    ...(options.style ?? {}),
+    ...(options.markerStart !== undefined ? { markerStart: options.markerStart } : {}),
+    ...(options.markerEnd !== undefined ? { markerEnd: options.markerEnd } : {}),
+  };
+
+  return line(id, {
+    start,
+    end,
     ...(Object.keys(style).length > 0 ? { style } : {}),
   });
 }

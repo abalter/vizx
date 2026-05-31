@@ -7,6 +7,7 @@ import {
   anchor,
   arrowEnd,
   circle,
+  circleToCircleLine,
   closePath,
   connector,
   cubicCurveTo,
@@ -334,6 +335,100 @@ describe("object-model builder helpers", () => {
       a: { x: 2, y: 2 },
       b: { x: 2, y: 2 },
     })).toThrow("segment");
+  });
+
+  it("creates a circle-to-circle trimmed line with preserved id and style", () => {
+    const trimmed = circleToCircleLine("c2c.main", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 10,
+      centerB: { x: 40, y: 0 },
+      radiusB: 6,
+      style: { stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" },
+    });
+
+    expect(trimmed.kind).toBe("line");
+    expect(trimmed.id).toBe("c2c.main");
+    expectPointClose(trimmed.start, { x: 10, y: 0 });
+    expectPointClose(trimmed.end, { x: 34, y: 0 });
+    expect(trimmed.style).toEqual({ stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" });
+  });
+
+  it("creates a diagonal circle-to-circle trimmed line with endpoints on both circles", () => {
+    const options = {
+      centerA: { x: 10, y: 20 },
+      radiusA: 5,
+      centerB: { x: 34, y: 52 },
+      radiusB: 8,
+    };
+    const trimmed = circleToCircleLine("c2c.diagonal", options);
+
+    const startDistance = Math.hypot(
+      trimmed.start.x - options.centerA.x,
+      trimmed.start.y - options.centerA.y,
+    );
+    const endDistance = Math.hypot(
+      trimmed.end.x - options.centerB.x,
+      trimmed.end.y - options.centerB.y,
+    );
+
+    expect(startDistance).toBeCloseTo(options.radiusA, 8);
+    expect(endDistance).toBeCloseTo(options.radiusB, 8);
+  });
+
+  it("applies markerStart and markerEnd through style merge in circleToCircleLine", () => {
+    const trimmed = circleToCircleLine("c2c.arrow", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 40, y: 0 },
+      radiusB: 8,
+      markerStart: "arrow",
+      markerEnd: "arrow",
+      style: { stroke: "#0f172a", strokeWidth: 1.6 },
+    });
+
+    expect(trimmed.style).toEqual({
+      stroke: "#0f172a",
+      strokeWidth: 1.6,
+      markerStart: "arrow",
+      markerEnd: "arrow",
+    });
+  });
+
+  it("throws for invalid circleToCircleLine inputs", () => {
+    expect(() => circleToCircleLine("c2c.bad.coincident", {
+      centerA: { x: 10, y: 20 },
+      radiusA: 8,
+      centerB: { x: 10, y: 20 },
+      radiusB: 6,
+    })).toThrow("distinct circle centers");
+
+    expect(() => circleToCircleLine("c2c.bad.radius", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 0,
+      centerB: { x: 20, y: 0 },
+      radiusB: 6,
+    })).toThrow("radiusA");
+
+    expect(() => circleToCircleLine("c2c.bad.overlap", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 12, y: 0 },
+      radiusB: 6,
+    })).toThrow("separated circles");
+
+    expect(() => circleToCircleLine("c2c.bad.tangent", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 14, y: 0 },
+      radiusB: 6,
+    })).toThrow("separated circles");
+
+    expect(() => circleToCircleLine("c2c.bad.nonfinite", {
+      centerA: { x: 0, y: 0 },
+      radiusA: Number.POSITIVE_INFINITY,
+      centerB: { x: 40, y: 0 },
+      radiusB: 6,
+    })).toThrow("radiusA");
   });
 
   it("creates x-axis and y-axis helper output as plain line/text objects", () => {

@@ -41,6 +41,7 @@ Object factories:
 - `text(id, options)`
 - `line(id, options)`
 - `trimmedLine(id, options)`
+- `circleToCircleLine(id, options)`
 - `polyline(id, options)`
 - `ellipse(id, options)`
 - `polygon(id, options)`
@@ -345,7 +346,7 @@ The bounded trimming helper slice also adds `trimmedLine(...)` in the builder la
 
 ```ts
 import { point } from "@vizx/geometry";
-import { circle, line, sceneOf, trimmedLine } from "@vizx/object-model";
+import { circle, circleToCircleLine, line, sceneOf, trimmedLine } from "@vizx/object-model";
 
 const a = point(120, 140);
 const b = point(300, 140);
@@ -367,6 +368,14 @@ const scene = sceneOf([
     markerEnd: "arrow",
     style: { stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" },
   }),
+  circleToCircleLine("boundary-link", {
+    centerA: a,
+    radiusA: radius,
+    centerB: b,
+    radiusB: radius,
+    markerEnd: "arrow",
+    style: { stroke: "#0369a1", strokeWidth: 2, strokeLineCap: "round", strokeDasharray: [3, 3] },
+  }),
 ]);
 ```
 
@@ -375,6 +384,7 @@ Notes:
 - helper emits an ordinary `line` object
 - no resolver/renderer `cutbefore` or `cutafter` semantics are added
 - no automatic boundary detection is performed
+- `circleToCircleLine(...)` requires strictly separated circles and rejects overlap/containment/tangent/coincident-center cases
 - parser syntax/JSON Core IR/parser AST helper constructs remain deferred
 
 ## 8. Data-Driven Generation Example

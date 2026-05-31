@@ -6,6 +6,7 @@ import {
   trimSegmentToCircle,
 } from "@vizx/geometry";
 import {
+  circleToCircleLine,
   circle,
   line,
   sceneOf,
@@ -102,6 +103,19 @@ export const technicalTrimmedSegmentsExample: VizxExample = {
           strokeLineCap: "round",
         },
       }),
+      circleToCircleLine("tts.segment.circle-to-circle", {
+        centerA: leftCenter,
+        radiusA: radius,
+        centerB: rightCenter,
+        radiusB: radius,
+        markerEnd: "arrow",
+        style: {
+          stroke: "#0369a1",
+          strokeWidth: 2,
+          strokeLineCap: "round",
+          strokeDasharray: [3, 3],
+        },
+      }),
       line("tts.guide.diagonal", {
         start: diagonalGuideStart,
         end: diagonalGuideEnd,
@@ -127,6 +141,11 @@ export const technicalTrimmedSegmentsExample: VizxExample = {
         center: labelAlongSegment(secantTrim.a, secantTrim.b, 0.5, 12),
         text: "trimSegmentToCircle(...)",
         style: { fill: "#b45309", fontSize: 10 },
+      }),
+      text("tts.label.circle-to-circle", {
+        center: labelAlongSegment(polished.a, polished.b, 0.5, 20),
+        text: "circleToCircleLine(...)",
+        style: { fill: "#0369a1", fontSize: 10 },
       }),
       text("tts.label.start", {
         center: labelAlongSegment(leftDropBase.a, leftDropBase.b, 0.5, 12),

@@ -1101,6 +1101,7 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "tts.circle.right" && object.kind === "circle")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.guide.centerline" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.segment.trimmed" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.segment.circle-to-circle" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.segment.secant" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.segment.start-trim" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.label.main" && object.kind === "text")).toBe(true);

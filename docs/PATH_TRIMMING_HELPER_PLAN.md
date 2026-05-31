@@ -166,3 +166,30 @@ Potential future branch (not this slice):
 - curve-aware trimming (Bezier and arc)
 - generalized shape-boundary trimming
 - path length and point-at-length
+
+## 10. Circle-Boundary Authoring Convenience (v0)
+
+Builder package addition:
+
+- `circleToCircleLine(id, { centerA, radiusA, centerB, radiusB, style?, markerStart?, markerEnd? })`
+
+Behavior:
+
+- emits an ordinary `line` object
+- computes direction from `centerA -> centerB`
+- computes start as `centerA + unitDirection * radiusA`
+- computes end as `centerB - unitDirection * radiusB`
+- merges optional marker fields into output `style`
+
+Validation/errors:
+
+- throws `TypeError` for non-finite center coordinates and radii
+- throws `RangeError` for non-positive radii
+- throws `RangeError` for coincident centers
+- throws `RangeError` when circles are not strictly separated (`distance <= radiusA + radiusB`), including overlap/containment/tangent cases
+
+Boundaries:
+
+- no automatic object-boundary lookup or resolver inference
+- no new runtime object kinds or renderer semantics
+- no parser syntax, JSON Core IR helper construct, or parser AST helper construct
