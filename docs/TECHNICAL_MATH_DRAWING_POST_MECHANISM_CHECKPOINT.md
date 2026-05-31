@@ -4,6 +4,7 @@ This checkpoint captures the technical/math drawing state after the current help
 
 - intersection helpers
 - segment/ray clipped helpers
+- bounded path/segment trimming helpers
 - tangent helpers
 - common circle-circle tangents
 - technical annotation helpers
@@ -53,6 +54,7 @@ Implemented pure helper families:
 - point/angle/polar helpers: `point`, `offsetPoint`, `midpoint`, `distance`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`
 - intersections: `lineLineIntersection`, `lineCircleIntersections`, `circleCircleIntersections`
 - segment/ray clipping: `pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`
+- bounded trimming: `trimSegment`, `trimSegmentStart`, `trimSegmentEnd`, `trimSegmentToCircle`
 - tangents: `tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`
 - common tangents: `circleCircleTangents`
 
@@ -101,6 +103,7 @@ Implemented aspirational review tooling:
 | `aspirational-projectile-motion-lite` | TikZ projectile-motion aspirational reproduction | `primitives`, `paths/Bezier`, `circular arcs / angle marks`, `style fields` | Physics-style trajectory sketches work without a plot subsystem | No measurement/trim helpers, no mechanics simulation, no data/plot semantics |
 | `technical-belt-pulley` | Focused technical example | `common tangents`, `belt/pulley path`, `circular arcs / angle marks`, `style fields` | Open and crossed belt helpers are stable, explicit builder composition on top of tangent math | No belt metrics, no thickness, no pulley mechanics |
 | `technical-common-tangents` | Focused technical example | `common tangents`, `annotation helpers`, `style fields` | Circle-circle common tangents are deterministic and useful for technical guides | No tangent-to-path/arc families, no higher-level trimming |
+| `technical-trimmed-segments` | Focused technical example | `segment/ray clipping`, `annotation helpers`, `style fields` | Explicit straight-segment trimming yields cleaner technical line polish without adding runtime semantics | No curve/path-length trimming or cutbefore/cutafter semantics |
 | `technical-tangents` | Focused technical example | `tangents`, `style fields` | Point-to-circle tangent helpers cover the expected v0 construction cases | No finite tangent clipping families, no perimeter-aware trim behavior |
 | `technical-angle-arc` | Focused technical example | `circular arcs / angle marks` | Arc command plus angle-mark helper supports readable angle annotation | No arc measurement, no elliptical arcs, no advanced arc labeling |
 
@@ -135,7 +138,7 @@ That is a credible manual technical-illustration baseline rather than a one-off 
 - path length and point-at-length
 - curve flattening and sampling
 - Bezier/arc/path intersections
-- `cutbefore` / `cutafter`-style trimming
+- generalized `cutbefore` / `cutafter`-style trimming
 - shape-perimeter-aware anchors
 - construction dependency graph or reusable derived-geometry graph
 
@@ -188,6 +191,11 @@ Cons:
 
 - requires careful path/arc/Bezier math
 - can easily grow into flattening and intersection work
+
+Current status note:
+
+- first bounded straight-segment trimming helpers are now implemented
+- remaining Option B scope is curve/path-level measurement and trimming
 
 ### Option C — Parser AST catch-up for current Core IR surface
 

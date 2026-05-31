@@ -364,6 +364,106 @@ export function segmentCircleIntersections(
     .filter((entry) => pointOnSegment(entry, a, b));
 }
 
+export function trimSegment(
+  a: Point,
+  b: Point,
+  startDistance: number,
+  endDistance: number,
+): { readonly a: Point; readonly b: Point } {
+  assertFinitePoint(a, "a");
+  assertFinitePoint(b, "b");
+  assertFiniteNumber(startDistance, "startDistance");
+  assertFiniteNumber(endDistance, "endDistance");
+
+  if (startDistance < 0) {
+    throw new RangeError("startDistance must be >= 0");
+  }
+
+  if (endDistance < 0) {
+    throw new RangeError("endDistance must be >= 0");
+  }
+
+  const segment = subtractPoints(b, a);
+  const segmentLength = Math.hypot(segment.dx, segment.dy);
+
+  if (segmentLength <= GEOMETRY_EPSILON) {
+    throw new RangeError("segment must use distinct points");
+  }
+
+  const combinedTrim = startDistance + endDistance;
+  if (combinedTrim > segmentLength + GEOMETRY_EPSILON) {
+    throw new RangeError("trim distance exceeds segment length");
+  }
+
+  const startT = Math.min(Math.max(startDistance / segmentLength, 0), 1);
+  const endT = Math.min(Math.max(1 - endDistance / segmentLength, 0), 1);
+  const clampedEndT = endT < startT ? startT : endT;
+
+  return {
+    a: point(
+      a.x + segment.dx * startT,
+      a.y + segment.dy * startT,
+    ),
+    b: point(
+      a.x + segment.dx * clampedEndT,
+      a.y + segment.dy * clampedEndT,
+    ),
+  };
+}
+
+export function trimSegmentStart(
+  a: Point,
+  b: Point,
+  distance: number,
+): { readonly a: Point; readonly b: Point } {
+  return trimSegment(a, b, distance, 0);
+}
+
+export function trimSegmentEnd(
+  a: Point,
+  b: Point,
+  distance: number,
+): { readonly a: Point; readonly b: Point } {
+  return trimSegment(a, b, 0, distance);
+}
+
+export function trimSegmentToCircle(
+  a: Point,
+  b: Point,
+  center: Point,
+  radius: number,
+): { readonly a: Point; readonly b: Point } | null {
+  assertFinitePoint(a, "a");
+  assertFinitePoint(b, "b");
+  assertFinitePoint(center, "center");
+  assertNonNegativeRadius(radius, "radius");
+  assertNonDegenerateLine(a, b, "segment");
+
+  const intersections = segmentCircleIntersections(a, b, center, radius);
+
+  if (intersections.length < 2) {
+    return null;
+  }
+
+  const direction = subtractPoints(b, a);
+  const directionLengthSquared = dot2D(direction, direction);
+  const ordered = [...intersections].sort((left, right) => {
+    const leftProjection = dot2D(subtractPoints(left, a), direction) / directionLengthSquared;
+    const rightProjection = dot2D(subtractPoints(right, a), direction) / directionLengthSquared;
+
+    return leftProjection - rightProjection;
+  });
+
+  const first = ordered[0];
+  const second = ordered[1];
+
+  if (!first || !second) {
+    return null;
+  }
+
+  return { a: first, b: second };
+}
+
 export function rayCircleIntersections(
   origin: Point,
   through: Point,

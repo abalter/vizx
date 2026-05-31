@@ -1087,6 +1087,32 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates technical-trimmed-segments", () => {
+    const example = requireVizxExample("technical-trimmed-segments");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "tts.circle.left" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.circle.right" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.guide.centerline" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.segment.trimmed" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.segment.secant" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.segment.start-trim" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "tts.label.main" && object.kind === "text")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<text");
+    expect(svg).toContain('stroke-dasharray="6 4"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(svg).toContain('marker-end="url(#vizx-marker-arrow)"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates technical-common-tangents", () => {
     const example = requireVizxExample("technical-common-tangents");
     const scene = example.createScene();

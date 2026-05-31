@@ -33,6 +33,7 @@ import { technicalBeltPulleyExample } from "./technicalBeltPulley";
 import { technicalCommonTangentsExample } from "./technicalCommonTangents";
 import { technicalLinearPlotExample } from "./technicalLinearPlot";
 import { technicalTangentsExample } from "./technicalTangents";
+import { technicalTrimmedSegmentsExample } from "./technicalTrimmedSegments";
 import type { VizxExample } from "./types";
 
 export * from "./types";
@@ -71,6 +72,7 @@ export const vizxExamples: readonly VizxExample[] = [
   technicalCommonTangentsExample,
   technicalLinearPlotExample,
   technicalTangentsExample,
+  technicalTrimmedSegmentsExample,
   relativePlacementExample,
   mixedNestedPlacementExample,
 ];

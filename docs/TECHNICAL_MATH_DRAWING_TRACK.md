@@ -11,6 +11,7 @@ Latest checkpoint:
 - [GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md](./GEOMETRY_COMMON_TANGENT_HELPER_PLAN.md)
 - [GEOMETRY_BELT_PULLEY_HELPER_PLAN.md](./GEOMETRY_BELT_PULLEY_HELPER_PLAN.md)
 - [GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md](./GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md)
+- [PATH_TRIMMING_HELPER_PLAN.md](./PATH_TRIMMING_HELPER_PLAN.md)
 - [TECHNICAL_ANNOTATION_HELPER_PLAN.md](./TECHNICAL_ANNOTATION_HELPER_PLAN.md)
 
 ## 1. Purpose
@@ -35,6 +36,7 @@ Current VizX capabilities that already support this track:
 - point and geometry helpers (`point`, `midpoint`, `distance`, `angleOf`, `polar`, `circlePoint`, `regularPolygonPoints`, `angleBetweenPoints`, `angleLabelPoint`)
 - intersection helpers (`lineLineIntersection`, `lineCircleIntersections`, `circleCircleIntersections`)
 - segment/ray clipped helpers (`segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`, `pointOnSegment`, `pointOnRay`)
+- bounded trimming helpers (`trimSegment`, `trimSegmentStart`, `trimSegmentEnd`, `trimSegmentToCircle`)
 - tangent helpers (`tangentLineAtCirclePoint`, `tangentPointsFromPointToCircle`)
 - common tangent helpers (`circleCircleTangents`)
 - belt/pulley path helper (`openBeltPath`)
@@ -59,7 +61,7 @@ Current blockers for higher-fidelity technical/math diagrams:
 - no polygon/path/Bezier/arc intersection helpers
 - no annotation collision avoidance or dimension-line annotation system
 - no belt thickness/length metrics or physical belt mechanics
-- no cutbefore/cutafter behavior
+- no generalized cutbefore/cutafter behavior
 - no path length or point-at-length helpers
 - no path flattening helpers
 - no clipping
@@ -97,6 +99,7 @@ Current note:
 - `aspirational-mechanism-lite` is now implemented as a manual Level 1-2 approximation of the MetaPost mechanism source by combining explicit circle-circle intersections, angle marks, and annotation helpers.
 - this example remains a static construction drawing only: no source translation, no solver, and no mechanics/kinematics simulation.
 - generated gallery tooling now includes both `aspirational-*` and `technical-*` example metadata for side-by-side review in `examples/example-gallery-manifest.json` and `examples/example-gallery.html`.
+- bounded straight-segment trimming helpers are now implemented in `@vizx/geometry` with focused example coverage (`technical-trimmed-segments`) for technical line polish near circle boundaries.
 
 ## 6. Recommended Next Feature Gaps
 

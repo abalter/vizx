@@ -42,6 +42,10 @@ import {
   subtractPoints,
   tangentLineAtCirclePoint,
   tangentPointsFromPointToCircle,
+  trimSegment,
+  trimSegmentEnd,
+  trimSegmentStart,
+  trimSegmentToCircle,
   transformPoint,
   transformPoints,
   vector,
@@ -624,6 +628,116 @@ describe("geometry kernel", () => {
 
     expect(endpointHit).toHaveLength(1);
     expectPointClose(endpointHit[0]!, point(5, 0));
+  });
+
+  it("trims segments by start and end distances", () => {
+    const trimmed = trimSegment(
+      point(0, 0),
+      point(10, 0),
+      2,
+      3,
+    );
+
+    expectPointClose(trimmed.a, point(2, 0));
+    expectPointClose(trimmed.b, point(7, 0));
+  });
+
+  it("trims segment start and end via convenience wrappers", () => {
+    const startTrimmed = trimSegmentStart(
+      point(0, 0),
+      point(0, 10),
+      2,
+    );
+    const endTrimmed = trimSegmentEnd(
+      point(0, 0),
+      point(0, 10),
+      2,
+    );
+
+    expectPointClose(startTrimmed.a, point(0, 2));
+    expectPointClose(startTrimmed.b, point(0, 10));
+    expectPointClose(endTrimmed.a, point(0, 0));
+    expectPointClose(endTrimmed.b, point(0, 8));
+  });
+
+  it("preserves segment direction under trimming", () => {
+    const trimmed = trimSegment(
+      point(10, 0),
+      point(0, 0),
+      2,
+      3,
+    );
+
+    expectPointClose(trimmed.a, point(8, 0));
+    expectPointClose(trimmed.b, point(3, 0));
+  });
+
+  it("allows exact full-length trim collapse to a point", () => {
+    const trimmed = trimSegment(
+      point(0, 0),
+      point(10, 0),
+      3,
+      7,
+    );
+
+    expectPointClose(trimmed.a, point(3, 0));
+    expectPointClose(trimmed.b, point(3, 0));
+  });
+
+  it("rejects invalid trimSegment inputs", () => {
+    expect(() => trimSegment(point(0, 0), point(10, 0), -1, 0)).toThrow("startDistance");
+    expect(() => trimSegment(point(0, 0), point(10, 0), 0, -1)).toThrow("endDistance");
+    expect(() => trimSegment(point(0, 0), point(10, 0), 6, 5)).toThrow("trim distance");
+    expect(() => trimSegment(point(2, 2), point(2, 2), 1, 0)).toThrow("segment");
+    expect(() => trimSegment(point(0, 0), point(10, 0), Number.NaN, 0)).toThrow("startDistance");
+  });
+
+  it("trims a segment to circle secant intersections", () => {
+    const forward = trimSegmentToCircle(
+      point(-10, 0),
+      point(10, 0),
+      point(0, 0),
+      5,
+    );
+    const reverse = trimSegmentToCircle(
+      point(10, 0),
+      point(-10, 0),
+      point(0, 0),
+      5,
+    );
+
+    expect(forward).not.toBeNull();
+    expect(reverse).not.toBeNull();
+
+    if (!forward || !reverse) {
+      throw new Error("Expected secant segment trims for circle clipping");
+    }
+
+    expectPointClose(forward.a, point(-5, 0));
+    expectPointClose(forward.b, point(5, 0));
+    expectPointClose(reverse.a, point(5, 0));
+    expectPointClose(reverse.b, point(-5, 0));
+  });
+
+  it("returns null for non-secant trimSegmentToCircle cases", () => {
+    expect(trimSegmentToCircle(
+      point(-10, 5),
+      point(10, 5),
+      point(0, 0),
+      5,
+    )).toBeNull();
+
+    expect(trimSegmentToCircle(
+      point(-10, 6),
+      point(10, 6),
+      point(0, 0),
+      5,
+    )).toBeNull();
+  });
+
+  it("rejects invalid trimSegmentToCircle inputs", () => {
+    expect(() => trimSegmentToCircle(point(1, 1), point(1, 1), point(0, 0), 2)).toThrow("segment");
+    expect(() => trimSegmentToCircle(point(0, 0), point(2, 0), point(0, 0), -1)).toThrow("radius");
   });
 
   it("computes ray-circle intersections with forward filtering", () => {

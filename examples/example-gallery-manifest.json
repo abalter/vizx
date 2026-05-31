@@ -275,6 +275,25 @@
         "no mechanics/physics simulation",
         "no parser/JSON/AST support"
       ]
+    },
+    {
+      "id": "technical-trimmed-segments",
+      "title": "Technical trimmed segments",
+      "description": "A focused technical example showing explicit straight-segment trimming helpers for polished boundary-aware linework.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "segment/ray clipping",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no parser/JSON/AST support"
+      ]
     }
   ]
 }
