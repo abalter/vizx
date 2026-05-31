@@ -198,6 +198,7 @@ Current note:
 - aspirational examples now have a dedicated gallery index and standardized source/level/helper/compromise metadata to make future target selection and scope comparison easier.
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
 - first bounded path/segment trimming helper slice now exists in `@vizx/geometry` (`trimSegment`, `trimSegmentStart`, `trimSegmentEnd`, `trimSegmentToCircle`) and remains explicit helper math without parser syntax, new runtime primitives, or solver behavior.
+- first builder convenience wrapper over that slice now exists in `@vizx/object-model` (`trimmedLine`), still emitting ordinary `line` objects with no resolver/renderer trimming semantics.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
 - first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.

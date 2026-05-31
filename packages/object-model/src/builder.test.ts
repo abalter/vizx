@@ -25,10 +25,16 @@ import {
   segmentTickMarks,
   rightAngleMarkPath,
   text,
+  trimmedLine,
   translate,
   xAxis,
   yAxis,
 } from "./builder";
+
+function expectPointClose(actual: { x: number; y: number }, expected: { x: number; y: number }): void {
+  expect(actual.x).toBeCloseTo(expected.x, 8);
+  expect(actual.y).toBeCloseTo(expected.y, 8);
+}
 
 describe("object-model builder helpers", () => {
   it("creates plain object scene data", () => {
@@ -275,6 +281,59 @@ describe("object-model builder helpers", () => {
     expect(ticks[1]?.id).toBe("seg.tick.1");
     expect(ticks[2]?.id).toBe("seg.tick.2");
     expect(ticks.every((entry) => entry.kind === "path")).toBe(true);
+  });
+
+  it("creates a trimmed line object with preserved id and style", () => {
+    const trimmed = trimmedLine("trimmed.main", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      startDistance: 2,
+      endDistance: 3,
+      style: { stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" },
+    });
+
+    expect(trimmed.kind).toBe("line");
+    expect(trimmed.id).toBe("trimmed.main");
+    expectPointClose(trimmed.start, { x: 2, y: 0 });
+    expectPointClose(trimmed.end, { x: 7, y: 0 });
+    expect(trimmed.style).toEqual({ stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" });
+  });
+
+  it("applies markerStart and markerEnd through style merge in trimmedLine", () => {
+    const trimmed = trimmedLine("trimmed.arrow", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      markerStart: "arrow",
+      markerEnd: "arrow",
+      style: { stroke: "#0f172a", strokeWidth: 1.6 },
+    });
+
+    expect(trimmed.style).toEqual({
+      stroke: "#0f172a",
+      strokeWidth: 1.6,
+      markerStart: "arrow",
+      markerEnd: "arrow",
+    });
+  });
+
+  it("throws for invalid trimmedLine distances and degenerate segments", () => {
+    expect(() => trimmedLine("trimmed.bad.negative", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      startDistance: -1,
+    })).toThrow("startDistance");
+
+    expect(() => trimmedLine("trimmed.bad.over", {
+      a: { x: 0, y: 0 },
+      b: { x: 10, y: 0 },
+      startDistance: 6,
+      endDistance: 5,
+    })).toThrow("trim distance");
+
+    expect(() => trimmedLine("trimmed.bad.degenerate", {
+      a: { x: 2, y: 2 },
+      b: { x: 2, y: 2 },
+    })).toThrow("segment");
   });
 
   it("creates x-axis and y-axis helper output as plain line/text objects", () => {

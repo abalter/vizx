@@ -40,6 +40,7 @@ Object factories:
 - `circle(id, options)`
 - `text(id, options)`
 - `line(id, options)`
+- `trimmedLine(id, options)`
 - `polyline(id, options)`
 - `ellipse(id, options)`
 - `polygon(id, options)`
@@ -337,6 +338,44 @@ Notes:
 - v0 `openBeltPath` requires disjoint circles and external tangents
 - v0 `crossedBeltPath` requires separated circles and two internal tangents
 - belt thickness/length/mechanics semantics are deferred
+
+## 7.3 Trimmed Line Convenience Example
+
+The bounded trimming helper slice also adds `trimmedLine(...)` in the builder layer as explicit sugar over geometry `trimSegment(...)`.
+
+```ts
+import { point } from "@vizx/geometry";
+import { circle, line, sceneOf, trimmedLine } from "@vizx/object-model";
+
+const a = point(120, 140);
+const b = point(300, 140);
+const radius = 30;
+
+const scene = sceneOf([
+  circle("left", { center: a, radius, style: { stroke: "#0f172a", fill: "none" } }),
+  circle("right", { center: b, radius, style: { stroke: "#1d4ed8", fill: "none" } }),
+  line("guide", {
+    start: point(64, 140),
+    end: point(356, 140),
+    style: { stroke: "#94a3b8", strokeDasharray: [6, 4] },
+  }),
+  trimmedLine("link", {
+    a,
+    b,
+    startDistance: radius + 10,
+    endDistance: radius + 10,
+    markerEnd: "arrow",
+    style: { stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" },
+  }),
+]);
+```
+
+Notes:
+
+- helper emits an ordinary `line` object
+- no resolver/renderer `cutbefore` or `cutafter` semantics are added
+- no automatic boundary detection is performed
+- parser syntax/JSON Core IR/parser AST helper constructs remain deferred
 
 ## 8. Data-Driven Generation Example
 

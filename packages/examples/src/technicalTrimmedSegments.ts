@@ -10,6 +10,7 @@ import {
   line,
   sceneOf,
   text,
+  trimmedLine,
   type CircleObject,
   type LineObject,
   type TextObject,
@@ -89,14 +90,16 @@ export const technicalTrimmedSegmentsExample: VizxExample = {
         end: guideEnd,
         style: { stroke: "#94a3b8", strokeWidth: 1.4, strokeDasharray: [6, 4], strokeLineCap: "round" },
       }),
-      line("tts.segment.trimmed", {
-        start: polished.a,
-        end: polished.b,
+      trimmedLine("tts.segment.trimmed", {
+        a: leftCenter,
+        b: rightCenter,
+        startDistance: radius + 10,
+        endDistance: radius + 10,
+        markerEnd: "arrow",
         style: {
           stroke: "#0f766e",
           strokeWidth: 2.6,
           strokeLineCap: "round",
-          markerEnd: "arrow",
         },
       }),
       line("tts.guide.diagonal", {
@@ -109,9 +112,10 @@ export const technicalTrimmedSegmentsExample: VizxExample = {
         end: secantTrim.b,
         style: { stroke: "#b45309", strokeWidth: 2.2, strokeLineCap: "round" },
       }),
-      line("tts.segment.start-trim", {
-        start: leftDropBase.a,
-        end: leftDropBase.b,
+      trimmedLine("tts.segment.start-trim", {
+        a: point(110, 236),
+        b: point(110, 66),
+        startDistance: 26,
         style: { stroke: "#7c3aed", strokeWidth: 2, strokeDasharray: [4, 3], strokeLineCap: "round" },
       }),
       text("tts.label.main", {

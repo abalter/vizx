@@ -138,7 +138,27 @@ Sync docs:
 
 - checkpoint/track/roadmap/capability/spec-index updates to record the bounded helper addition
 
-## 8. Deferred Follow-Ups
+## 8. Builder Convenience (v0)
+
+Builder package addition:
+
+- `trimmedLine(id, { a, b, startDistance?, endDistance?, style?, markerStart?, markerEnd? })`
+
+Behavior:
+
+- emits an ordinary `line` object
+- calls geometry `trimSegment(...)` internally
+- applies optional marker fields through line `style`
+- keeps validation behavior from geometry helpers (negative/over-trim, zero-length, non-finite)
+
+Boundaries:
+
+- explicit authoring sugar only
+- no renderer/resolver `cutbefore` / `cutafter` semantics
+- no automatic object-boundary detection
+- no parser syntax, JSON Core IR helper construct, or parser AST helper construct
+
+## 9. Deferred Follow-Ups
 
 Potential future branch (not this slice):
 

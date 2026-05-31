@@ -9,6 +9,7 @@ import {
   linearScale,
   mapDataPoint,
   normalizeAngleDegrees,
+  trimSegment,
   type PlotFrame,
   type Point,
 } from "@vizx/geometry";
@@ -174,6 +175,36 @@ interface AxisOptions {
 }
 
 type AxisObject = LineObject | TextObject;
+
+interface TrimmedLineOptions {
+  readonly a: Point;
+  readonly b: Point;
+  readonly startDistance?: number;
+  readonly endDistance?: number;
+  readonly style?: Style;
+  readonly markerStart?: Style["markerStart"];
+  readonly markerEnd?: Style["markerEnd"];
+}
+
+export function trimmedLine(id: string, options: TrimmedLineOptions): LineObject {
+  const trimmed = trimSegment(
+    options.a,
+    options.b,
+    options.startDistance ?? 0,
+    options.endDistance ?? 0,
+  );
+  const style = {
+    ...(options.style ?? {}),
+    ...(options.markerStart !== undefined ? { markerStart: options.markerStart } : {}),
+    ...(options.markerEnd !== undefined ? { markerEnd: options.markerEnd } : {}),
+  };
+
+  return line(id, {
+    start: trimmed.a,
+    end: trimmed.b,
+    ...(Object.keys(style).length > 0 ? { style } : {}),
+  });
+}
 
 export function arc(
   center: Point,
