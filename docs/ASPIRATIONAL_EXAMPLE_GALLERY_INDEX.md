@@ -20,6 +20,14 @@ Machine-readable manifest:
 - generation command: `npm run manifest:aspirational`
 - payload is metadata-only and intentionally excludes scenes, render output, and source contents
 
+Generated static gallery report:
+
+- generated file: `examples/aspirational-gallery.html`
+- writer script: `packages/examples/src/writeAspirationalGalleryHtml.ts`
+- generation command: `npm run gallery:aspirational`
+- the page uses manifest metadata plus current `examples/{id}.svg` and `examples/{id}.debug.svg` outputs when present
+- missing SVG previews are shown as non-fatal gaps; run `npm run examples` first for fresh previews
+
 Boundary reminder:
 
 - no source translation guarantee

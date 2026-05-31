@@ -18,6 +18,7 @@
     "demo": "tsx packages/cli/src/index.ts examples/basic.svg",
     "debug": "tsx packages/cli/src/index.ts debug",
     "examples": "tsx packages/cli/src/index.ts examples",
+    "gallery:aspirational": "npm run manifest:aspirational && tsx packages/examples/src/writeAspirationalGalleryHtml.ts",
     "inspect": "tsx packages/cli/src/index.ts inspect",
     "manifest:aspirational": "tsx packages/examples/src/writeAspirationalGalleryManifest.ts",
     "test": "vitest run",

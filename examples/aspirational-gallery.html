@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VizX Aspirational Gallery</title>
+  <style>
+    :root {
+      --bg: #f7f7f3;
+      --surface: #ffffff;
+      --ink: #17212b;
+      --muted: #5b6570;
+      --line: #d7dde3;
+      --accent: #0f766e;
+      --shadow: 0 8px 24px rgba(23, 33, 43, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 0%, #eef6f5 0%, var(--bg) 45%), var(--bg);
+    }
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 36px;
+    }
+    header {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #edf4f3 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    h1 { margin: 0 0 8px; font-size: 1.7rem; }
+    p { margin: 8px 0; line-height: 1.45; }
+    .meta { color: var(--muted); font-size: 0.95rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card h2 { margin: 0; font-size: 1.15rem; }
+    .id { color: var(--muted); margin: 2px 0; }
+    .path { font-family: 'IBM Plex Mono', 'Consolas', monospace; font-size: 0.9rem; }
+    .preview {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+      background: #fcfcfa;
+      min-height: 148px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .preview-image { max-width: 100%; max-height: 240px; }
+    .preview-missing { color: var(--muted); text-align: center; font-size: 0.95rem; }
+    .links { margin: 4px 0; }
+    a { color: var(--accent); text-decoration-thickness: 1.5px; }
+    ul { margin: 6px 0 2px 18px; padding: 0; }
+    h3 { margin: 8px 0 2px; font-size: 0.98rem; }
+    .muted { color: var(--muted); }
+    footer { margin-top: 20px; color: var(--muted); font-size: 0.92rem; }
+    @media (max-width: 620px) {
+      main { padding: 18px 12px 24px; }
+      header { padding: 14px; }
+      .card { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>VizX Aspirational Gallery</h1>
+      <p>Static metadata and rendered-output review page for current aspirational examples.</p>
+      <p class="meta">Generated from packages/examples/src/index.ts | manifest v1 | generated 2026-05-31T01:30:18.613Z</p>
+      <p class="meta">This page is review tooling only. It is not source translation and does not guarantee source-fidelity parity.</p>
+    </header>
+    <section class="grid">
+<article class="card">
+  <h2>Aspirational: Android activity lifecycle</h2>
+  <p class="id"><strong>ID:</strong> aspirational-android-lifecycle</p>
+  <p><strong>Reproduction level:</strong> Level 2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/tikz/Diagram of Android activity life cycle</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-android-lifecycle.svg" alt="Aspirational: Android activity lifecycle preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-android-lifecycle.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-android-lifecycle.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual builder-authored Level 2 approximation of the TikZ Android activity lifecycle with rounded lifecycle nodes and arrowed flow connectors.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>connectors/placement</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no automatic layout</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational: Arrow with label</h2>
+  <p class="id"><strong>ID:</strong> aspirational-arrow-label</p>
+  <p><strong>Reproduction level:</strong> Level 2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/metapost/arrow_label.mp</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-arrow-label.svg" alt="Aspirational: Arrow with label preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-arrow-label.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-arrow-label.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual builder-authored approximation of MetaPost arrow_label with a shortened double-arrow segment and centered label.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational geometry 1 lite</h2>
+  <p class="id"><strong>ID:</strong> aspirational-geometry-1-lite</p>
+  <p><strong>Reproduction level:</strong> Level 1-2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/asymptote/geometry_1</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-geometry-1-lite.svg" alt="Aspirational geometry 1 lite preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-geometry-1-lite.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-geometry-1-lite.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual Level 1-2 approximation of Asymptote geometry_1 using current VizX geometry, paths, arcs, labels, and style fields.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>intersections</li>
+<li>annotation helpers</li>
+<li>circular arcs / angle marks</li>
+<li>style fields</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational: Labeled polygon</h2>
+  <p class="id"><strong>ID:</strong> aspirational-labeled-polygon</p>
+  <p><strong>Reproduction level:</strong> Level 1-2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/asymptote/labeled_polygon</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-labeled-polygon.svg" alt="Aspirational: Labeled polygon preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-labeled-polygon.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-labeled-polygon.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>circular arcs / angle marks</li>
+<li>style fields</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational pendagon lite</h2>
+  <p class="id"><strong>ID:</strong> aspirational-pendagon-lite</p>
+  <p><strong>Reproduction level:</strong> Level 1-2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/metapost/pendagon.mp</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-pendagon-lite.svg" alt="Aspirational pendagon lite preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-pendagon-lite.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-pendagon-lite.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>intersections</li>
+<li>segment/ray clipping</li>
+<li>annotation helpers</li>
+<li>style fields</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational projectile motion lite</h2>
+  <p class="id"><strong>ID:</strong> aspirational-projectile-motion-lite</p>
+  <p><strong>Reproduction level:</strong> Level 1-2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/tikz/projectile_motion</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-projectile-motion-lite.svg" alt="Aspirational projectile motion lite preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-projectile-motion-lite.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-projectile-motion-lite.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual Level 1-2 approximation of TikZ projectile_motion using current VizX geometry, arcs, paths, arrows, labels, and v0 style fields.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>paths/Bezier</li>
+<li>circular arcs / angle marks</li>
+<li>style fields</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no mechanics/physics simulation</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+
+<article class="card">
+  <h2>Aspirational pullys lite</h2>
+  <p class="id"><strong>ID:</strong> aspirational-pullys-lite</p>
+  <p><strong>Reproduction level:</strong> Level 1-2</p>
+  <p><strong>Source path:</strong> <span class="path">examples/aspirational_gallery/metapost/pullys.mp</span></p>
+  <div class="preview">
+    <img class="preview-image" src="./aspirational-pullys-lite.svg" alt="Aspirational pullys lite preview" loading="lazy" />
+  </div>
+  <p class="links">
+    <a href="./aspirational-pullys-lite.svg">Normal SVG</a>
+    |
+    <a href="./aspirational-pullys-lite.debug.svg">Debug SVG</a>
+  </p>
+  <p>Manual Level 1-2 approximation of MetaPost pullys using the current belt, tangent, annotation, and style helper stack.</p>
+  <section>
+    <h3>Helper families</h3>
+    <ul>
+<li>primitives</li>
+<li>tangents</li>
+<li>common tangents</li>
+<li>annotation helpers</li>
+<li>circular arcs / angle marks</li>
+<li>belt/pulley path</li>
+<li>style fields</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Compromises</h3>
+    <ul>
+<li>manual coordinates</li>
+<li>no source translation</li>
+<li>no solver</li>
+<li>no mechanics/physics simulation</li>
+<li>no full visual fidelity</li>
+<li>no clipping/gradients</li>
+<li>no parser/JSON/AST support</li>
+    </ul>
+  </section>
+</article>
+    </section>
+    <footer>
+      Preview links are relative to the examples directory. Missing previews are non-fatal and indicate outputs were not generated yet.
+    </footer>
+  </main>
+</body>
+</html>
