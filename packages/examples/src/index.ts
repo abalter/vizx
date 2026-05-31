@@ -4,6 +4,7 @@ import { aspirationalAndroidLifecycleExample } from "./aspirationalAndroidLifecy
 import { aspirationalArrowLabelExample } from "./aspirationalArrowLabel";
 import { aspirationalGeometry1LiteExample } from "./aspirationalGeometry1Lite";
 import { aspirationalLabeledPolygonExample } from "./aspirationalLabeledPolygon";
+import { aspirationalMechanismLiteExample } from "./aspirationalMechanismLite";
 import { aspirationalPendagonLiteExample } from "./aspirationalPendagonLite";
 import { aspirationalPullysLiteExample } from "./aspirationalPullysLite";
 import { aspirationalProjectileMotionLiteExample } from "./aspirationalProjectileMotionLite";
@@ -43,6 +44,7 @@ export const vizxExamples: readonly VizxExample[] = [
   aspirationalArrowLabelExample,
   aspirationalGeometry1LiteExample,
   aspirationalLabeledPolygonExample,
+  aspirationalMechanismLiteExample,
   aspirationalPendagonLiteExample,
   aspirationalPullysLiteExample,
   aspirationalProjectileMotionLiteExample,

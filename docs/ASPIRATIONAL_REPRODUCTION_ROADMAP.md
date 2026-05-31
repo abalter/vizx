@@ -132,6 +132,7 @@ Current status:
   - `aspirational-geometry-1-lite`
   - `aspirational-pendagon-lite`
   - `aspirational-pullys-lite`
+  - `aspirational-mechanism-lite`
 - implemented as manual builder-authored Level 1-2 reproductions
 - `aspirational-labeled-polygon` now uses real circular angle marks for its beta labels
 - `aspirational-projectile-motion-lite` combines Bezier trajectory pathing, launch-angle arc annotation, arrowed vector styling, and dashed construction guides using existing capabilities only
@@ -142,6 +143,8 @@ Current status:
 - no mechanics simulation, solver behavior, or source translation is added for this example
 - no source-language translation added
 - no parser/JSON Core IR/AST expansion added
+- `aspirational-mechanism-lite` provides a manual static linkage sketch using explicit `circleCircleIntersections(...)`, angle marks, and annotation helpers
+- no mechanics simulation, solver behavior, or source translation is added for this example
 
 Acceptance criteria:
 

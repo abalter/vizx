@@ -82,6 +82,29 @@
       ]
     },
     {
+      "id": "aspirational-mechanism-lite",
+      "title": "Aspirational mechanism lite",
+      "description": "Manual Level 1-2 approximation of the MetaPost mechanism aspirational example using current VizX intersections, labels, angle marks, and style helpers.",
+      "sourcePath": "examples/aspirational_gallery/metapost/mechanism.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "static snapshot only",
+        "manual coordinates",
+        "no kinematics solver",
+        "no animation",
+        "no source translation",
+        "no automatic construction inference",
+        "no full visual fidelity"
+      ]
+    },
+    {
       "id": "aspirational-pendagon-lite",
       "title": "Aspirational pendagon lite",
       "description": "Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.",

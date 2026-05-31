@@ -800,6 +800,44 @@ describe("example registry", () => {
     expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
   });
 
+  it("registers and semantically validates aspirational-mechanism-lite", () => {
+    const example = requireVizxExample("aspirational-mechanism-lite");
+    const scene = example.createScene();
+    const result = resolveScene(scene);
+    const inspection = inspectScene(scene);
+    const svg = renderSvg(result.renderScene, { pretty: true });
+    const debugScene = createDebugRenderScene(result);
+    const angleMark = scene.objects.find((object) => object.id === "mek.angle.crank");
+
+    expect(result.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+    expect(svg.length).toBeGreaterThan(0);
+    expect(inspection.objects.some((object) => object.id === "mek.bar.base" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.bar.crank" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.bar.left.upper" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.bar.right.upper" && object.kind === "line")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.guide.outer" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.guide.coupler" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.joint.n1" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.joint.n2" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.joint.m" && object.kind === "circle")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.tick.base.0" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.tick.crank.0" && object.kind === "path")).toBe(true);
+    expect(inspection.objects.some((object) => object.id === "mek.label.frame" && object.kind === "text")).toBe(true);
+
+    expect(angleMark?.kind).toBe("path");
+    if (!angleMark || angleMark.kind !== "path") {
+      throw new Error("Expected mek.angle.crank path object");
+    }
+
+    expect(angleMark.commands.some((command) => command.kind === "arc")).toBe(true);
+    expect(svg).toContain("<circle");
+    expect(svg).toContain("<line");
+    expect(svg).toContain("<path");
+    expect(svg).toContain('stroke-dasharray="7 5"');
+    expect(svg).toContain('stroke-linecap="round"');
+    expect(debugScene.children.at(-1)?.id).toBe("debug-overlay");
+  });
+
   it("registers and semantically validates aspirational-geometry-1-lite", () => {
     const example = requireVizxExample("aspirational-geometry-1-lite");
     const scene = example.createScene();

@@ -123,6 +123,8 @@ Current technical/math-relevant examples and coverage:
   - demonstrates explicit external/internal common tangents between two circles with tangent-point markers and dashed guide radii
 - `technical-belt-pulley`
   - demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal tangents, circular wrap arcs, and dashed guide radii
+- `aspirational-mechanism-lite`
+  - demonstrates a static linkage/mechanism schematic built from explicit circle-circle intersections, angle marks, and annotation helpers
 - `aspirational-labeled-polygon`
   - demonstrates angle marks plus v0 technical style fields (`strokeDasharray`, `strokeLineCap`, `strokeLineJoin`)
 - `aspirational-geometry-1-lite`
@@ -151,6 +153,7 @@ Current helper and object surfaces are sufficient to manually author:
 - labeled polygon diagrams
 - angle diagrams with visible angle arcs
 - circle/line construction diagrams
+- static mechanism/linkage schematics built from explicit intersections and annotation helpers
 - tangent diagrams from external points to circles
 - circle-circle and line-circle construction sketches
 - dashed guide/construction-line diagrams
@@ -167,7 +170,6 @@ Still missing for higher-fidelity technical/math construction work:
 - no construction solver
 - no automatic dependency graph/inference for geometric constructions
 - no tangent-to-path or tangent-to-arc helpers
-- no crossed-belt helper (internal tangent belt runs)
 - no mechanics or kinematics simulation
 - no automatic annotation collision avoidance
 - no dimension-line annotation system
