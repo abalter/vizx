@@ -142,8 +142,7 @@ That is a credible manual technical-illustration baseline rather than a one-off 
 ### C. Authoring/system gaps
 
 - parser syntax
-- JSON Core IR catch-up for newer path/style/transform/helper-adjacent surfaces
-- parser AST catch-up for the same surfaces
+- parser AST catch-up for current path/style/transform/object-kind surfaces
 - source-language translation
 - stronger reusable example/component conventions for technical figures
 - automated visual comparison or regression review tooling
@@ -190,13 +189,13 @@ Cons:
 - requires careful path/arc/Bezier math
 - can easily grow into flattening and intersection work
 
-### Option C — JSON Core IR / parser AST catch-up
+### Option C — Parser AST catch-up for current Core IR surface
 
 Pros:
 
-- reduces drift between the builder/runtime surface and interchange plans
-- makes the current capability stack easier to reason about and carry forward
+- reduces drift between runtime/Core IR and parser modeling
 - prepares for later parser/source work without committing to syntax now
+- keeps parser syntax deferred while still improving model parity
 
 Cons:
 
@@ -241,13 +240,13 @@ Cons:
 
 ## 7. Recommendation
 
-Recommend prioritizing **Option C: JSON Core IR / parser AST catch-up for the current builder/helper surface**.
+Recommend prioritizing **Option C: parser AST catch-up for the current Core IR surface**.
 
 Rationale:
 
 - the builder/helper stack has grown substantially across geometry, paths, style fields, transforms, markers, and example metadata
-- JSON Core IR and parser AST support have been deferred repeatedly while the implemented runtime has continued to move forward
-- catching up now reduces long-term model drift before another major feature branch expands the gap further
+- JSON Core IR catch-up has started, but parser AST coverage remains narrow while runtime/Core IR moved forward
+- parser AST catch-up now reduces long-term model drift before another major feature branch expands the gap further
 - this does not require committing to parser syntax or source translation yet
 - it creates a cleaner foundation for later parser, interchange, or source-planning work
 
@@ -257,7 +256,8 @@ If the immediate goal were visual output quality rather than model consolidation
 
 Concrete next prompt target for Option C:
 
-- inventory the current implemented object/path/style/transform/helper-adjacent surfaces against [CORE_IR_SPEC.md](./CORE_IR_SPEC.md)
+- inventory current parser AST coverage against [CORE_IR_SPEC.md](./CORE_IR_SPEC.md) and [JSON_CORE_IR_CATCHUP_AUDIT.md](./JSON_CORE_IR_CATCHUP_AUDIT.md)
+- add bounded parser AST type/lowering catch-up for object kinds and path/style/transform fields already accepted by JSON Core IR
 - create or update a JSON Core IR catch-up plan that enumerates the missing representable surfaces and any unresolved design questions
 - implement only a very small first catch-up if the gap is narrow and low-risk; otherwise keep the next pass docs-first
 - do not add parser syntax

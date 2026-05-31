@@ -201,6 +201,7 @@ Current note:
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
 - first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.
 - post-mechanism technical/math checkpoint guidance now recommends JSON Core IR / parser AST catch-up before another major geometry or fidelity branch.
+- JSON Core IR v0 schema/converter parity catch-up has started for the current object/path/style/transform runtime surface; parser AST catch-up remains the next bounded consolidation step.
 - generated gallery tooling now has both generalized (`npm run manifest:examples`, `npm run gallery:examples`) and aspirational-only compatibility (`npm run manifest:aspirational`, `npm run gallery:aspirational`) outputs.
 
 ## D. Deferred Work
@@ -208,8 +209,7 @@ Current note:
 Still deferred or out-of-scope categories:
 
 - parser syntax as a primary authoring surface
-- JSON Core IR catch-up for newer path/transform/marker/helper/style features
-- parser AST catch-up for newer path/transform/marker/helper/style features
+- further parser AST catch-up for newer path/transform/marker/helper/style features
 - clipping/gradients/themes/style inheritance/class systems
 - source-language translation (TikZ/Asymptote/MetaPost import/transpile)
 - plotting/data model implementation until milestone planning lands

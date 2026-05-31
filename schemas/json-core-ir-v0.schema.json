@@ -5,7 +5,7 @@
   "description": "Draft schema for the currently supported JSON Core IR v0 fixture surface. This file is not enforced by runtime validation yet and does not imply public format stability.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["objects", "connectors"],
+  "required": ["objects"],
   "properties": {
     "objects": {
       "type": "array",
@@ -33,6 +33,101 @@
         "x": { "type": "number" },
         "y": { "type": "number" }
       }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stroke": { "$ref": "#/$defs/nonEmptyString" },
+        "fill": { "$ref": "#/$defs/nonEmptyString" },
+        "strokeWidth": { "type": "number" },
+        "strokeDasharray": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "strokeLineCap": {
+          "type": "string",
+          "enum": ["butt", "round", "square"]
+        },
+        "strokeLineJoin": {
+          "type": "string",
+          "enum": ["miter", "round", "bevel"]
+        },
+        "fillRule": {
+          "type": "string",
+          "enum": ["nonzero", "evenodd"]
+        },
+        "fontFamily": { "$ref": "#/$defs/nonEmptyString" },
+        "fontSize": { "type": "number" },
+        "textAnchor": {
+          "type": "string",
+          "enum": ["start", "middle", "end"]
+        },
+        "dominantBaseline": { "$ref": "#/$defs/nonEmptyString" },
+        "opacity": { "type": "number" },
+        "markerStart": { "$ref": "#/$defs/nonEmptyString" },
+        "markerEnd": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "translateTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "x", "y"],
+      "properties": {
+        "kind": { "const": "translate" },
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "rotateTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "angleDegrees"],
+      "properties": {
+        "kind": { "const": "rotate" },
+        "angleDegrees": { "type": "number" },
+        "around": { "$ref": "#/$defs/point" }
+      }
+    },
+    "scaleTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "sx"],
+      "properties": {
+        "kind": { "const": "scale" },
+        "sx": { "type": "number" },
+        "sy": { "type": "number" },
+        "around": { "$ref": "#/$defs/point" }
+      }
+    },
+    "legacyTranslateTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["translateX", "translateY"],
+      "properties": {
+        "translateX": { "type": "number" },
+        "translateY": { "type": "number" }
+      }
+    },
+    "transformOperation": {
+      "oneOf": [
+        { "$ref": "#/$defs/translateTransform" },
+        { "$ref": "#/$defs/rotateTransform" },
+        { "$ref": "#/$defs/scaleTransform" },
+        { "$ref": "#/$defs/legacyTranslateTransform" }
+      ]
+    },
+    "transform": {
+      "oneOf": [
+        { "$ref": "#/$defs/transformOperation" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/transformOperation" }
+        }
+      ]
     },
     "anchorName": {
       "type": "string",
@@ -118,12 +213,14 @@
     "groupObject": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "kind", "placement", "children"],
+      "required": ["id", "kind", "children"],
       "properties": {
         "id": { "$ref": "#/$defs/nonEmptyString" },
         "kind": { "const": "group" },
         "placement": { "$ref": "#/$defs/placement" },
         "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" },
         "children": {
           "type": "array",
           "items": { "$ref": "#/$defs/drawableObject" }
@@ -139,10 +236,13 @@
         "kind": { "const": "text" },
         "center": { "$ref": "#/$defs/point" },
         "text": { "$ref": "#/$defs/nonEmptyString" },
-        "align": { "$ref": "#/$defs/alignment" }
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
       }
     },
-    "rectObject": {
+    "rectFitToTextObject": {
       "type": "object",
       "additionalProperties": false,
       "required": ["id", "kind", "fitToText"],
@@ -152,14 +252,215 @@
         "fitToText": { "$ref": "#/$defs/fitToText" },
         "rx": { "type": "number" },
         "ry": { "type": "number" },
-        "align": { "$ref": "#/$defs/alignment" }
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "rectExplicitObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "center", "width", "height"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "rect" },
+        "center": { "$ref": "#/$defs/point" },
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "rx": { "type": "number" },
+        "ry": { "type": "number" },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "rectObject": {
+      "oneOf": [
+        { "$ref": "#/$defs/rectFitToTextObject" },
+        { "$ref": "#/$defs/rectExplicitObject" }
+      ]
+    },
+    "lineObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "start", "end"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "line" },
+        "start": { "$ref": "#/$defs/point" },
+        "end": { "$ref": "#/$defs/point" },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "polylineObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "points"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "polyline" },
+        "points": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "ellipseObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "center", "rx", "ry"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "ellipse" },
+        "center": { "$ref": "#/$defs/point" },
+        "rx": { "type": "number" },
+        "ry": { "type": "number" },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "polygonObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "points"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "polygon" },
+        "points": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/point" }
+        },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "circleObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "center", "radius"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "circle" },
+        "center": { "$ref": "#/$defs/point" },
+        "radius": { "type": "number" },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
+      }
+    },
+    "moveToCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "point"],
+      "properties": {
+        "kind": { "const": "moveTo" },
+        "point": { "$ref": "#/$defs/point" }
+      }
+    },
+    "lineToCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "point"],
+      "properties": {
+        "kind": { "const": "lineTo" },
+        "point": { "$ref": "#/$defs/point" }
+      }
+    },
+    "quadraticCurveToCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "control", "point"],
+      "properties": {
+        "kind": { "const": "quadraticCurveTo" },
+        "control": { "$ref": "#/$defs/point" },
+        "point": { "$ref": "#/$defs/point" }
+      }
+    },
+    "cubicCurveToCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "control1", "control2", "point"],
+      "properties": {
+        "kind": { "const": "cubicCurveTo" },
+        "control1": { "$ref": "#/$defs/point" },
+        "control2": { "$ref": "#/$defs/point" },
+        "point": { "$ref": "#/$defs/point" }
+      }
+    },
+    "arcCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "center", "radius", "startAngleDegrees", "endAngleDegrees"],
+      "properties": {
+        "kind": { "const": "arc" },
+        "center": { "$ref": "#/$defs/point" },
+        "radius": { "type": "number" },
+        "startAngleDegrees": { "type": "number" },
+        "endAngleDegrees": { "type": "number" },
+        "clockwise": { "type": "boolean" }
+      }
+    },
+    "closePathCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "const": "closePath" }
+      }
+    },
+    "pathCommand": {
+      "oneOf": [
+        { "$ref": "#/$defs/moveToCommand" },
+        { "$ref": "#/$defs/lineToCommand" },
+        { "$ref": "#/$defs/quadraticCurveToCommand" },
+        { "$ref": "#/$defs/cubicCurveToCommand" },
+        { "$ref": "#/$defs/arcCommand" },
+        { "$ref": "#/$defs/closePathCommand" }
+      ]
+    },
+    "pathObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "commands"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "const": "path" },
+        "commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/pathCommand" }
+        },
+        "placement": { "$ref": "#/$defs/placement" },
+        "align": { "$ref": "#/$defs/alignment" },
+        "style": { "$ref": "#/$defs/style" },
+        "transform": { "$ref": "#/$defs/transform" }
       }
     },
     "drawableObject": {
       "oneOf": [
         { "$ref": "#/$defs/groupObject" },
         { "$ref": "#/$defs/textObject" },
-        { "$ref": "#/$defs/rectObject" }
+        { "$ref": "#/$defs/rectObject" },
+        { "$ref": "#/$defs/lineObject" },
+        { "$ref": "#/$defs/polylineObject" },
+        { "$ref": "#/$defs/ellipseObject" },
+        { "$ref": "#/$defs/polygonObject" },
+        { "$ref": "#/$defs/pathObject" },
+        { "$ref": "#/$defs/circleObject" }
       ]
     },
     "connector": {
@@ -170,7 +471,8 @@
         "kind": { "const": "connector" },
         "id": { "$ref": "#/$defs/nonEmptyString" },
         "from": { "$ref": "#/$defs/anchorRef" },
-        "to": { "$ref": "#/$defs/anchorRef" }
+        "to": { "$ref": "#/$defs/anchorRef" },
+        "style": { "$ref": "#/$defs/style" }
       }
     },
     "distributionOperation": {

@@ -11,7 +11,9 @@ function loadJsonCoreIrSchema(): unknown {
   return JSON.parse(schemaText) as unknown;
 }
 
-function loadJsonCoreIrFixture(name: "basic" | "relative-placement" | "alignment-family" | "distribute-x" | "distribute-y"): unknown {
+function loadJsonCoreIrFixture(
+  name: "basic" | "relative-placement" | "alignment-family" | "distribute-x" | "distribute-y" | "technical-style-path",
+): unknown {
   const fixtureUrl = new URL(`../fixtures/json-core-ir-v0/${name}.json`, import.meta.url);
   const fixtureText = readFileSync(fixtureUrl, "utf8");
   return JSON.parse(fixtureText) as unknown;
@@ -63,7 +65,7 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       $defs?: {
         groupObject?: { properties?: { kind?: { const?: unknown } } };
         textObject?: { properties?: { kind?: { const?: unknown } } };
-        rectObject?: { properties?: { kind?: { const?: unknown } } };
+        rectExplicitObject?: { properties?: { kind?: { const?: unknown } } };
         alignment?: { properties?: { relation?: { enum?: unknown } } };
         relativePlacement?: { properties?: { kind?: { enum?: unknown } } };
         distributionOperation?: { properties?: { relation?: { enum?: unknown } } };
@@ -72,7 +74,7 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
 
     expect(schema.$defs?.groupObject?.properties?.kind?.const).toBe("group");
     expect(schema.$defs?.textObject?.properties?.kind?.const).toBe("text");
-    expect(schema.$defs?.rectObject?.properties?.kind?.const).toBe("rect");
+    expect(schema.$defs?.rectExplicitObject?.properties?.kind?.const).toBe("rect");
     expect(schema.$defs?.distributionOperation?.properties?.relation?.enum).toEqual([
       "distributeX",
       "distributeY",
@@ -101,6 +103,7 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       "alignment-family",
       "distribute-x",
       "distribute-y",
+      "technical-style-path",
     ] as const;
 
     for (const fixtureName of fixtureNames) {
@@ -120,13 +123,100 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       objects: [
         {
           id: "Bad",
-          kind: "ellipse",
+          kind: "triangle",
         },
       ],
       connectors: [],
     };
 
     expectSchemaValidationToFail(validate, malformed, "Unknown object kind");
+  });
+
+  it("rejects invalid strokeLineCap enum values", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "bad-linecap",
+          kind: "line",
+          start: { x: 0, y: 0 },
+          end: { x: 10, y: 10 },
+          style: {
+            stroke: "#0f172a",
+            strokeLineCap: "banana",
+          },
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Invalid strokeLineCap");
+  });
+
+  it("rejects invalid strokeLineJoin enum values", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "bad-linejoin",
+          kind: "line",
+          start: { x: 0, y: 0 },
+          end: { x: 10, y: 10 },
+          style: {
+            stroke: "#0f172a",
+            strokeLineJoin: "banana",
+          },
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Invalid strokeLineJoin");
+  });
+
+  it("rejects invalid fillRule enum values", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "bad-fillrule",
+          kind: "polygon",
+          points: [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+          ],
+          style: {
+            fill: "#e2e8f0",
+            fillRule: "banana",
+          },
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Invalid fillRule");
+  });
+
+  it("rejects malformed strokeDasharray values", () => {
+    const validate = createJsonCoreIrSchemaValidator();
+    const malformed = {
+      objects: [
+        {
+          id: "bad-dasharray",
+          kind: "line",
+          start: { x: 0, y: 0 },
+          end: { x: 10, y: 10 },
+          style: {
+            stroke: "#0f172a",
+            strokeDasharray: [4, -2],
+          },
+        },
+      ],
+      connectors: [],
+    };
+
+    expectSchemaValidationToFail(validate, malformed, "Malformed strokeDasharray");
   });
 
   it("rejects a placement with an unsupported relation", () => {
@@ -259,6 +349,30 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       "center-above",
       "center-below",
     ]);
+  });
+
+  it("loads the technical-style-path fixture and resolves a styled arc path scene", () => {
+    const fixture = loadJsonCoreIrFixture("technical-style-path");
+    const result = convertJsonCoreIrV0ToObjectScene(fixture);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.scene).toBeDefined();
+
+    const resolved = resolveScene(result.scene!);
+    expect(resolved.diagnostics.filter((diagnostic) => diagnostic.severity === "error")).toEqual([]);
+
+    const styledPath = resolved.resolved.objects.find((object) => object.id === "styled.path");
+    expect(styledPath?.kind).toBe("path");
+    expect(styledPath?.renderNode.kind).toBe("path");
+
+    if (styledPath?.renderNode.kind === "path") {
+      expect(styledPath.renderNode.d).toContain("A ");
+      expect(styledPath.renderNode.style?.strokeDasharray).toEqual([8, 4]);
+      expect(styledPath.renderNode.style?.strokeLineCap).toBe("round");
+      expect(styledPath.renderNode.style?.strokeLineJoin).toBe("bevel");
+      expect(styledPath.renderNode.style?.fillRule).toBe("evenodd");
+      expect(styledPath.renderNode.style?.markerEnd).toBe("arrow");
+    }
   });
 
   it("fixture-converted relative-placement scene matches TypeScript example semantics", () => {
@@ -586,16 +700,14 @@ describe("convertJsonCoreIrV0ToObjectScene", () => {
       objects: [
         {
           id: "A",
-          kind: "circle",
-          center: { x: 0, y: 0 },
-          radius: 10,
+          kind: "triangle",
         },
       ],
       connectors: [],
     });
 
     expect(result.scene).toBeUndefined();
-    expect(result.diagnostics.some((message) => message.includes("kind must be one of group, text, or rect"))).toBe(true);
+    expect(result.diagnostics.some((message) => message.includes("kind must be one of group, text, rect, line, polyline, ellipse, polygon, circle, or path"))).toBe(true);
   });
 
   it("returns diagnostics for an unsupported placement relation", () => {

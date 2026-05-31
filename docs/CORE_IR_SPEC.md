@@ -14,7 +14,7 @@ Core IR here means the structured drawing model consumed by the resolver, not us
   - `packages/object-model/src/objects.ts`
   - `packages/object-model/src/scene.ts`
   - `packages/resolver/src/resolveScene.ts`
-- Related implementation/test artifacts: a provisional JSON Core IR converter and committed JSON fixtures for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, and `distribute-y`
+- Related implementation/test artifacts: JSON Core IR v0 schema + converter and committed JSON fixtures for `basic`, `relative-placement`, `alignment-family`, `distribute-x`, `distribute-y`, and `technical-style-path`
 
 ## 1. Scene
 
@@ -44,7 +44,7 @@ Current drawable object kinds:
 - `polyline`
 - `ellipse`
 - `polygon`
-- `path` (v0: `moveTo`, `lineTo`, `closePath`)
+- `path` (`moveTo`, `lineTo`, `quadraticCurveTo`, `cubicCurveTo`, `arc`, `closePath`)
 - `rect`
 - `circle`
 - `text`
@@ -75,7 +75,7 @@ Current transform deferrals:
 
 - rotation support for `text` objects (diagnostic + skip in v0)
 - scale support for `text` objects (diagnostic + skip in v0)
-- parser/JSON/AST transform surfaces
+- parser AST transform surface parity and source-syntax lowering
 
 Current style baseline in `Style`:
 

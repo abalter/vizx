@@ -1,0 +1,97 @@
+{
+  "objects": [
+    {
+      "id": "styled.path",
+      "kind": "path",
+      "commands": [
+        {
+          "kind": "moveTo",
+          "point": {
+            "x": 20,
+            "y": 60
+          }
+        },
+        {
+          "kind": "lineTo",
+          "point": {
+            "x": 84,
+            "y": 60
+          }
+        },
+        {
+          "kind": "arc",
+          "center": {
+            "x": 84,
+            "y": 84
+          },
+          "radius": 24,
+          "startAngleDegrees": -90,
+          "endAngleDegrees": 0,
+          "clockwise": false
+        },
+        {
+          "kind": "lineTo",
+          "point": {
+            "x": 132,
+            "y": 84
+          }
+        },
+        {
+          "kind": "quadraticCurveTo",
+          "control": {
+            "x": 152,
+            "y": 66
+          },
+          "point": {
+            "x": 170,
+            "y": 84
+          }
+        },
+        {
+          "kind": "cubicCurveTo",
+          "control1": {
+            "x": 190,
+            "y": 102
+          },
+          "control2": {
+            "x": 210,
+            "y": 66
+          },
+          "point": {
+            "x": 228,
+            "y": 84
+          }
+        },
+        {
+          "kind": "closePath"
+        }
+      ],
+      "style": {
+        "stroke": "#0f766e",
+        "fill": "none",
+        "strokeWidth": 2,
+        "strokeDasharray": [8, 4],
+        "strokeLineCap": "round",
+        "strokeLineJoin": "bevel",
+        "fillRule": "evenodd",
+        "markerEnd": "arrow"
+      },
+      "transform": [
+        {
+          "kind": "translate",
+          "x": 4,
+          "y": -2
+        },
+        {
+          "kind": "rotate",
+          "angleDegrees": 6,
+          "around": {
+            "x": 120,
+            "y": 84
+          }
+        }
+      ]
+    }
+  ],
+  "connectors": []
+}

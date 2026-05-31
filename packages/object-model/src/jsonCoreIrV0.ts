@@ -1,5 +1,16 @@
+import type { Style } from "@vizx/core";
+import type { Transform } from "@vizx/geometry";
 import type { AnchorName, AnchorRef } from "./anchors";
-import type { ConnectorObject, DrawableObject, ObjectAlignment, ObjectPlacement } from "./objects";
+import type {
+  ArcPathCommand,
+  ConnectorObject,
+  CubicCurveToPathCommand,
+  DrawableObject,
+  ObjectAlignment,
+  ObjectPlacement,
+  PathCommand,
+  QuadraticCurveToPathCommand,
+} from "./objects";
 import type { ObjectScene, SceneDistribution } from "./scene";
 
 export interface JsonCoreIrV0ConversionResult {
@@ -34,20 +45,19 @@ export function convertJsonCoreIrV0ToObjectScene(input: unknown): JsonCoreIrV0Co
   }
 
   const connectorsValue = input.connectors;
-
-  if (!Array.isArray(connectorsValue)) {
-    diagnostics.push("Scene connectors must be an array.");
-  }
-
   const convertedConnectors: ConnectorObject[] = [];
 
-  if (Array.isArray(connectorsValue)) {
-    for (let index = 0; index < connectorsValue.length; index += 1) {
-      const connectorResult = convertConnector(connectorsValue[index], `connectors[${index}]`);
-      diagnostics.push(...connectorResult.diagnostics);
+  if (connectorsValue !== undefined) {
+    if (!Array.isArray(connectorsValue)) {
+      diagnostics.push("Scene connectors must be an array.");
+    } else {
+      for (let index = 0; index < connectorsValue.length; index += 1) {
+        const connectorResult = convertConnector(connectorsValue[index], `connectors[${index}]`);
+        diagnostics.push(...connectorResult.diagnostics);
 
-      if (connectorResult.connector) {
-        convertedConnectors.push(connectorResult.connector);
+        if (connectorResult.connector) {
+          convertedConnectors.push(connectorResult.connector);
+        }
       }
     }
   }
@@ -92,8 +102,12 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
 
   const id = readString(value.id, `${path}.id`, diagnostics);
   const kind = readString(value.kind, `${path}.kind`, diagnostics);
+  const placement = convertPlacement(value.placement, `${path}.placement`, diagnostics);
+  const align = convertAlignment(value.align, `${path}.align`, diagnostics);
+  const style = readStyle(value.style, `${path}.style`, diagnostics);
+  const transform = readTransform(value.transform, `${path}.transform`, diagnostics);
 
-  if (!kind) {
+  if (!kind || !id || diagnostics.length > 0) {
     return { diagnostics };
   }
 
@@ -116,13 +130,6 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
       }
     }
 
-    const placement = convertPlacement(value.placement, `${path}.placement`, diagnostics);
-    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
-
-    if (!id) {
-      return { diagnostics };
-    }
-
     if (diagnostics.length > 0) {
       return { diagnostics };
     }
@@ -133,6 +140,8 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         id,
         placement,
         align,
+        style,
+        transform,
         children,
       },
       diagnostics,
@@ -142,11 +151,6 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
   if (kind === "text") {
     const center = readPoint(value.center, `${path}.center`, diagnostics);
     const text = readString(value.text, `${path}.text`, diagnostics);
-    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
-
-    if (!id) {
-      return { diagnostics };
-    }
 
     if (!center || !text || diagnostics.length > 0) {
       return { diagnostics };
@@ -158,7 +162,10 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         id,
         center,
         text,
+        placement,
         align,
+        style,
+        transform,
       },
       diagnostics,
     };
@@ -166,15 +173,29 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
 
   if (kind === "rect") {
     const fitToText = readFitToText(value.fitToText, `${path}.fitToText`, diagnostics);
+    const center = readOptionalPoint(value.center, `${path}.center`, diagnostics);
+    const width = readOptionalNumber(value.width, `${path}.width`, diagnostics);
+    const height = readOptionalNumber(value.height, `${path}.height`, diagnostics);
     const rx = readOptionalNumber(value.rx, `${path}.rx`, diagnostics);
     const ry = readOptionalNumber(value.ry, `${path}.ry`, diagnostics);
-    const align = convertAlignment(value.align, `${path}.align`, diagnostics);
 
-    if (!id) {
-      return { diagnostics };
+    if (!fitToText && !center) {
+      diagnostics.push(`${path} rect object requires fitToText or center.`);
     }
 
-    if (!fitToText || diagnostics.length > 0) {
+    if (fitToText && center) {
+      diagnostics.push(`${path} rect object cannot use fitToText and center together.`);
+    }
+
+    if (center && width === undefined) {
+      diagnostics.push(`${path}.width must be a finite number when center is provided.`);
+    }
+
+    if (center && height === undefined) {
+      diagnostics.push(`${path}.height must be a finite number when center is provided.`);
+    }
+
+    if (diagnostics.length > 0) {
       return { diagnostics };
     }
 
@@ -183,19 +204,163 @@ function convertDrawableObject(value: unknown, path: string): { object?: Drawabl
         kind: "rect",
         id,
         fitToText,
+        center,
+        width,
+        height,
         rx,
         ry,
+        placement,
         align,
+        style,
+        transform,
       },
       diagnostics,
     };
   }
 
-  diagnostics.push(`${path}.kind must be one of group, text, or rect.`);
+  if (kind === "line") {
+    const start = readPoint(value.start, `${path}.start`, diagnostics);
+    const end = readPoint(value.end, `${path}.end`, diagnostics);
+
+    if (!start || !end || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "line",
+        id,
+        start,
+        end,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  if (kind === "polyline") {
+    const points = readPointArray(value.points, `${path}.points`, diagnostics);
+
+    if (!points || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "polyline",
+        id,
+        points,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  if (kind === "ellipse") {
+    const center = readPoint(value.center, `${path}.center`, diagnostics);
+    const rx = readNumber(value.rx, `${path}.rx`, diagnostics);
+    const ry = readNumber(value.ry, `${path}.ry`, diagnostics);
+
+    if (!center || rx === undefined || ry === undefined || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "ellipse",
+        id,
+        center,
+        rx,
+        ry,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  if (kind === "polygon") {
+    const points = readPointArray(value.points, `${path}.points`, diagnostics);
+
+    if (!points || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "polygon",
+        id,
+        points,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  if (kind === "circle") {
+    const center = readPoint(value.center, `${path}.center`, diagnostics);
+    const radius = readNumber(value.radius, `${path}.radius`, diagnostics);
+
+    if (!center || radius === undefined || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "circle",
+        id,
+        center,
+        radius,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  if (kind === "path") {
+    const commands = readPathCommands(value.commands, `${path}.commands`, diagnostics);
+
+    if (!commands || diagnostics.length > 0) {
+      return { diagnostics };
+    }
+
+    return {
+      object: {
+        kind: "path",
+        id,
+        commands,
+        placement,
+        align,
+        style,
+        transform,
+      },
+      diagnostics,
+    };
+  }
+
+  diagnostics.push(`${path}.kind must be one of group, text, rect, line, polyline, ellipse, polygon, circle, or path.`);
   return { diagnostics };
 }
 
 function convertPlacement(value: unknown, path: string, diagnostics: string[]): ObjectPlacement | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
   if (!isRecord(value)) {
     diagnostics.push(`${path} must be an object.`);
     return undefined;
@@ -313,6 +478,7 @@ function convertConnector(value: unknown, path: string): { connector?: Connector
 
   const from = readAnchorRef(value.from, `${path}.from`, diagnostics);
   const to = readAnchorRef(value.to, `${path}.to`, diagnostics);
+  const style = readStyle(value.style, `${path}.style`, diagnostics);
 
   if (!id || !from || !to || diagnostics.length > 0) {
     return { diagnostics };
@@ -324,12 +490,17 @@ function convertConnector(value: unknown, path: string): { connector?: Connector
       id,
       from,
       to,
+      style,
     },
     diagnostics,
   };
 }
 
 function readFitToText(value: unknown, path: string, diagnostics: string[]) {
+  if (value === undefined) {
+    return undefined;
+  }
+
   if (!isRecord(value)) {
     diagnostics.push(`${path} must be an object.`);
     return undefined;
@@ -344,6 +515,255 @@ function readFitToText(value: unknown, path: string, diagnostics: string[]) {
   }
 
   return { textId, paddingX, paddingY };
+}
+
+function readStyle(value: unknown, path: string, diagnostics: string[]): Style | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (!isRecord(value)) {
+    diagnostics.push(`${path} must be an object.`);
+    return undefined;
+  }
+
+  const stroke = readOptionalString(value.stroke, `${path}.stroke`, diagnostics);
+  const fill = readOptionalString(value.fill, `${path}.fill`, diagnostics);
+  const strokeWidth = readOptionalNumber(value.strokeWidth, `${path}.strokeWidth`, diagnostics);
+  const strokeDasharray = readOptionalNumberArray(value.strokeDasharray, `${path}.strokeDasharray`, diagnostics, {
+    minimum: 0,
+  });
+  const strokeLineCap = readOptionalEnum(value.strokeLineCap, `${path}.strokeLineCap`, diagnostics, ["butt", "round", "square"]);
+  const strokeLineJoin = readOptionalEnum(value.strokeLineJoin, `${path}.strokeLineJoin`, diagnostics, ["miter", "round", "bevel"]);
+  const fillRule = readOptionalEnum(value.fillRule, `${path}.fillRule`, diagnostics, ["nonzero", "evenodd"]);
+  const fontFamily = readOptionalString(value.fontFamily, `${path}.fontFamily`, diagnostics);
+  const fontSize = readOptionalNumber(value.fontSize, `${path}.fontSize`, diagnostics);
+  const textAnchor = readOptionalEnum(value.textAnchor, `${path}.textAnchor`, diagnostics, ["start", "middle", "end"]);
+  const dominantBaseline = readOptionalString(value.dominantBaseline, `${path}.dominantBaseline`, diagnostics);
+  const opacity = readOptionalNumber(value.opacity, `${path}.opacity`, diagnostics);
+  const markerStart = readOptionalString(value.markerStart, `${path}.markerStart`, diagnostics);
+  const markerEnd = readOptionalString(value.markerEnd, `${path}.markerEnd`, diagnostics);
+
+  if (diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return {
+    stroke,
+    fill,
+    strokeWidth,
+    strokeDasharray,
+    strokeLineCap,
+    strokeLineJoin,
+    fillRule,
+    fontFamily,
+    fontSize,
+    textAnchor,
+    dominantBaseline,
+    opacity,
+    markerStart,
+    markerEnd,
+  };
+}
+
+function readTransform(value: unknown, path: string, diagnostics: string[]): Transform | readonly Transform[] | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (Array.isArray(value)) {
+    const operations: Transform[] = [];
+
+    for (let index = 0; index < value.length; index += 1) {
+      const operation = readTransformOperation(value[index], `${path}[${index}]`, diagnostics);
+
+      if (operation) {
+        operations.push(operation);
+      }
+    }
+
+    if (diagnostics.length > 0) {
+      return undefined;
+    }
+
+    return operations;
+  }
+
+  const operation = readTransformOperation(value, path, diagnostics);
+
+  if (!operation || diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return operation;
+}
+
+function readTransformOperation(value: unknown, path: string, diagnostics: string[]): Transform | undefined {
+  if (!isRecord(value)) {
+    diagnostics.push(`${path} must be an object.`);
+    return undefined;
+  }
+
+  if (value.kind === "translate") {
+    const x = readNumber(value.x, `${path}.x`, diagnostics);
+    const y = readNumber(value.y, `${path}.y`, diagnostics);
+
+    if (x === undefined || y === undefined) {
+      return undefined;
+    }
+
+    return { kind: "translate", x, y };
+  }
+
+  if (value.kind === "rotate") {
+    const angleDegrees = readNumber(value.angleDegrees, `${path}.angleDegrees`, diagnostics);
+    const around = readOptionalPoint(value.around, `${path}.around`, diagnostics);
+
+    if (angleDegrees === undefined) {
+      return undefined;
+    }
+
+    return {
+      kind: "rotate",
+      angleDegrees,
+      around,
+    };
+  }
+
+  if (value.kind === "scale") {
+    const sx = readNumber(value.sx, `${path}.sx`, diagnostics);
+    const sy = readOptionalNumber(value.sy, `${path}.sy`, diagnostics);
+    const around = readOptionalPoint(value.around, `${path}.around`, diagnostics);
+
+    if (sx === undefined) {
+      return undefined;
+    }
+
+    return {
+      kind: "scale",
+      sx,
+      sy,
+      around,
+    };
+  }
+
+  if (value.translateX !== undefined || value.translateY !== undefined) {
+    const translateX = readNumber(value.translateX, `${path}.translateX`, diagnostics);
+    const translateY = readNumber(value.translateY, `${path}.translateY`, diagnostics);
+
+    if (translateX === undefined || translateY === undefined) {
+      return undefined;
+    }
+
+    return {
+      translateX,
+      translateY,
+    };
+  }
+
+  diagnostics.push(`${path} must be a translate/rotate/scale or legacy translate transform.`);
+  return undefined;
+}
+
+function readPathCommands(value: unknown, path: string, diagnostics: string[]): readonly PathCommand[] | undefined {
+  if (!Array.isArray(value)) {
+    diagnostics.push(`${path} must be an array.`);
+    return undefined;
+  }
+
+  const commands: PathCommand[] = [];
+
+  for (let index = 0; index < value.length; index += 1) {
+    const command = readPathCommand(value[index], `${path}[${index}]`, diagnostics);
+
+    if (command) {
+      commands.push(command);
+    }
+  }
+
+  if (diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return commands;
+}
+
+function readPathCommand(value: unknown, path: string, diagnostics: string[]): PathCommand | undefined {
+  if (!isRecord(value)) {
+    diagnostics.push(`${path} must be an object.`);
+    return undefined;
+  }
+
+  const kind = readString(value.kind, `${path}.kind`, diagnostics);
+
+  if (!kind) {
+    return undefined;
+  }
+
+  if (kind === "moveTo" || kind === "lineTo") {
+    const point = readPoint(value.point, `${path}.point`, diagnostics);
+
+    if (!point) {
+      return undefined;
+    }
+
+    return { kind, point };
+  }
+
+  if (kind === "quadraticCurveTo") {
+    const control = readPoint(value.control, `${path}.control`, diagnostics);
+    const point = readPoint(value.point, `${path}.point`, diagnostics);
+
+    if (!control || !point) {
+      return undefined;
+    }
+
+    const command: QuadraticCurveToPathCommand = { kind, control, point };
+    return command;
+  }
+
+  if (kind === "cubicCurveTo") {
+    const control1 = readPoint(value.control1, `${path}.control1`, diagnostics);
+    const control2 = readPoint(value.control2, `${path}.control2`, diagnostics);
+    const point = readPoint(value.point, `${path}.point`, diagnostics);
+
+    if (!control1 || !control2 || !point) {
+      return undefined;
+    }
+
+    const command: CubicCurveToPathCommand = { kind, control1, control2, point };
+    return command;
+  }
+
+  if (kind === "arc") {
+    const center = readPoint(value.center, `${path}.center`, diagnostics);
+    const radius = readNumber(value.radius, `${path}.radius`, diagnostics);
+    const startAngleDegrees = readNumber(value.startAngleDegrees, `${path}.startAngleDegrees`, diagnostics);
+    const endAngleDegrees = readNumber(value.endAngleDegrees, `${path}.endAngleDegrees`, diagnostics);
+    const clockwise = readOptionalBoolean(value.clockwise, `${path}.clockwise`, diagnostics);
+
+    if (!center || radius === undefined || startAngleDegrees === undefined || endAngleDegrees === undefined) {
+      return undefined;
+    }
+
+    const command: ArcPathCommand = {
+      kind,
+      center,
+      radius,
+      startAngleDegrees,
+      endAngleDegrees,
+      clockwise,
+    };
+
+    return command;
+  }
+
+  if (kind === "closePath") {
+    return { kind };
+  }
+
+  diagnostics.push(`${path}.kind must be moveTo, lineTo, quadraticCurveTo, cubicCurveTo, arc, or closePath.`);
+  return undefined;
 }
 
 function readAnchorRef(value: unknown, path: string, diagnostics: string[]): AnchorRef | undefined {
@@ -383,6 +803,37 @@ function readPoint(value: unknown, path: string, diagnostics: string[]) {
   return { x, y };
 }
 
+function readOptionalPoint(value: unknown, path: string, diagnostics: string[]) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return readPoint(value, path, diagnostics);
+}
+
+function readPointArray(value: unknown, path: string, diagnostics: string[]) {
+  if (!Array.isArray(value)) {
+    diagnostics.push(`${path} must be an array.`);
+    return undefined;
+  }
+
+  const points: Array<{ x: number; y: number }> = [];
+
+  for (let index = 0; index < value.length; index += 1) {
+    const point = readPoint(value[index], `${path}[${index}]`, diagnostics);
+
+    if (point) {
+      points.push(point);
+    }
+  }
+
+  if (diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return points;
+}
+
 function readString(value: unknown, path: string, diagnostics: string[]) {
   if (typeof value !== "string" || value.length === 0) {
     diagnostics.push(`${path} must be a non-empty string.`);
@@ -390,6 +841,14 @@ function readString(value: unknown, path: string, diagnostics: string[]) {
   }
 
   return value;
+}
+
+function readOptionalString(value: unknown, path: string, diagnostics: string[]) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return readString(value, path, diagnostics);
 }
 
 function readStringArray(value: unknown, path: string, diagnostics: string[]) {
@@ -430,6 +889,81 @@ function readOptionalNumber(value: unknown, path: string, diagnostics: string[])
   }
 
   return readNumber(value, path, diagnostics);
+}
+
+function readOptionalNumberArray(
+  value: unknown,
+  path: string,
+  diagnostics: string[],
+  options: { minimum?: number } = {},
+): readonly number[] | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (!Array.isArray(value)) {
+    diagnostics.push(`${path} must be an array.`);
+    return undefined;
+  }
+
+  const entries: number[] = [];
+
+  for (let index = 0; index < value.length; index += 1) {
+    const entry = readNumber(value[index], `${path}[${index}]`, diagnostics);
+
+    if (entry === undefined) {
+      continue;
+    }
+
+    if (options.minimum !== undefined && entry < options.minimum) {
+      diagnostics.push(`${path}[${index}] must be >= ${options.minimum}.`);
+      continue;
+    }
+
+    entries.push(entry);
+  }
+
+  if (diagnostics.length > 0) {
+    return undefined;
+  }
+
+  return entries;
+}
+
+function readOptionalBoolean(value: unknown, path: string, diagnostics: string[]) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value !== "boolean") {
+    diagnostics.push(`${path} must be a boolean.`);
+    return undefined;
+  }
+
+  return value;
+}
+
+function readOptionalEnum<T extends string>(
+  value: unknown,
+  path: string,
+  diagnostics: string[],
+  options: readonly T[],
+): T | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    diagnostics.push(`${path} must be one of: ${options.join(", ")}.`);
+    return undefined;
+  }
+
+  if (!options.includes(value as T)) {
+    diagnostics.push(`${path} must be one of: ${options.join(", ")}.`);
+    return undefined;
+  }
+
+  return value as T;
 }
 
 function isRecord(value: unknown): value is JsonRecord {
