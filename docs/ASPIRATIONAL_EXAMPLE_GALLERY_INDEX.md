@@ -13,6 +13,13 @@ Current metadata source:
 - optional aspirational metadata fields on `VizxExample` objects
 - standardized top-level reproduction notes in each aspirational example file
 
+Machine-readable manifest:
+
+- generated file: `examples/aspirational-gallery-manifest.json`
+- writer script: `packages/examples/src/writeAspirationalGalleryManifest.ts`
+- generation command: `npm run manifest:aspirational`
+- payload is metadata-only and intentionally excludes scenes, render output, and source contents
+
 Boundary reminder:
 
 - no source translation guarantee

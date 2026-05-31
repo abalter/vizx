@@ -3,6 +3,7 @@ import type { ObjectScene } from "@vizx/object-model";
 import type { RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { renderSvg } from "@vizx/renderer-svg";
 import { createDebugRenderScene, inspectScene, resolveScene } from "@vizx/resolver";
+import { createAspirationalGalleryManifest } from "./aspirationalGalleryManifest";
 import { requireVizxExample, vizxExamples } from "./index";
 
 const minimalDebugOverlay = {
@@ -36,6 +37,29 @@ describe("example registry", () => {
       expect(example.reproductionLevel).toBeTruthy();
       expect(example.helperFamilies?.length ?? 0).toBeGreaterThan(0);
       expect(example.compromises?.length ?? 0).toBeGreaterThan(0);
+    }
+  });
+
+  it("creates a stable aspirational gallery manifest from registry metadata", () => {
+    const manifest = createAspirationalGalleryManifest(vizxExamples);
+    const aspirationalExamples = vizxExamples.filter((example) => example.id.startsWith("aspirational-"));
+
+    expect(manifest.version).toBe(1);
+    expect(manifest.generatedFrom).toBe("packages/examples/src/index.ts");
+    expect(manifest.examples).toHaveLength(aspirationalExamples.length);
+
+    const manifestIds = manifest.examples.map((entry) => entry.id);
+    const sortedManifestIds = [...manifestIds].sort((a, b) => a.localeCompare(b));
+    expect(manifestIds).toEqual(sortedManifestIds);
+
+    for (const entry of manifest.examples) {
+      expect(entry.id.startsWith("aspirational-")).toBe(true);
+      expect(entry.title.length).toBeGreaterThan(0);
+      expect(entry.description.length).toBeGreaterThan(0);
+      expect(entry.sourcePath.length).toBeGreaterThan(0);
+      expect(entry.reproductionLevel.length).toBeGreaterThan(0);
+      expect(entry.helperFamilies.length).toBeGreaterThan(0);
+      expect(entry.compromises.length).toBeGreaterThan(0);
     }
   });
 

@@ -169,6 +169,7 @@ Current extension note:
 
 - a bounded current-capability extension example (`aspirational-projectile-motion-lite`) now exists without introducing a plot/data-coordinate model
 - aspirational examples now also expose standardized source/level/helper/compromise metadata, and the comparison view is documented in [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md)
+- a machine-readable aspirational manifest now exists at `examples/aspirational-gallery-manifest.json` and is regenerated with `npm run manifest:aspirational`; this is metadata-only (no scenes/SVG/source translation)
 
 ## 5. Milestone 2 - Geometry Helper Layer For Math Diagrams
 

@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "generatedFrom": "packages/examples/src/index.ts",
+  "examples": [
+    {
+      "id": "aspirational-android-lifecycle",
+      "title": "Aspirational: Android activity lifecycle",
+      "description": "Manual builder-authored Level 2 approximation of the TikZ Android activity lifecycle with rounded lifecycle nodes and arrowed flow connectors.",
+      "sourcePath": "examples/aspirational_gallery/tikz/Diagram of Android activity life cycle",
+      "reproductionLevel": "Level 2",
+      "helperFamilies": [
+        "primitives",
+        "connectors/placement"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no automatic layout",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-arrow-label",
+      "title": "Aspirational: Arrow with label",
+      "description": "Manual builder-authored approximation of MetaPost arrow_label with a shortened double-arrow segment and centered label.",
+      "sourcePath": "examples/aspirational_gallery/metapost/arrow_label.mp",
+      "reproductionLevel": "Level 2",
+      "helperFamilies": [
+        "primitives"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-geometry-1-lite",
+      "title": "Aspirational geometry 1 lite",
+      "description": "Manual Level 1-2 approximation of Asymptote geometry_1 using current VizX geometry, paths, arcs, labels, and style fields.",
+      "sourcePath": "examples/aspirational_gallery/asymptote/geometry_1",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-labeled-polygon",
+      "title": "Aspirational: Labeled polygon",
+      "description": "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.",
+      "sourcePath": "examples/aspirational_gallery/asymptote/labeled_polygon",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-pendagon-lite",
+      "title": "Aspirational pendagon lite",
+      "description": "Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.",
+      "sourcePath": "examples/aspirational_gallery/metapost/pendagon.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "segment/ray clipping",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-projectile-motion-lite",
+      "title": "Aspirational projectile motion lite",
+      "description": "Manual Level 1-2 approximation of TikZ projectile_motion using current VizX geometry, arcs, paths, arrows, labels, and v0 style fields.",
+      "sourcePath": "examples/aspirational_gallery/tikz/projectile_motion",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "paths/Bezier",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-pullys-lite",
+      "title": "Aspirational pullys lite",
+      "description": "Manual Level 1-2 approximation of MetaPost pullys using the current belt, tangent, annotation, and style helper stack.",
+      "sourcePath": "examples/aspirational_gallery/metapost/pullys.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "tangents",
+        "common tangents",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "belt/pulley path",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    }
+  ]
+}
