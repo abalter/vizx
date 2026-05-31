@@ -120,6 +120,12 @@ npm run debug
 
 Examples are currently TypeScript scene builders collected in `@vizx/examples`, not parser-driven source files. `npm run demo` writes [examples/basic.svg](./examples/basic.svg). `npm run examples` renders normal and debug SVGs for every registered example into `examples/`. `npm run inspect` outputs resolved scene details as JSON, and `npm run debug` emits overlay SVG output for geometry inspection.
 
+Gallery metadata/review outputs:
+
+- `npm run manifest:examples` writes `examples/example-gallery-manifest.json` for combined `aspirational-*` and `technical-*` metadata.
+- `npm run gallery:examples` writes `examples/example-gallery.html` using the generalized manifest and available preview SVG/debug SVG files.
+- `npm run manifest:aspirational` and `npm run gallery:aspirational` remain available for aspirational-only compatibility views.
+
 ## Design Principles
 
 1. **Meaning before marks.** Preserve objects, anchors, and relationships before lowering to paths and text.

@@ -4,6 +4,7 @@ import type { RenderNode, RenderScene } from "@vizx/renderer-svg";
 import { renderSvg } from "@vizx/renderer-svg";
 import { createDebugRenderScene, inspectScene, resolveScene } from "@vizx/resolver";
 import { createAspirationalGalleryManifest } from "./aspirationalGalleryManifest";
+import { createExampleGalleryManifest } from "./exampleGalleryManifest";
 import { requireVizxExample, vizxExamples } from "./index";
 
 const minimalDebugOverlay = {
@@ -61,6 +62,39 @@ describe("example registry", () => {
       expect(entry.helperFamilies.length).toBeGreaterThan(0);
       expect(entry.compromises.length).toBeGreaterThan(0);
     }
+  });
+
+  it("creates a stable generalized example gallery manifest for aspirational and technical examples", () => {
+    const manifest = createExampleGalleryManifest(vizxExamples);
+    const expectedExamples = vizxExamples.filter((example) =>
+      example.id.startsWith("aspirational-") || example.id.startsWith("technical-"));
+
+    expect(manifest.version).toBe(1);
+    expect(manifest.generatedFrom).toBe("packages/examples/src/index.ts");
+    expect(manifest.includedPrefixes).toEqual(["aspirational-", "technical-"]);
+    expect(manifest.examples).toHaveLength(expectedExamples.length);
+
+    const manifestIds = manifest.examples.map((entry) => entry.id);
+    const sortedManifestIds = [...manifestIds].sort((a, b) => a.localeCompare(b));
+    expect(manifestIds).toEqual(sortedManifestIds);
+
+    for (const entry of manifest.examples) {
+      expect(entry.id.startsWith("aspirational-") || entry.id.startsWith("technical-")).toBe(true);
+      expect(entry.title.length).toBeGreaterThan(0);
+      expect(entry.description.length).toBeGreaterThan(0);
+      expect(entry.helperFamilies.length).toBeGreaterThan(0);
+      expect(entry.compromises.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("supports filtered generalized gallery manifests by prefix", () => {
+    const technicalOnly = createExampleGalleryManifest(vizxExamples, {
+      includedPrefixes: ["technical-"],
+    });
+
+    expect(technicalOnly.includedPrefixes).toEqual(["technical-"]);
+    expect(technicalOnly.examples.length).toBeGreaterThan(0);
+    expect(technicalOnly.examples.every((entry) => entry.id.startsWith("technical-"))).toBe(true);
   });
 
   it("lets every example resolve, inspect, render, and debug-render", () => {

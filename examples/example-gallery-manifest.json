@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "generatedFrom": "packages/examples/src/index.ts",
+  "includedPrefixes": [
+    "aspirational-",
+    "technical-"
+  ],
+  "examples": [
+    {
+      "id": "aspirational-android-lifecycle",
+      "title": "Aspirational: Android activity lifecycle",
+      "description": "Manual builder-authored Level 2 approximation of the TikZ Android activity lifecycle with rounded lifecycle nodes and arrowed flow connectors.",
+      "sourcePath": "examples/aspirational_gallery/tikz/Diagram of Android activity life cycle",
+      "reproductionLevel": "Level 2",
+      "helperFamilies": [
+        "primitives",
+        "connectors/placement"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no automatic layout",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-arrow-label",
+      "title": "Aspirational: Arrow with label",
+      "description": "Manual builder-authored approximation of MetaPost arrow_label with a shortened double-arrow segment and centered label.",
+      "sourcePath": "examples/aspirational_gallery/metapost/arrow_label.mp",
+      "reproductionLevel": "Level 2",
+      "helperFamilies": [
+        "primitives"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-geometry-1-lite",
+      "title": "Aspirational geometry 1 lite",
+      "description": "Manual Level 1-2 approximation of Asymptote geometry_1 using current VizX geometry, paths, arcs, labels, and style fields.",
+      "sourcePath": "examples/aspirational_gallery/asymptote/geometry_1",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-labeled-polygon",
+      "title": "Aspirational: Labeled polygon",
+      "description": "Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.",
+      "sourcePath": "examples/aspirational_gallery/asymptote/labeled_polygon",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-mechanism-lite",
+      "title": "Aspirational mechanism lite",
+      "description": "Manual Level 1-2 approximation of the MetaPost mechanism aspirational example using current VizX intersections, labels, angle marks, and style helpers.",
+      "sourcePath": "examples/aspirational_gallery/metapost/mechanism.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no source translation",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-pendagon-lite",
+      "title": "Aspirational pendagon lite",
+      "description": "Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.",
+      "sourcePath": "examples/aspirational_gallery/metapost/pendagon.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "segment/ray clipping",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-projectile-motion-lite",
+      "title": "Aspirational projectile motion lite",
+      "description": "Manual Level 1-2 approximation of TikZ projectile_motion using current VizX geometry, arcs, paths, arrows, labels, and v0 style fields.",
+      "sourcePath": "examples/aspirational_gallery/tikz/projectile_motion",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "paths/Bezier",
+        "circular arcs / angle marks",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "aspirational-pullys-lite",
+      "title": "Aspirational pullys lite",
+      "description": "Manual Level 1-2 approximation of MetaPost pullys using the current belt, tangent, annotation, and style helper stack.",
+      "sourcePath": "examples/aspirational_gallery/metapost/pullys.mp",
+      "reproductionLevel": "Level 1-2",
+      "helperFamilies": [
+        "primitives",
+        "tangents",
+        "common tangents",
+        "annotation helpers",
+        "circular arcs / angle marks",
+        "belt/pulley path",
+        "style fields"
+      ],
+      "compromises": [
+        "manual coordinates",
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no full visual fidelity",
+        "no clipping/gradients",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "technical-angle-arc",
+      "title": "Technical angle arc",
+      "description": "A focused circular arc angle-mark example using the v0 center/radius/angle path command.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "circular arcs / angle marks",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "technical-belt-pulley",
+      "title": "Technical belt pulley",
+      "description": "Demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal common tangents and circular wrap arcs.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "tangents",
+        "common tangents",
+        "belt/pulley path",
+        "circular arcs / angle marks",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "technical-common-tangents",
+      "title": "Technical common tangents",
+      "description": "Demonstrates explicit common tangent construction between two circles (external/internal) using pure helper math.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "tangents",
+        "common tangents",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "technical-linear-plot",
+      "title": "Technical linear plot",
+      "description": "Demonstrates v0 linear scale + plot-frame mapping helpers with minimal axis helpers and an explicit data series.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "intersections",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no automatic layout",
+        "no parser/JSON/AST support"
+      ]
+    },
+    {
+      "id": "technical-tangents",
+      "title": "Technical tangents",
+      "description": "A focused tangent-construction example using the v0 circle tangent helpers.",
+      "sourcePath": "internal technical example",
+      "reproductionLevel": "Technical",
+      "helperFamilies": [
+        "primitives",
+        "tangents",
+        "annotation helpers",
+        "style fields"
+      ],
+      "compromises": [
+        "no source translation",
+        "no solver",
+        "no mechanics/physics simulation",
+        "no parser/JSON/AST support"
+      ]
+    }
+  ]
+}

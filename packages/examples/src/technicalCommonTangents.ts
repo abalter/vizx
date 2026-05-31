@@ -19,6 +19,15 @@ export const technicalCommonTangentsExample: VizxExample = {
   title: "Technical common tangents",
   description:
     "Demonstrates explicit common tangent construction between two circles (external/internal) using pure helper math.",
+  sourcePath: "internal technical example",
+  reproductionLevel: "Technical",
+  helperFamilies: ["primitives", "tangents", "common tangents", "annotation helpers", "style fields"],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "technical geometry helpers",
     "common tangent helpers",

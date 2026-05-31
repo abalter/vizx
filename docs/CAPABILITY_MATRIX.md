@@ -6,6 +6,7 @@ For the current formal model behind these capabilities, see [CORE_IR_SPEC.md](./
 For parser-readiness planning (not implementation status), see [PARSER_LOWERING_CONTRACT.md](./PARSER_LOWERING_CONTRACT.md).
 For milestone progression from current capabilities to aspirational examples, see [ASPIRATIONAL_REPRODUCTION_ROADMAP.md](./ASPIRATIONAL_REPRODUCTION_ROADMAP.md) and the root [roadmap.md](../roadmap.md).
 For a source/helper/compromise comparison across the current aspirational examples, see [ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md](./ASPIRATIONAL_EXAMPLE_GALLERY_INDEX.md).
+For combined aspirational + technical generated metadata/gallery outputs, see `examples/example-gallery-manifest.json` and `examples/example-gallery.html`.
 For near-term technical/mathematical drawing priority guidance, see [TECHNICAL_MATH_DRAWING_TRACK.md](./TECHNICAL_MATH_DRAWING_TRACK.md).
 For consolidated technical/math drawing checkpoint status and recommended next branch, see [TECHNICAL_MATH_DRAWING_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_CHECKPOINT.md).
 For the post-mechanism milestone decision and current strategic recommendation, see [TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md](./TECHNICAL_MATH_DRAWING_POST_MECHANISM_CHECKPOINT.md).

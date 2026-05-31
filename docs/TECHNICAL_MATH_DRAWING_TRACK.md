@@ -96,6 +96,7 @@ Current note:
 - this example remains a static construction drawing only: no source translation, no solver, and no mechanics/kinematics simulation.
 - `aspirational-mechanism-lite` is now implemented as a manual Level 1-2 approximation of the MetaPost mechanism source by combining explicit circle-circle intersections, angle marks, and annotation helpers.
 - this example remains a static construction drawing only: no source translation, no solver, and no mechanics/kinematics simulation.
+- generated gallery tooling now includes both `aspirational-*` and `technical-*` example metadata for side-by-side review in `examples/example-gallery-manifest.json` and `examples/example-gallery.html`.
 
 ## 6. Recommended Next Feature Gaps
 

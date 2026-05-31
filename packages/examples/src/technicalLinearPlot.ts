@@ -7,6 +7,15 @@ export const technicalLinearPlotExample: VizxExample = {
   title: "Technical linear plot",
   description:
     "Demonstrates v0 linear scale + plot-frame mapping helpers with minimal axis helpers and an explicit data series.",
+  sourcePath: "internal technical example",
+  reproductionLevel: "Technical",
+  helperFamilies: ["primitives", "intersections", "annotation helpers", "style fields"],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no automatic layout",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "linearScale helper",
     "plot frame mapping helper",

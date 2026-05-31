@@ -146,6 +146,7 @@ Current maintainability note:
 
 - aspirational examples now use a standardized source/level/helper/compromise note format
 - optional aspirational metadata fields on `VizxExample` mirror that information for lightweight registry-level inspection
+- generalized example-gallery tooling now indexes both `aspirational-*` and `technical-*` metadata into `examples/example-gallery-manifest.json` and `examples/example-gallery.html`
 - this is documentation/metadata consolidation only, not a new rendering or geometry capability
 
 ## 4. What Is Now Feasible

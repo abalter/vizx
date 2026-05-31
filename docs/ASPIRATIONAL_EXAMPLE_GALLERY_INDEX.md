@@ -20,6 +20,13 @@ Machine-readable manifest:
 - generation command: `npm run manifest:aspirational`
 - payload is metadata-only and intentionally excludes scenes, render output, and source contents
 
+Generalized machine-readable manifest (aspirational + technical):
+
+- generated file: `examples/example-gallery-manifest.json`
+- writer script: `packages/examples/src/writeExampleGalleryManifest.ts`
+- generation command: `npm run manifest:examples`
+- payload remains metadata-only and intentionally excludes scenes, render output, and source contents
+
 Generated static gallery report:
 
 - generated file: `examples/aspirational-gallery.html`
@@ -27,6 +34,13 @@ Generated static gallery report:
 - generation command: `npm run gallery:aspirational`
 - the page uses manifest metadata plus current `examples/{id}.svg` and `examples/{id}.debug.svg` outputs when present
 - missing SVG previews are shown as non-fatal gaps; run `npm run examples` first for fresh previews
+
+Generalized static gallery report (aspirational + technical):
+
+- generated file: `examples/example-gallery.html`
+- writer script: `packages/examples/src/writeExampleGalleryHtml.ts`
+- generation command: `npm run gallery:examples`
+- the page includes both `aspirational-*` and `technical-*` IDs and labels each card by category
 
 Boundary reminder:
 

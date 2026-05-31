@@ -18,6 +18,23 @@ export const technicalBeltPulleyExample: VizxExample = {
   title: "Technical belt pulley",
   description:
     "Demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal common tangents and circular wrap arcs.",
+  sourcePath: "internal technical example",
+  reproductionLevel: "Technical",
+  helperFamilies: [
+    "primitives",
+    "tangents",
+    "common tangents",
+    "belt/pulley path",
+    "circular arcs / angle marks",
+    "annotation helpers",
+    "style fields",
+  ],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "technical geometry helpers",
     "common tangent helpers",

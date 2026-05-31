@@ -201,6 +201,7 @@ Current note:
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
 - first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.
 - post-mechanism technical/math checkpoint guidance now recommends JSON Core IR / parser AST catch-up before another major geometry or fidelity branch.
+- generated gallery tooling now has both generalized (`npm run manifest:examples`, `npm run gallery:examples`) and aspirational-only compatibility (`npm run manifest:aspirational`, `npm run gallery:aspirational`) outputs.
 
 ## D. Deferred Work
 

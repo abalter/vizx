@@ -19,6 +19,15 @@ export const technicalTangentsExample: VizxExample = {
   id: "technical-tangents",
   title: "Technical tangents",
   description: "A focused tangent-construction example using the v0 circle tangent helpers.",
+  sourcePath: "internal technical example",
+  reproductionLevel: "Technical",
+  helperFamilies: ["primitives", "tangents", "annotation helpers", "style fields"],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "technical geometry helpers",
     "circle primitive",

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VizX Example Gallery</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --fg: #0f172a;
+      --muted: #475569;
+      --card: #ffffff;
+      --border: #cbd5e1;
+      --asp: #0369a1;
+      --tech: #15803d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: radial-gradient(circle at 20% 0%, #e0f2fe 0%, var(--bg) 40%);
+      color: var(--fg);
+      line-height: 1.5;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+    }
+    .meta {
+      margin-top: 0.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-top: 1.25rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+    }
+    .card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+      display: flex;
+      gap: 0.55rem;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.14rem 0.46rem;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+    }
+    .badge.aspirational { color: var(--asp); }
+    .badge.technical { color: var(--tech); }
+    .id {
+      margin: 0.3rem 0 0.6rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.88rem;
+    }
+    dl {
+      display: grid;
+      grid-template-columns: 9.5rem 1fr;
+      gap: 0.26rem 0.5rem;
+      margin: 0.75rem 0 0;
+      font-size: 0.92rem;
+    }
+    dt { color: var(--muted); }
+    dd { margin: 0; }
+    .preview-grid {
+      margin-top: 0.9rem;
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+    .preview-cell {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.55rem;
+      background: #f8fafc;
+    }
+    .preview-cell h4 {
+      margin: 0 0 0.45rem;
+      font-size: 0.84rem;
+      color: #334155;
+    }
+    .preview-cell img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .preview-missing {
+      margin: 0;
+      font-size: 0.84rem;
+      color: #b45309;
+    }
+    @media (max-width: 720px) {
+      main { padding: 1rem; }
+      dl { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>VizX Example Gallery</h1>
+    <p class="meta">Generated from packages/examples/src/index.ts at 2026-05-31T05:28:41.386Z.</p>
+    <p class="meta">Included prefixes: aspirational-, technical-</p>
+    <section class="grid">
+      <article class="card"><h2>Aspirational: Android activity lifecycle <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-android-lifecycle</p><p>Manual builder-authored Level 2 approximation of the TikZ Android activity lifecycle with rounded lifecycle nodes and arrowed flow connectors.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/tikz/Diagram of Android activity life cycle</dd><dt>Reproduction Level</dt><dd>Level 2</dd><dt>Helper Families</dt><dd>primitives, connectors/placement</dd><dt>Compromises</dt><dd>no source translation, no solver, no automatic layout, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-android-lifecycle.svg" alt="aspirational-android-lifecycle scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-android-lifecycle.debug.svg" alt="aspirational-android-lifecycle debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational: Arrow with label <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-arrow-label</p><p>Manual builder-authored approximation of MetaPost arrow_label with a shortened double-arrow segment and centered label.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/metapost/arrow_label.mp</dd><dt>Reproduction Level</dt><dd>Level 2</dd><dt>Helper Families</dt><dd>primitives</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-arrow-label.svg" alt="aspirational-arrow-label scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-arrow-label.debug.svg" alt="aspirational-arrow-label debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational geometry 1 lite <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-geometry-1-lite</p><p>Manual Level 1-2 approximation of Asymptote geometry_1 using current VizX geometry, paths, arcs, labels, and style fields.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/asymptote/geometry_1</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, intersections, annotation helpers, circular arcs / angle marks, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-geometry-1-lite.svg" alt="aspirational-geometry-1-lite scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-geometry-1-lite.debug.svg" alt="aspirational-geometry-1-lite debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational: Labeled polygon <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-labeled-polygon</p><p>Manual builder-authored approximation of an Asymptote labeled polygon with vertex labels, real circular angle marks, and technical style distinctions.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/asymptote/labeled_polygon</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, circular arcs / angle marks, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-labeled-polygon.svg" alt="aspirational-labeled-polygon scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-labeled-polygon.debug.svg" alt="aspirational-labeled-polygon debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational mechanism lite <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-mechanism-lite</p><p>Manual Level 1-2 approximation of the MetaPost mechanism aspirational example using current VizX intersections, labels, angle marks, and style helpers.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/metapost/mechanism.mp</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, intersections, annotation helpers, circular arcs / angle marks, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no solver, no mechanics/physics simulation, no source translation, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-mechanism-lite.svg" alt="aspirational-mechanism-lite scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-mechanism-lite.debug.svg" alt="aspirational-mechanism-lite debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational pendagon lite <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-pendagon-lite</p><p>Manual Level 1-2 approximation of MetaPost pendagon using current VizX intersection helpers and primitive geometry.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/metapost/pendagon.mp</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, intersections, segment/ray clipping, annotation helpers, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-pendagon-lite.svg" alt="aspirational-pendagon-lite scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-pendagon-lite.debug.svg" alt="aspirational-pendagon-lite debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational projectile motion lite <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-projectile-motion-lite</p><p>Manual Level 1-2 approximation of TikZ projectile_motion using current VizX geometry, arcs, paths, arrows, labels, and v0 style fields.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/tikz/projectile_motion</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, paths/Bezier, circular arcs / angle marks, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no mechanics/physics simulation, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-projectile-motion-lite.svg" alt="aspirational-projectile-motion-lite scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-projectile-motion-lite.debug.svg" alt="aspirational-projectile-motion-lite debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Aspirational pullys lite <span class="badge aspirational">Aspirational</span></h2><p class="id">aspirational-pullys-lite</p><p>Manual Level 1-2 approximation of MetaPost pullys using the current belt, tangent, annotation, and style helper stack.</p><dl><dt>Source</dt><dd>examples/aspirational_gallery/metapost/pullys.mp</dd><dt>Reproduction Level</dt><dd>Level 1-2</dd><dt>Helper Families</dt><dd>primitives, tangents, common tangents, annotation helpers, circular arcs / angle marks, belt/pulley path, style fields</dd><dt>Compromises</dt><dd>manual coordinates, no source translation, no solver, no mechanics/physics simulation, no full visual fidelity, no clipping/gradients, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./aspirational-pullys-lite.svg" alt="aspirational-pullys-lite scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./aspirational-pullys-lite.debug.svg" alt="aspirational-pullys-lite debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Technical angle arc <span class="badge technical">Technical</span></h2><p class="id">technical-angle-arc</p><p>A focused circular arc angle-mark example using the v0 center/radius/angle path command.</p><dl><dt>Source</dt><dd>internal technical example</dd><dt>Reproduction Level</dt><dd>Technical</dd><dt>Helper Families</dt><dd>primitives, circular arcs / angle marks, annotation helpers, style fields</dd><dt>Compromises</dt><dd>no source translation, no solver, no mechanics/physics simulation, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./technical-angle-arc.svg" alt="technical-angle-arc scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./technical-angle-arc.debug.svg" alt="technical-angle-arc debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Technical belt pulley <span class="badge technical">Technical</span></h2><p class="id">technical-belt-pulley</p><p>Demonstrates open-belt and crossed-belt loop paths around pulley pairs using external/internal common tangents and circular wrap arcs.</p><dl><dt>Source</dt><dd>internal technical example</dd><dt>Reproduction Level</dt><dd>Technical</dd><dt>Helper Families</dt><dd>primitives, tangents, common tangents, belt/pulley path, circular arcs / angle marks, annotation helpers, style fields</dd><dt>Compromises</dt><dd>no source translation, no solver, no mechanics/physics simulation, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./technical-belt-pulley.svg" alt="technical-belt-pulley scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./technical-belt-pulley.debug.svg" alt="technical-belt-pulley debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Technical common tangents <span class="badge technical">Technical</span></h2><p class="id">technical-common-tangents</p><p>Demonstrates explicit common tangent construction between two circles (external/internal) using pure helper math.</p><dl><dt>Source</dt><dd>internal technical example</dd><dt>Reproduction Level</dt><dd>Technical</dd><dt>Helper Families</dt><dd>primitives, tangents, common tangents, annotation helpers, style fields</dd><dt>Compromises</dt><dd>no source translation, no solver, no mechanics/physics simulation, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./technical-common-tangents.svg" alt="technical-common-tangents scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./technical-common-tangents.debug.svg" alt="technical-common-tangents debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Technical linear plot <span class="badge technical">Technical</span></h2><p class="id">technical-linear-plot</p><p>Demonstrates v0 linear scale + plot-frame mapping helpers with minimal axis helpers and an explicit data series.</p><dl><dt>Source</dt><dd>internal technical example</dd><dt>Reproduction Level</dt><dd>Technical</dd><dt>Helper Families</dt><dd>primitives, intersections, annotation helpers, style fields</dd><dt>Compromises</dt><dd>no source translation, no solver, no automatic layout, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./technical-linear-plot.svg" alt="technical-linear-plot scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./technical-linear-plot.debug.svg" alt="technical-linear-plot debug preview" loading="lazy" /></div></div></article>
+<article class="card"><h2>Technical tangents <span class="badge technical">Technical</span></h2><p class="id">technical-tangents</p><p>A focused tangent-construction example using the v0 circle tangent helpers.</p><dl><dt>Source</dt><dd>internal technical example</dd><dt>Reproduction Level</dt><dd>Technical</dd><dt>Helper Families</dt><dd>primitives, tangents, annotation helpers, style fields</dd><dt>Compromises</dt><dd>no source translation, no solver, no mechanics/physics simulation, no parser/JSON/AST support</dd></dl><div class="preview-grid"><div class="preview-cell"><h4>Scene</h4><img src="./technical-tangents.svg" alt="technical-tangents scene preview" loading="lazy" /></div><div class="preview-cell"><h4>Debug</h4><img src="./technical-tangents.debug.svg" alt="technical-tangents debug preview" loading="lazy" /></div></div></article>
+    </section>
+  </main>
+</body>
+</html>

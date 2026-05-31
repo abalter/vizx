@@ -1,6 +1,6 @@
 import type { ObjectScene } from "@vizx/object-model";
 
-export type VizxExampleReproductionLevel = "Level 1" | "Level 2" | "Level 1-2" | "Level 3";
+export type VizxExampleReproductionLevel = "Technical" | "Level 1" | "Level 2" | "Level 1-2" | "Level 3";
 
 export type VizxExampleHelperFamily =
   | "primitives"

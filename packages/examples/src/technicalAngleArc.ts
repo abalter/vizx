@@ -6,6 +6,15 @@ export const technicalAngleArcExample: VizxExample = {
   id: "technical-angle-arc",
   title: "Technical angle arc",
   description: "A focused circular arc angle-mark example using the v0 center/radius/angle path command.",
+  sourcePath: "internal technical example",
+  reproductionLevel: "Technical",
+  helperFamilies: ["primitives", "circular arcs / angle marks", "annotation helpers", "style fields"],
+  compromises: [
+    "no source translation",
+    "no solver",
+    "no mechanics/physics simulation",
+    "no parser/JSON/AST support",
+  ],
   expectedCapabilities: [
     "path arc command",
     "line primitive",
