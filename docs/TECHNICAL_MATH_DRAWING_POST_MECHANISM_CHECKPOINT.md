@@ -142,7 +142,7 @@ That is a credible manual technical-illustration baseline rather than a one-off 
 ### C. Authoring/system gaps
 
 - parser syntax
-- parser AST catch-up for current path/style/transform/object-kind surfaces
+- parser AST catch-up completion for current path/style/transform/object-kind surfaces
 - source-language translation
 - stronger reusable example/component conventions for technical figures
 - automated visual comparison or regression review tooling
@@ -249,6 +249,11 @@ Rationale:
 - parser AST catch-up now reduces long-term model drift before another major feature branch expands the gap further
 - this does not require committing to parser syntax or source translation yet
 - it creates a cleaner foundation for later parser, interchange, or source-planning work
+
+Current implementation note:
+
+- parser AST catch-up audit now exists in [PARSER_AST_CATCHUP_AUDIT.md](./PARSER_AST_CATCHUP_AUDIT.md)
+- first bounded parser AST type/lowering parity work has started without adding parser source syntax
 
 If the immediate goal were visual output quality rather than model consolidation, **Option B** would be the next most useful branch.
 

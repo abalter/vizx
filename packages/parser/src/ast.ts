@@ -60,7 +60,53 @@ export interface VizxAstBaseObject {
   readonly id: string;
   readonly placement?: VizxAstPlacement;
   readonly align?: VizxAstAlignment;
+  readonly style?: VizxAstStyle;
+  readonly transform?: VizxAstTransform;
 }
+
+export interface VizxAstStyle {
+  readonly stroke?: string;
+  readonly fill?: string;
+  readonly strokeWidth?: number;
+  readonly strokeDasharray?: readonly number[];
+  readonly strokeLineCap?: "butt" | "round" | "square";
+  readonly strokeLineJoin?: "miter" | "round" | "bevel";
+  readonly fillRule?: "nonzero" | "evenodd";
+  readonly fontFamily?: string;
+  readonly fontSize?: number;
+  readonly textAnchor?: "start" | "middle" | "end";
+  readonly dominantBaseline?: string;
+  readonly opacity?: number;
+  readonly markerStart?: string;
+  readonly markerEnd?: string;
+}
+
+export interface VizxAstTranslateTransform {
+  readonly kind: "translate";
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface VizxAstRotateTransform {
+  readonly kind: "rotate";
+  readonly angleDegrees: number;
+  readonly around?: VizxAstPoint;
+}
+
+export interface VizxAstScaleTransform {
+  readonly kind: "scale";
+  readonly sx: number;
+  readonly sy?: number;
+  readonly around?: VizxAstPoint;
+}
+
+export interface VizxAstLegacyTranslateTransform {
+  readonly translateX: number;
+  readonly translateY: number;
+}
+
+export type VizxAstTransformOperation = VizxAstTranslateTransform | VizxAstRotateTransform | VizxAstScaleTransform;
+export type VizxAstTransform = VizxAstTransformOperation | VizxAstLegacyTranslateTransform | readonly VizxAstTransformOperation[];
 
 export interface VizxAstRectFitToText {
   readonly textId: string;
@@ -70,9 +116,90 @@ export interface VizxAstRectFitToText {
 
 export interface VizxAstRectObject extends VizxAstBaseObject {
   readonly kind: "rect";
-  readonly fitToText: VizxAstRectFitToText;
+  readonly fitToText?: VizxAstRectFitToText;
+  readonly center?: VizxAstPoint;
+  readonly width?: number;
+  readonly height?: number;
   readonly rx?: number;
   readonly ry?: number;
+}
+
+export interface VizxAstLineObject extends VizxAstBaseObject {
+  readonly kind: "line";
+  readonly start: VizxAstPoint;
+  readonly end: VizxAstPoint;
+}
+
+export interface VizxAstPolylineObject extends VizxAstBaseObject {
+  readonly kind: "polyline";
+  readonly points: readonly VizxAstPoint[];
+}
+
+export interface VizxAstEllipseObject extends VizxAstBaseObject {
+  readonly kind: "ellipse";
+  readonly center: VizxAstPoint;
+  readonly rx: number;
+  readonly ry: number;
+}
+
+export interface VizxAstPolygonObject extends VizxAstBaseObject {
+  readonly kind: "polygon";
+  readonly points: readonly VizxAstPoint[];
+}
+
+export interface VizxAstCircleObject extends VizxAstBaseObject {
+  readonly kind: "circle";
+  readonly center: VizxAstPoint;
+  readonly radius: number;
+}
+
+export interface VizxAstMoveToPathCommand {
+  readonly kind: "moveTo";
+  readonly point: VizxAstPoint;
+}
+
+export interface VizxAstLineToPathCommand {
+  readonly kind: "lineTo";
+  readonly point: VizxAstPoint;
+}
+
+export interface VizxAstQuadraticCurveToPathCommand {
+  readonly kind: "quadraticCurveTo";
+  readonly control: VizxAstPoint;
+  readonly point: VizxAstPoint;
+}
+
+export interface VizxAstCubicCurveToPathCommand {
+  readonly kind: "cubicCurveTo";
+  readonly control1: VizxAstPoint;
+  readonly control2: VizxAstPoint;
+  readonly point: VizxAstPoint;
+}
+
+export interface VizxAstArcPathCommand {
+  readonly kind: "arc";
+  readonly center: VizxAstPoint;
+  readonly radius: number;
+  readonly startAngleDegrees: number;
+  readonly endAngleDegrees: number;
+  readonly clockwise?: boolean;
+}
+
+export interface VizxAstClosePathCommand {
+  readonly kind: "closePath";
+}
+
+export type VizxAstPathCommand =
+  | VizxAstMoveToPathCommand
+  | VizxAstLineToPathCommand
+  | VizxAstQuadraticCurveToPathCommand
+  | VizxAstCubicCurveToPathCommand
+  | VizxAstArcPathCommand
+  | VizxAstClosePathCommand;
+
+export interface VizxAstPathObject extends VizxAstBaseObject {
+  readonly kind: "path";
+  readonly commands: readonly VizxAstPathCommand[];
 }
 
 export interface VizxAstTextObject extends VizxAstBaseObject {
@@ -86,13 +213,23 @@ export interface VizxAstGroupObject extends VizxAstBaseObject {
   readonly children: readonly VizxAstObject[];
 }
 
-export type VizxAstObject = VizxAstRectObject | VizxAstTextObject | VizxAstGroupObject;
+export type VizxAstObject =
+  | VizxAstRectObject
+  | VizxAstLineObject
+  | VizxAstPolylineObject
+  | VizxAstEllipseObject
+  | VizxAstPolygonObject
+  | VizxAstCircleObject
+  | VizxAstPathObject
+  | VizxAstTextObject
+  | VizxAstGroupObject;
 
 export interface VizxAstConnector {
   readonly kind: "connector";
   readonly id: string;
   readonly from: VizxAstAnchorRef;
   readonly to: VizxAstAnchorRef;
+  readonly style?: VizxAstStyle;
 }
 
 export interface VizxAstDistributionOperation {

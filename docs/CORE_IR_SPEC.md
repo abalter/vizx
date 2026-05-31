@@ -75,7 +75,7 @@ Current transform deferrals:
 
 - rotation support for `text` objects (diagnostic + skip in v0)
 - scale support for `text` objects (diagnostic + skip in v0)
-- parser AST transform surface parity and source-syntax lowering
+- parser source-syntax lowering for broad transform surfaces (AST representability has started without syntax)
 
 Current style baseline in `Style`:
 

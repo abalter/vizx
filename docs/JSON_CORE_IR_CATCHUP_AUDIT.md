@@ -82,21 +82,27 @@ Bounded implementation chosen for this phase:
 
 1. Expand JSON Core IR schema and conversion for already-implemented runtime object/style/path/transform surfaces.
 2. Add focused fixture and tests for styled path + arc + ordered transforms.
-3. Keep parser AST unchanged and explicitly deferred (no parser syntax changes).
+3. Keep parser syntax unchanged and begin parser AST parity catch-up in a separate bounded phase.
+
+Follow-up status:
+
+- Parser AST catch-up audit now exists in [PARSER_AST_CATCHUP_AUDIT.md](./PARSER_AST_CATCHUP_AUDIT.md).
+- A first bounded parser AST/type/lowering catch-up has started without parser source syntax changes.
 
 ## 4. What Was Intentionally Deferred
 
 Deferred in this phase:
 
 - parser syntax changes
-- broad parser AST object/style/path transform parity
+- parser source syntax for broader object/style/path/transform surfaces
+- parser AST validation semantics beyond representability/lowering coverage
 - helper-level serialization (intersections/tangents/annotation/belt helpers)
 - source translation
 
 Reason:
 
 - helper APIs are authoring conveniences that emit ordinary object/path IR.
-- parser AST and parser syntax are separate roadmap branches and should not be forced in a Core IR schema catch-up pass.
+- parser AST and parser syntax are separate roadmap branches and should not be forced together in a Core IR schema catch-up pass.
 
 ## 5. Recommended Next Catch-up Phase
 
