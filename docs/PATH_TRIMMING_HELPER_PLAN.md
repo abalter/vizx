@@ -172,6 +172,7 @@ Potential future branch (not this slice):
 Builder package addition:
 
 - `circleToCircleLine(id, { centerA, radiusA, centerB, radiusB, style?, markerStart?, markerEnd? })`
+- `circleToCircleArrow(id, { centerA, radiusA, centerB, radiusB, style?, markerStart?, markerEnd? })`
 
 Behavior:
 
@@ -180,6 +181,14 @@ Behavior:
 - computes start as `centerA + unitDirection * radiusA`
 - computes end as `centerB - unitDirection * radiusB`
 - merges optional marker fields into output `style`
+
+`circleToCircleArrow(...)` behavior:
+
+- emits an ordinary `line` object (not a connector object)
+- uses `circleToCircleLine(...)` for the same validation and endpoint geometry
+- defaults `markerEnd` to `"arrow"`
+- preserves caller-supplied `markerStart`
+- allows explicit `markerEnd` override
 
 Validation/errors:
 
@@ -193,6 +202,8 @@ Boundaries:
 - no automatic object-boundary lookup or resolver inference
 - no new runtime object kinds or renderer semantics
 - no parser syntax, JSON Core IR helper construct, or parser AST helper construct
+- no existing connector resolver behavior changes
+- no object-level `cutbefore` / `cutafter` semantics
 
 ## 11. Application Checkpoint (current)
 

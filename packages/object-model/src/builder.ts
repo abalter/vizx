@@ -196,6 +196,8 @@ interface CircleToCircleLineOptions {
   readonly markerEnd?: Style["markerEnd"];
 }
 
+type CircleToCircleArrowOptions = CircleToCircleLineOptions;
+
 export function trimmedLine(id: string, options: TrimmedLineOptions): LineObject {
   const trimmed = trimSegment(
     options.a,
@@ -254,6 +256,13 @@ export function circleToCircleLine(id: string, options: CircleToCircleLineOption
     start,
     end,
     ...(Object.keys(style).length > 0 ? { style } : {}),
+  });
+}
+
+export function circleToCircleArrow(id: string, options: CircleToCircleArrowOptions): LineObject {
+  return circleToCircleLine(id, {
+    ...options,
+    markerEnd: options.markerEnd ?? "arrow",
   });
 }
 

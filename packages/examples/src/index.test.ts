@@ -1105,6 +1105,7 @@ describe("example registry", () => {
     expect(inspection.objects.some((object) => object.id === "tts.segment.secant" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.segment.start-trim" && object.kind === "line")).toBe(true);
     expect(inspection.objects.some((object) => object.id === "tts.label.main" && object.kind === "text")).toBe(true);
+    expect(svg).toContain('id="tts.segment.circle-to-circle"');
     expect(svg).toContain("<circle");
     expect(svg).toContain("<line");
     expect(svg).toContain("<text");

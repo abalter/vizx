@@ -7,6 +7,7 @@ import {
   anchor,
   arrowEnd,
   circle,
+  circleToCircleArrow,
   circleToCircleLine,
   closePath,
   connector,
@@ -429,6 +430,79 @@ describe("object-model builder helpers", () => {
       centerB: { x: 40, y: 0 },
       radiusB: 6,
     })).toThrow("radiusA");
+  });
+
+  it("creates a circle-to-circle arrow line with default markerEnd", () => {
+    const trimmed = circleToCircleArrow("c2ca.main", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 10,
+      centerB: { x: 40, y: 0 },
+      radiusB: 6,
+      style: { stroke: "#0f766e", strokeWidth: 2.4, strokeLineCap: "round" },
+    });
+
+    expect(trimmed.kind).toBe("line");
+    expect(trimmed.id).toBe("c2ca.main");
+    expectPointClose(trimmed.start, { x: 10, y: 0 });
+    expectPointClose(trimmed.end, { x: 34, y: 0 });
+    expect(trimmed.style).toEqual({
+      stroke: "#0f766e",
+      strokeWidth: 2.4,
+      strokeLineCap: "round",
+      markerEnd: "arrow",
+    });
+  });
+
+  it("allows explicit markerEnd override in circleToCircleArrow", () => {
+    const trimmed = circleToCircleArrow("c2ca.override", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 40, y: 0 },
+      radiusB: 8,
+      markerEnd: undefined,
+      style: { stroke: "#0f172a", strokeWidth: 1.6 },
+    });
+
+    expect(trimmed.style).toEqual({
+      stroke: "#0f172a",
+      strokeWidth: 1.6,
+      markerEnd: "arrow",
+    });
+  });
+
+  it("preserves markerStart and explicit markerEnd in circleToCircleArrow", () => {
+    const trimmed = circleToCircleArrow("c2ca.markers", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 40, y: 0 },
+      radiusB: 8,
+      markerStart: "arrow",
+      markerEnd: "arrow",
+      style: { stroke: "#0f172a", strokeWidth: 1.6 },
+    });
+
+    expect(trimmed.style).toEqual({
+      stroke: "#0f172a",
+      strokeWidth: 1.6,
+      markerStart: "arrow",
+      markerEnd: "arrow",
+    });
+  });
+
+  it("propagates circleToCircleLine validation in circleToCircleArrow", () => {
+    expect(() => circleToCircleArrow("c2ca.bad.coincident", {
+      centerA: { x: 10, y: 20 },
+      radiusA: 8,
+      centerB: { x: 10, y: 20 },
+      radiusB: 6,
+    })).toThrow("distinct circle centers");
+
+    expect(() => circleToCircleArrow("c2ca.bad.overlap", {
+      centerA: { x: 0, y: 0 },
+      radiusA: 8,
+      centerB: { x: 12, y: 0 },
+      radiusB: 6,
+    })).toThrow("separated circles");
   });
 
   it("creates x-axis and y-axis helper output as plain line/text objects", () => {

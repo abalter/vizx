@@ -27,6 +27,7 @@ Builder helpers:
 
 - `trimmedLine`
 - `circleToCircleLine`
+- `circleToCircleArrow`
 
 ## 3. Examples With Applied Trimming
 

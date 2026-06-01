@@ -42,6 +42,7 @@ Object factories:
 - `line(id, options)`
 - `trimmedLine(id, options)`
 - `circleToCircleLine(id, options)`
+- `circleToCircleArrow(id, options)`
 - `polyline(id, options)`
 - `ellipse(id, options)`
 - `polygon(id, options)`
@@ -346,7 +347,7 @@ The bounded trimming helper slice also adds `trimmedLine(...)` in the builder la
 
 ```ts
 import { point } from "@vizx/geometry";
-import { circle, circleToCircleLine, line, sceneOf, trimmedLine } from "@vizx/object-model";
+import { circle, circleToCircleArrow, circleToCircleLine, line, sceneOf, trimmedLine } from "@vizx/object-model";
 
 const a = point(120, 140);
 const b = point(300, 140);
@@ -376,6 +377,13 @@ const scene = sceneOf([
     markerEnd: "arrow",
     style: { stroke: "#0369a1", strokeWidth: 2, strokeLineCap: "round", strokeDasharray: [3, 3] },
   }),
+  circleToCircleArrow("boundary-arrow", {
+    centerA: a,
+    radiusA: radius,
+    centerB: b,
+    radiusB: radius,
+    style: { stroke: "#0f766e", strokeWidth: 2.2, strokeLineCap: "round" },
+  }),
 ]);
 ```
 
@@ -385,6 +393,7 @@ Notes:
 - no resolver/renderer `cutbefore` or `cutafter` semantics are added
 - no automatic boundary detection is performed
 - `circleToCircleLine(...)` requires strictly separated circles and rejects overlap/containment/tangent/coincident-center cases
+- `circleToCircleArrow(...)` is explicit sugar over `circleToCircleLine(...)` and defaults `markerEnd` to `arrow`
 - parser syntax/JSON Core IR/parser AST helper constructs remain deferred
 
 ## 8. Data-Driven Generation Example

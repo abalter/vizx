@@ -199,6 +199,7 @@ Current note:
 - first segment/ray clipped helper slice now exists in `@vizx/geometry` (`pointOnSegment`, `pointOnRay`, `segmentSegmentIntersection`, `segmentCircleIntersections`, `rayCircleIntersections`) and remains explicit helper math without resolver inference.
 - first bounded path/segment trimming helper slice now exists in `@vizx/geometry` (`trimSegment`, `trimSegmentStart`, `trimSegmentEnd`, `trimSegmentToCircle`) and remains explicit helper math without parser syntax, new runtime primitives, or solver behavior.
 - first builder convenience wrapper over that slice now exists in `@vizx/object-model` (`trimmedLine`), still emitting ordinary `line` objects with no resolver/renderer trimming semantics.
+- circle-boundary builder sugar now also includes `circleToCircleLine` and arrow-default `circleToCircleArrow`, both still emitting ordinary `line` objects with no connector/resolver behavior changes.
 - trimming application has now expanded beyond the focused technical trimming example into selected technical and aspirational scenes via explicit `trimmedLine`/`circleToCircleLine` usage, with no automatic cutbefore/cutafter semantics.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.

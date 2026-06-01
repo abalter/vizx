@@ -46,7 +46,7 @@ Implemented baseline object and rendering surface:
 - ordered transforms: `translate`, `rotate`, `scale`
 - connectors and built-in arrow markers
 - current style fields including dash/cap/join/fill-rule support
-- builder trimming conveniences (`trimmedLine`, `circleToCircleLine`) over existing geometry helpers
+- builder trimming conveniences (`trimmedLine`, `circleToCircleLine`, `circleToCircleArrow`) over existing geometry helpers
 
 ### 2.2 Geometry construction helpers
 

@@ -6,7 +6,7 @@ import {
   trimSegmentToCircle,
 } from "@vizx/geometry";
 import {
-  circleToCircleLine,
+  circleToCircleArrow,
   circle,
   line,
   sceneOf,
@@ -103,12 +103,11 @@ export const technicalTrimmedSegmentsExample: VizxExample = {
           strokeLineCap: "round",
         },
       }),
-      circleToCircleLine("tts.segment.circle-to-circle", {
+      circleToCircleArrow("tts.segment.circle-to-circle", {
         centerA: leftCenter,
         radiusA: radius,
         centerB: rightCenter,
         radiusB: radius,
-        markerEnd: "arrow",
         style: {
           stroke: "#0369a1",
           strokeWidth: 2,
