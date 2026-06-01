@@ -76,3 +76,13 @@ Current usage remains explicit authoring only:
 2. Add a bounded line-to-circle builder helper only if repeated authoring patterns justify it.
 3. Plan object-level `cutbefore` / `cutafter` semantics as a later model branch.
 4. Defer path measurement and flattening to a later geometry-focused branch.
+
+## 7. Post-Application Consolidation
+
+The fuller post-application consolidation and branch comparison now lives in:
+
+- [PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md](./PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md)
+
+Current decision from that follow-up checkpoint:
+
+- next branch should be a docs-only `cutbefore` / `cutafter` semantics design pass before additional runtime trimming implementation

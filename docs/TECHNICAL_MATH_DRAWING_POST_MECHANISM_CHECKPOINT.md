@@ -215,6 +215,7 @@ Cons:
 
 ### Option D — Source-language / parser planning
 
+- post-application trimming consolidation now recommends a docs-only object-level `cutbefore` / `cutafter` semantics design pass before additional runtime trimming implementation
 Pros:
 
 - directly addresses TikZ/Asymptote/MetaPost inspiration

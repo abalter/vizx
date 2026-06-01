@@ -213,8 +213,16 @@ Current application checkpoint:
 
 - [PATH_TRIMMING_APPLICATION_CHECKPOINT.md](./PATH_TRIMMING_APPLICATION_CHECKPOINT.md)
 
+Post-application consolidation and branch decision checkpoint:
+
+- [PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md](./PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md)
+
 Boundary reminder:
 
 - application remains explicit author-written helper usage
 - no automatic `cutbefore` / `cutafter` semantics
 - no resolver/renderer integration for inferred endpoint trimming
+
+Current next-branch recommendation from post-application consolidation:
+
+- do a docs-only design pass for object-level `cutbefore` / `cutafter` semantics before further runtime trimming implementation

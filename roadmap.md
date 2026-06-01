@@ -201,6 +201,7 @@ Current note:
 - first builder convenience wrapper over that slice now exists in `@vizx/object-model` (`trimmedLine`), still emitting ordinary `line` objects with no resolver/renderer trimming semantics.
 - circle-boundary builder sugar now also includes `circleToCircleLine` and arrow-default `circleToCircleArrow`, both still emitting ordinary `line` objects with no connector/resolver behavior changes.
 - trimming application has now expanded beyond the focused technical trimming example into selected technical and aspirational scenes via explicit `trimmedLine`/`circleToCircleLine` usage, with no automatic cutbefore/cutafter semantics.
+- post-application trimming consolidation checkpoint now exists (`docs/PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md`) and recommends a docs-only object-level `cutbefore` / `cutafter` semantics design pass before additional runtime trimming implementation.
 - first technical annotation helper slice now exists (`labelAlongSegment`, `rightAngleMarkPath`, `segmentTickMarkPath`, `segmentTickMarks`) and remains explicit authoring convenience without introducing new runtime object kinds.
 - first common tangent helper slice now exists (`circleCircleTangents`) with `technical-common-tangents` example coverage, remaining explicit helper math without solver/resolver inference.
 - first bounded belt/pulley helper slice now exists in builder layer (`openBeltPath`) with `technical-belt-pulley` example coverage, still using existing path commands and no new runtime primitives.

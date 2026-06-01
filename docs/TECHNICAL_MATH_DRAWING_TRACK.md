@@ -12,6 +12,7 @@ Latest checkpoint:
 - [GEOMETRY_BELT_PULLEY_HELPER_PLAN.md](./GEOMETRY_BELT_PULLEY_HELPER_PLAN.md)
 - [GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md](./GEOMETRY_SEGMENT_RAY_HELPER_PLAN.md)
 - [PATH_TRIMMING_HELPER_PLAN.md](./PATH_TRIMMING_HELPER_PLAN.md)
+- [PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md](./PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md)
 - [TECHNICAL_ANNOTATION_HELPER_PLAN.md](./TECHNICAL_ANNOTATION_HELPER_PLAN.md)
 
 ## 1. Purpose
@@ -101,6 +102,7 @@ Current note:
 - generated gallery tooling now includes both `aspirational-*` and `technical-*` example metadata for side-by-side review in `examples/example-gallery-manifest.json` and `examples/example-gallery.html`.
 - bounded straight-segment trimming helpers are now implemented in `@vizx/geometry` with focused example coverage (`technical-trimmed-segments`) for technical line polish near circle boundaries.
 - trimming application has now expanded to additional technical/aspirational examples using explicit `trimmedLine(...)` and `circleToCircleLine(...)` where line endpoints meet circular pivots/contact markers; this remains author-driven polish with no automatic trimming semantics.
+- post-application trimming consolidation now exists in `PATH_TRIMMING_POST_APPLICATION_CHECKPOINT.md`, with a docs-only recommendation to design object-level `cutbefore` / `cutafter` semantics before additional runtime trimming implementation.
 
 ## 6. Recommended Next Feature Gaps
 
